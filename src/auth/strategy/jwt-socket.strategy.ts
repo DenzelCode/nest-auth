@@ -13,7 +13,7 @@ export class JwtSocketStrategy extends PassportStrategy(
 ) {
   constructor(private userService: UserService, configService: ConfigService) {
     super({
-      jwtFromRequest: ExtractJwt.fromUrlQueryParameter('token'),
+      jwtFromRequest: ExtractJwt.fromUrlQueryParameter('accessToken'),
       secretOrKey: configService.get<string>('JWT_SECRET'),
       ignoreExpiration: false,
     });
