@@ -17,11 +17,6 @@ export class AppGateway
 
   online = 0;
 
-  @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): string {
-    return 'Hello world!';
-  }
-
   handleConnection(client: Socket, ...args: any[]) {
     this.online++;
 
