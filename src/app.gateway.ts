@@ -1,5 +1,6 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import {
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
@@ -7,6 +8,9 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { CurrentUser } from './auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
+import { User } from './user/schema/user.schema';
 
 @WebSocketGateway()
 export class AppGateway
@@ -27,5 +31,11 @@ export class AppGateway
     this.online--;
 
     this.logger.log(`User ${client.id} disconnected; ${this.online}`);
+  }
+
+  @SubscribeMessage('test')
+  @UseGuards(JwtAuthGuard)
+  handleTestMessage(@MessageBody() data: string, @CurrentUser() user?: User) {
+    this.logger.log(`Message received: ${data} from ${user?.username}`);
   }
 }

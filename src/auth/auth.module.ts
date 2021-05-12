@@ -6,10 +6,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
-import { JwtSocketStrategy } from './strategy/jwt-socket.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -34,9 +34,8 @@ import { LocalAuthGuard } from './guard/local-auth.guard';
   providers: [
     AuthService,
     JwtStrategy,
-    JwtSocketStrategy,
-    LocalStrategy,
     JwtAuthGuard,
+    LocalStrategy,
     LocalAuthGuard,
   ],
   exports: [JwtAuthGuard, LocalAuthGuard],
