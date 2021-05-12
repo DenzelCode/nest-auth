@@ -12,7 +12,7 @@ import { Server } from 'socket.io';
 export class SocketIoAdapter extends AbstractWsAdapter {
   constructor(
     appOrHttpServer?: INestApplicationContext | any,
-    private readonly corsOrigins = [],
+    private readonly corsOrigins: string | string[] = '*',
   ) {
     super(appOrHttpServer);
   }

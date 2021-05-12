@@ -8,7 +8,7 @@ async function bootstrap() {
 
   app.enableCors();
 
-  app.useWebSocketAdapter(new SocketIoAdapter(app, ['http://localhost:4200']));
+  app.useWebSocketAdapter(new SocketIoAdapter(app));
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
