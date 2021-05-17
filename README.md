@@ -3,3 +3,7 @@
 To use this server, get the [Angular Client](https://github.com/DenzelCode/nest-angular-auth-client) up and running.
 
 You can also use this API using Postman or any other request framework.
+
+Online demo here:
+
+[Demo](https://nest-auth.ubbly.club/)
