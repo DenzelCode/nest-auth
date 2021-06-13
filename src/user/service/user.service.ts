@@ -9,11 +9,15 @@ import { User } from '../schema/user.schema';
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  getUserByName(username: string) {
+  getUserByName(name: string) {
+    const username = { $regex: new RegExp(`^${name}$`, 'i') };
+
     return this.userModel.findOne({ username }).exec();
   }
 
-  getUserByEmail(email: string) {
+  getUserByEmail(mail: string) {
+    const email = { $regex: new RegExp(`^${mail}$`, 'i') };
+
     return this.userModel.findOne({ email }).exec();
   }
 
