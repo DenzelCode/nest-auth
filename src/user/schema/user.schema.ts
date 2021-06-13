@@ -5,10 +5,26 @@ import { createSchemaForClassWithMethods } from 'src/common/mongoose/create-sche
 
 @Schema()
 export class User extends Document {
-  @Prop()
+  @Prop({
+    index: {
+      unique: true,
+      collation: {
+        locale: 'en',
+        strength: 2,
+      },
+    },
+  })
   username: string;
 
-  @Prop()
+  @Prop({
+    index: {
+      unique: true,
+      collation: {
+        locale: 'en',
+        strength: 2,
+      },
+    },
+  })
   email: string;
 
   @Prop()
