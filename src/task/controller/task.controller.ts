@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
@@ -49,10 +40,7 @@ export class TaskController {
   }
 
   @Delete(':id')
-  delete(
-    @CurrentUser() user: User,
-    @Param('id', ParseObjectIdPipe) id: ObjectId,
-  ) {
+  delete(@CurrentUser() user: User, @Param('id', ParseObjectIdPipe) id: ObjectId) {
     return this.taskService.delete({
       _id: id,
       owner: user._id,

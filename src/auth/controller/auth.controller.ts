@@ -1,11 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Get,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { User } from '../../user/schema/user.schema';
 import { UserService } from '../../user/service/user.service';
 import { CurrentUser } from '../decorators/current-user.decorator';
@@ -16,10 +9,7 @@ import { LoginDto } from '../dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private userService: UserService,
-  ) {}
+  constructor(private authService: AuthService, private userService: UserService) {}
 
   @Post('login')
   async login(@Body() body: LoginDto) {

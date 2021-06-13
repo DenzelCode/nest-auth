@@ -32,9 +32,7 @@ export class UserService {
   }
 
   async getUser(username: string) {
-    const user =
-      (await this.getUserByName(username)) ??
-      (await this.getUserByEmail(username));
+    const user = (await this.getUserByName(username)) ?? (await this.getUserByEmail(username));
 
     if (!user) {
       return null;

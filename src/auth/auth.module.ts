@@ -31,13 +31,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    JwtStrategy,
-    JwtAuthGuard,
-    LocalStrategy,
-    LocalAuthGuard,
-  ],
+  providers: [AuthService, JwtStrategy, JwtAuthGuard, LocalStrategy, LocalAuthGuard],
   exports: [JwtAuthGuard, LocalAuthGuard],
 })
 export class AuthModule {}

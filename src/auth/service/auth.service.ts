@@ -10,10 +10,7 @@ export interface TokenResponse {
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private userService: UserService, private jwtService: JwtService) {}
 
   async validate(username: string, password: string) {
     const user = await this.userService.getUser(username);
