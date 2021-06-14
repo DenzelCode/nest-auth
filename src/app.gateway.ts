@@ -8,9 +8,9 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { CurrentUser } from './auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from './auth/guard/jwt-auth.guard';
-import { User } from './user/schema/user.schema';
+import { CurrentUser } from './modules/auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from './modules/auth/guard/jwt-auth.guard';
+import { User } from './modules/user/schema/user.schema';
 
 @WebSocketGateway()
 export class AppGateway implements OnGatewayConnection<Socket>, OnGatewayDisconnect<Socket> {
@@ -34,7 +34,7 @@ export class AppGateway implements OnGatewayConnection<Socket>, OnGatewayDisconn
 
   @SubscribeMessage('test')
   @UseGuards(JwtAuthGuard)
-  handleTestMessage(@MessageBody() data: string, @CurrentUser() user?: User) {
-    this.logger.log(`Message received: ${data} from ${user?.username}`);
+  handleTestMessage(@MessageBody() data: string, @CurrentUser() user: User) {
+    this.logger.log(`Message received: ${data} from ${user.username}`);
   }
 }

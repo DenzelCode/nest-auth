@@ -1,0 +1,87 @@
+import { MailerService } from '@nestjs-modules/mailer';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  InternalServerErrorException,
+  NotFoundException,
+  Param,
+  Post,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { UserService } from 'src/modules/user/service/user.service';
+import { ChangePasswordDto } from '../dto/change-password.dto';
+import { RecoverPasswordDto } from '../dto/recover-password.dto';
+import { Recover } from '../schema/recover.schema';
+import { RecoverService } from '../service/recover.service';
+
+@Controller('recover')
+export class RecoverController {
+  constructor(
+    private userService: UserService,
+    private recoverService: RecoverService,
+    private mailerService: MailerService,
+    private configService: ConfigService,
+  ) {}
+
+  @Get(':code')
+  async validateCode(@Param('code') code: Recover['code']) {
+    const recover = await this.recoverService.get(code);
+
+    if (!recover) {
+      throw new NotFoundException('Code not found');
+    }
+
+    recover.owner = this.userService.filterUser(recover.owner);
+
+    return recover;
+  }
+
+  @Post()
+  async recoverPassword(@Body() body: RecoverPasswordDto) {
+    const user = await this.userService.getUserByEmail(body.email);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const { code } = await this.recoverService.create(user);
+
+    const url = this.configService.get('FRONTEND_URL');
+
+    try {
+      await this.mailerService.sendMail({
+        to: user.email,
+        subject: 'Recover your password',
+        template: './recover', // This will fetch /template/recover.hbs
+        context: {
+          name: user.username,
+          url,
+          code,
+        },
+      });
+    } catch (e) {
+      throw new InternalServerErrorException(`An error occurred sending email: ${e.message}`);
+    }
+  }
+
+  @Post(':code')
+  async changePassword(@Param('code') code: Recover['code'], @Body() body: ChangePasswordDto) {
+    const recover = await this.recoverService.get(code);
+
+    if (!recover) {
+      throw new NotFoundException('Code not found');
+    }
+
+    if (body.password !== body.confirmPassword) {
+      throw new BadRequestException(`Passwords doesn't match`);
+    }
+
+    const user = recover.owner;
+
+    user.password = body.password;
+
+    return this.userService.filterUser(await user.save());
+  }
+}

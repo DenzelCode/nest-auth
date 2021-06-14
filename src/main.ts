@@ -1,6 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { SocketIoAdapter } from './adapters/socket-io-adapter';
+import { SocketIoAdapter } from './core/adapter/socket-io-adapter';
 import { AppModule } from './app.module';
 
 async function bootstrap() {

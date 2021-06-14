@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { CurrentUser } from 'src/modules/auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
 import { ParseObjectIdPipe } from 'src/common/pipe/parse-object-id.pipe';
-import { User } from 'src/user/schema/user.schema';
+import { User } from 'src/modules/user/schema/user.schema';
 import { TaskDto } from '../dto/task.dto';
 import { TaskService } from '../service/task.service';
 

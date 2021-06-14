@@ -1,7 +1,7 @@
 import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from 'src/user/schema/user.schema';
+import { User } from 'src/modules/user/schema/user.schema';
 
 export class JwtAuthGuard extends AuthGuard('jwt') {
   reflector: Reflector;

@@ -1,7 +1,7 @@
-import { TaskModule } from './task/task.module';
+import { RecoverModule } from './modules/recover/recover.module';
+import { ModulesModule } from './modules/modules.module';
+import { CoreModule } from './core/core.module';
 import { CommonModule } from './common/common.module';
-import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -10,9 +10,10 @@ import { AppGateway } from './app.gateway';
 
 @Module({
   imports: [
+    RecoverModule,
+    ModulesModule,
+    CoreModule,
     CommonModule,
-    UserModule,
-    TaskModule,
     ConfigModule.forRoot(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -21,7 +22,6 @@ import { AppGateway } from './app.gateway';
         uri: configService.get<string>('MONGO_URI'),
       }),
     }),
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppGateway],
