@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/modules/user/schema/user.schema';
@@ -7,7 +8,10 @@ import { Recover } from '../schema/recover.schema';
 
 @Injectable()
 export class RecoverService {
-  constructor(@InjectModel(Recover.name) private recoveryModel: Model<Recover>) {}
+  constructor(
+    @InjectModel(Recover.name) private recoveryModel: Model<Recover>,
+    private configService: ConfigService,
+  ) {}
 
   async create(user: User) {
     await this.delete(user);
@@ -15,6 +19,7 @@ export class RecoverService {
     return new this.recoveryModel({
       code: randomString(50),
       owner: user._id,
+      expiration: new Date(Date.now() + this.configService.get<number>('CODE_EXPIRATION') * 1000),
     }).save();
   }
 

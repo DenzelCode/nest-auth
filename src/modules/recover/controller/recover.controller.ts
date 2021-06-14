@@ -33,6 +33,12 @@ export class RecoverController {
       throw new NotFoundException('Code not found');
     }
 
+    if (recover.expiration?.getTime() < Date.now()) {
+      await this.recoverService.delete(recover.owner);
+
+      throw new NotFoundException('Code has expired');
+    }
+
     recover.owner = this.userService.filterUser(recover.owner);
 
     return recover;
@@ -46,7 +52,7 @@ export class RecoverController {
       throw new NotFoundException('User not found');
     }
 
-    const { code } = await this.recoverService.create(user);
+    const { code, expiration } = await this.recoverService.create(user);
 
     const url = this.configService.get('FRONTEND_URL');
 
@@ -59,6 +65,7 @@ export class RecoverController {
           name: user.username,
           url,
           code,
+          expiration: Math.round((expiration.getTime() - Date.now()) / 1000 / 60 / 60),
         },
       });
     } catch (e) {
@@ -81,6 +88,8 @@ export class RecoverController {
     const user = recover.owner;
 
     user.password = body.password;
+
+    await this.recoverService.delete(user);
 
     return this.userService.filterUser(await user.save());
   }

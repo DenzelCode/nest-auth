@@ -11,6 +11,9 @@ export class Recover extends Document {
 
   @Prop({ type: ObjectId, ref: User.name })
   owner: User;
+
+  @Prop()
+  expiration: Date;
 }
 
 export const RecoverSchema = createSchemaForClassWithMethods(Recover);
