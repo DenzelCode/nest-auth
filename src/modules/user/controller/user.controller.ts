@@ -42,6 +42,8 @@ export class UserController {
       updatedData.password = body.password;
     }
 
-    return this.userService.updateUser(user, updatedData);
+    Object.assign(user, updatedData);
+
+    return user.save();
   }
 }
