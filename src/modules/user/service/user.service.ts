@@ -56,7 +56,7 @@ export class UserService {
   }
 
   updateUser(user: User, data: Partial<User>) {
-    return this.userModel.updateOne({ _id: user._id }, data);
+    return this.userModel.updateOne({ _id: user._id }, data).exec();
   }
 
   filterUser(user: User) {
