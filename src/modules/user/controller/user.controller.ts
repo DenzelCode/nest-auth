@@ -36,7 +36,7 @@ export class UserController {
 
     if (body.password) {
       if (!(await user.validatePassword(body.currentPassword))) {
-        throw new BadRequestException('Password does not match current password');
+        throw new BadRequestException('Current password does not match');
       }
 
       if (body.password !== body.confirmPassword) {
