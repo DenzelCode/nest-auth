@@ -15,26 +15,30 @@ export class UserController {
     const updatedData: Partial<User> = {};
 
     if (user.username !== body.username) {
-      updatedData.username = body.username;
-
       const usernameUser = await this.userService.getUserByName(body.username);
 
       if (usernameUser) {
         throw new BadRequestException('Username already exists');
       }
+
+      updatedData.username = body.username;
     }
 
     if (user.email !== body.email) {
-      updatedData.email = body.email;
-
       const emailUser = await this.userService.getUserByName(body.email);
 
       if (emailUser) {
         throw new BadRequestException('Email already exists');
       }
+
+      updatedData.email = body.email;
     }
 
     if (body.password) {
+      if (!(await user.validatePassword(body.currentPassword))) {
+        throw new BadRequestException('Password does not match current password');
+      }
+
       if (body.password !== body.confirmPassword) {
         throw new BadRequestException('Passwords does not match');
       }
