@@ -55,6 +55,10 @@ export class UserService {
     return this.filterUser(user);
   }
 
+  updateUser(user: User, data: Partial<User>) {
+    return this.userModel.updateOne({ _id: user._id }, data);
+  }
+
   filterUser(user: User) {
     const userObject = JSON.parse(JSON.stringify(user));
 

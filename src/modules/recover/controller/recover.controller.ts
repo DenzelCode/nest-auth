@@ -82,7 +82,7 @@ export class RecoverController {
     }
 
     if (body.password !== body.confirmPassword) {
-      throw new BadRequestException(`Passwords doesn't match`);
+      throw new BadRequestException(`Passwords does not match`);
     }
 
     const user = recover.owner;

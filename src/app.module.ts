@@ -20,6 +20,7 @@ import { AppGateway } from './app.gateway';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>('MONGO_URI'),
+        autoIndex: false,
       }),
     }),
   ],
