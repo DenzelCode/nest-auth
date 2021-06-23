@@ -23,8 +23,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate({ sub }: Token) {
-    console.log('validating');
-
     return this.userService.validateUser(sub);
   }
 

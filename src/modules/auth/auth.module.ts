@@ -21,12 +21,14 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRATION', undefined),
-        },
-      }),
+      useFactory: (configService: ConfigService) => {
+        const expiresIn = configService.get<string>('JWT_EXPIRATION');
+
+        return {
+          secret: configService.get<string>('JWT_SECRET'),
+          signOptions: expiresIn ? { expiresIn } : {},
+        };
+      },
     }),
     UserModule,
   ],
