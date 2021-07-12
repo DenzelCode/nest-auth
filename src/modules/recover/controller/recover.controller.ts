@@ -65,16 +65,23 @@ export class RecoverController {
           name: user.username,
           url,
           code,
-          expiration: Math.round((expiration.getTime() - Date.now()) / 1000 / 60 / 60),
+          expiration: Math.round(
+            (expiration.getTime() - Date.now()) / 1000 / 60 / 60,
+          ),
         },
       });
     } catch (e) {
-      throw new InternalServerErrorException(`An error occurred sending email: ${e.message}`);
+      throw new InternalServerErrorException(
+        `An error occurred sending email: ${e.message}`,
+      );
     }
   }
 
   @Post(':code')
-  async changePassword(@Param('code') code: Recover['code'], @Body() body: ChangePasswordDto) {
+  async changePassword(
+    @Param('code') code: Recover['code'],
+    @Body() body: ChangePasswordDto,
+  ) {
     const recover = await this.recoverService.get(code);
 
     if (!recover) {

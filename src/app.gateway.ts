@@ -13,7 +13,8 @@ import { JwtAuthGuard } from './modules/auth/guard/jwt-auth.guard';
 import { User } from './modules/user/schema/user.schema';
 
 @WebSocketGateway()
-export class AppGateway implements OnGatewayConnection<Socket>, OnGatewayDisconnect<Socket> {
+export class AppGateway
+  implements OnGatewayConnection<Socket>, OnGatewayDisconnect<Socket> {
   logger = new Logger(this.constructor.name);
 
   @WebSocketServer() server: Server;

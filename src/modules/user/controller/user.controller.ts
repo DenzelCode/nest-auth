@@ -1,4 +1,10 @@
-import { BadRequestException, Body, Controller, Put, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { CurrentUser } from 'src/modules/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
 import { UpdateUserDto } from '../dto/update-user.dto';

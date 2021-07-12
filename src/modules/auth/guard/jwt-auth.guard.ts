@@ -21,7 +21,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     }
   }
 
-  handleRequest(err: Error, user: User, info: string, ctx: ExecutionContext, status: number) {
+  handleRequest(
+    err: Error,
+    user: User,
+    info: string,
+    ctx: ExecutionContext,
+    status: number,
+  ) {
     const allowAny = this.reflector.get<boolean>('allow-any', ctx.getHandler());
 
     if (allowAny) {

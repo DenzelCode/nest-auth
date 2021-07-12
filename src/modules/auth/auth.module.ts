@@ -9,13 +9,12 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';
-import { APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [
     ConfigModule,
     PassportModule.register({
-      defaultStrategy: 'jwt',
+      defaultStrategy: JwtStrategy.strategyName,
       property: 'user',
     }),
     JwtModule.registerAsync({
@@ -33,7 +32,13 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtAuthGuard, LocalStrategy, LocalAuthGuard],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    JwtAuthGuard,
+    LocalStrategy,
+    LocalAuthGuard,
+  ],
   exports: [JwtAuthGuard, LocalAuthGuard],
 })
 export class AuthModule {}

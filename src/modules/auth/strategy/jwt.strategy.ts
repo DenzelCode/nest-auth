@@ -12,9 +12,16 @@ export interface Token {
   username: string;
 }
 
+const STRATEGY_NAME = 'jwt';
+
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
-  constructor(private userService: UserService, private configService: ConfigService) {
+export class JwtStrategy extends PassportStrategy(Strategy, STRATEGY_NAME) {
+  static strategyName = STRATEGY_NAME;
+
+  constructor(
+    private userService: UserService,
+    private configService: ConfigService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: configService.get<string>('JWT_SECRET'),
