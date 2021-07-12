@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Post,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { User } from '../../user/schema/user.schema';
@@ -13,12 +14,16 @@ import { AuthService } from '../service/auth.service';
 import { JwtAuthGuard } from '../guard/jwt-auth.guard';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
+import { RefreshTokenDto } from '../dto/refresh-token.dto';
+import { JwtService } from '@nestjs/jwt';
+import { Token } from '../strategy/jwt.strategy';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private jwtService: JwtService,
   ) {}
 
   @Post('login')
@@ -26,6 +31,28 @@ export class AuthController {
     const user = await this.authService.validate(body.username, body.password);
 
     return this.authService.login(user);
+  }
+
+  @Post('refresh-token')
+  async refreshToken(@Body() body: RefreshTokenDto) {
+    try {
+      const decoded = this.jwtService.decode(body.refreshToken) as Token;
+
+      if (!decoded) {
+        throw new Error();
+      }
+
+      const user = await this.userService.validateUser(decoded.sub);
+
+      await this.jwtService.verifyAsync<Token>(
+        body.refreshToken,
+        this.authService.getRefreshTokenOptions(user),
+      );
+
+      return this.authService.login(user);
+    } catch {
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 
   @Post('register')

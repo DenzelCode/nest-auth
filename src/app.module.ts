@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppGateway } from './app.gateway';
+import { GlobalConfig } from './common/types/global-config';
 
 @Module({
   imports: [
@@ -18,8 +19,8 @@ import { AppGateway } from './app.gateway';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGO_URI'),
+      useFactory: (configService: ConfigService<GlobalConfig>) => ({
+        uri: configService.get('MONGO_URI'),
         autoIndex: false,
       }),
     }),

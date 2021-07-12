@@ -10,6 +10,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { GlobalConfig } from 'src/common/types/global-config';
 import { UserService } from 'src/modules/user/service/user.service';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { RecoverPasswordDto } from '../dto/recover-password.dto';
@@ -22,7 +23,7 @@ export class RecoverController {
     private userService: UserService,
     private recoverService: RecoverService,
     private mailerService: MailerService,
-    private configService: ConfigService,
+    private configService: ConfigService<GlobalConfig>,
   ) {}
 
   @Get(':code')

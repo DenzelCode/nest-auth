@@ -5,6 +5,7 @@ import { Dictionary } from 'code-config/dist';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 import { Strategy } from 'passport-jwt';
+import { GlobalConfig } from 'src/common/types/global-config';
 import { UserService } from '../../user/service/user.service';
 
 export interface Token {
@@ -20,12 +21,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, STRATEGY_NAME) {
 
   constructor(
     private userService: UserService,
-    private configService: ConfigService,
+    private configService: ConfigService<GlobalConfig>,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: configService.get<string>('JWT_SECRET'),
-      ignoreExpiration: !configService.get<string>('JWT_EXPIRATION'),
+      secretOrKey: configService.get('ACCESS_TOKEN_SECRET'),
+      ignoreExpiration: !configService.get('ACCESS_TOKEN_EXPIRATION'),
     });
   }
 
@@ -34,7 +35,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, STRATEGY_NAME) {
   }
 
   async authenticate(request: Request, options: Dictionary) {
-    if (request.user && !this.configService.get<string>('JWT_EXPIRATION')) {
+    if (request.user && !this.configService.get('ACCESS_TOKEN_EXPIRATION')) {
       return this.success(request.user, request);
     }
 

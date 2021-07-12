@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { GlobalConfig } from 'src/common/types/global-config';
 import { User } from 'src/modules/user/schema/user.schema';
 import { randomString } from 'src/utils/random-string';
 import { Recover } from '../schema/recover.schema';
@@ -10,7 +11,7 @@ import { Recover } from '../schema/recover.schema';
 export class RecoverService {
   constructor(
     @InjectModel(Recover.name) private recoveryModel: Model<Recover>,
-    private configService: ConfigService,
+    private configService: ConfigService<GlobalConfig>,
   ) {}
 
   async create(user: User) {

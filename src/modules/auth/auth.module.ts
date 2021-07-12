@@ -9,6 +9,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';
+import { GlobalConfig } from 'src/common/types/global-config';
 
 @Module({
   imports: [
@@ -20,11 +21,11 @@ import { LocalAuthGuard } from './guard/local-auth.guard';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const expiresIn = configService.get<string>('JWT_EXPIRATION');
+      useFactory: (configService: ConfigService<GlobalConfig>) => {
+        const expiresIn = configService.get('ACCESS_TOKEN_EXPIRATION');
 
         return {
-          secret: configService.get<string>('JWT_SECRET'),
+          secret: configService.get('ACCESS_TOKEN_SECRET'),
           signOptions: expiresIn ? { expiresIn } : {},
         };
       },
