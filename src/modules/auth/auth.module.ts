@@ -10,6 +10,7 @@ import { LocalStrategy } from './strategy/local.strategy';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { GlobalConfig } from 'src/common/types/global-config';
+import { Dictionary } from 'code-config';
 
 @Module({
   imports: [
@@ -22,11 +23,17 @@ import { GlobalConfig } from 'src/common/types/global-config';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService<GlobalConfig>) => {
-        const expiresIn = configService.get('ACCESS_TOKEN_EXPIRATION');
+        const signOptions: Dictionary = {};
+
+        const expiration = configService.get('ACCESS_TOKEN_EXPIRATION');
+
+        if (expiration) {
+          signOptions.expiresIn = expiration;
+        }
 
         return {
           secret: configService.get('ACCESS_TOKEN_SECRET'),
-          signOptions: expiresIn ? { expiresIn } : {},
+          signOptions: signOptions,
         };
       },
     }),
