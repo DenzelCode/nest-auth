@@ -1,39 +1,109 @@
-import { ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
-import { AuthGuard } from '@nestjs/passport';
-import { User } from 'src/modules/user/schema/user.schema';
+import { JwtService } from '@nestjs/jwt';
+import { GlobalConfig } from 'src/common/types/global-config';
+import { getClient, Client } from 'src/common/utils/get-client';
+import { UserService } from 'src/modules/user/service/user.service';
+import { AuthService } from '../service/auth.service';
 
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export interface Token {
+  sub: string;
+  username: string;
+}
+
+@Injectable()
+export class JwtAuthGuard implements CanActivate {
   reflector: Reflector;
 
-  constructor() {
-    super();
+  private readonly headerProperty = 'Authorization';
 
+  constructor(
+    private authService: AuthService,
+    private jwtService: JwtService,
+    private userService: UserService,
+    private configService: ConfigService<GlobalConfig>,
+  ) {
     this.reflector = new Reflector();
   }
 
-  getRequest(ctx: ExecutionContext) {
-    switch (ctx.getType()) {
-      case 'ws':
-        return ctx.switchToWs().getClient().handshake;
-      default:
-        return ctx.switchToHttp().getRequest();
+  async canActivate(ctx: ExecutionContext): Promise<boolean> {
+    const client = this.getRequest(ctx);
+
+    if (client.user && !this.configService.get('ACCESS_TOKEN_EXPIRATION')) {
+      return true;
+    }
+
+    const allowAny = this.reflector.get<boolean>('allow-any', ctx.getHandler());
+
+    try {
+      client.user = await this.handleRequest(client);
+    } catch (e) {
+      if (allowAny) {
+        return true;
+      }
+
+      throw e;
+    }
+
+    return client.user != null;
+  }
+
+  private async handleRequest(client: Client) {
+    const token = this.getToken(client);
+
+    const decoded = this.jwtService.decode(token) as Token;
+
+    if (!decoded) {
+      throw new UnauthorizedException('Unable to decode token');
+    }
+
+    try {
+      const user = await this.validate(decoded);
+
+      await this.jwtService.verifyAsync<Token>(
+        token,
+        this.authService.getAccessTokenOptions(user),
+      );
+
+      return user;
+    } catch (e) {
+      throw new UnauthorizedException('Invalid token');
     }
   }
 
-  handleRequest(
-    err: Error,
-    user: User,
-    info: string,
-    ctx: ExecutionContext,
-    status: number,
-  ) {
-    const allowAny = this.reflector.get<boolean>('allow-any', ctx.getHandler());
+  private validate({ sub }: Token) {
+    return this.userService.validateUser(sub);
+  }
 
-    if (allowAny) {
-      return user || {};
+  private getToken(client: Client): string {
+    const property = Object.keys(client.headers).find(
+      prop => prop.toLowerCase() === this.headerProperty.toLowerCase(),
+    );
+
+    if (!property) {
+      throw new UnauthorizedException('Token not found');
     }
 
-    return super.handleRequest(err, user, info, ctx, status);
+    const authorization = client.headers[property].split(' ');
+
+    if (authorization[0].toLowerCase() !== 'bearer') {
+      throw new UnauthorizedException('Authorization type not valid');
+    }
+
+    if (!authorization[1]) {
+      throw new UnauthorizedException('Token not provided');
+    }
+
+    return authorization[1];
+  }
+
+  private getRequest(ctx: ExecutionContext) {
+    return getClient(ctx);
   }
 }

@@ -1,4 +1,3 @@
-import { RecoverModule } from './modules/recover/recover.module';
 import { ModulesModule } from './modules/modules.module';
 import { CoreModule } from './core/core.module';
 import { CommonModule } from './common/common.module';
@@ -11,7 +10,6 @@ import { GlobalConfig } from './common/types/global-config';
 
 @Module({
   imports: [
-    RecoverModule,
     ModulesModule,
     CoreModule,
     CommonModule,

@@ -4,7 +4,7 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { GlobalConfig } from 'src/common/types/global-config';
 import { User } from '../../user/schema/user.schema';
 import { UserService } from '../../user/service/user.service';
-import { Token } from '../strategy/jwt.strategy';
+import { Token } from '../guard/jwt-auth.guard';
 
 export interface TokenResponse {
   access_token: string;
@@ -49,7 +49,10 @@ export class AuthService {
     }
 
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.jwtService.signAsync(
+        payload,
+        this.getAccessTokenOptions(user),
+      ),
       refresh_token,
     };
   }

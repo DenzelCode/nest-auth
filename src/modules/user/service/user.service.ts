@@ -30,7 +30,7 @@ export class UserService {
     const user = await this.getUserById(id);
 
     if (!user) {
-      throw new UnauthorizedException('Unable to find user');
+      throw new UnauthorizedException('Token user not found');
     }
 
     return user;
