@@ -49,10 +49,7 @@ export class AuthService {
     }
 
     return {
-      access_token: await this.jwtService.signAsync(
-        payload,
-        this.getAccessTokenOptions(user),
-      ),
+      access_token: await this.jwtService.signAsync(payload),
       refresh_token,
     };
   }
