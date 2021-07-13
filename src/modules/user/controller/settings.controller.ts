@@ -13,12 +13,12 @@ import { UpdateUsernameDto } from '../dto/update-username.dto';
 import { User } from '../schema/user.schema';
 import { UserService } from '../service/user.service';
 
-@Controller('user')
+@Controller('settings')
+@UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Put('update/username')
-  @UseGuards(JwtAuthGuard)
+  @Put('username')
   async updateUsername(
     @CurrentUser() user: User,
     @Body() body: UpdateUsernameDto,
@@ -34,8 +34,7 @@ export class UserController {
     return user.save();
   }
 
-  @Put('update/email')
-  @UseGuards(JwtAuthGuard)
+  @Put('email')
   async updateEmail(@CurrentUser() user: User, @Body() body: UpdateEmailDto) {
     const emailUser = await this.userService.getUserByName(body.email);
 
@@ -48,8 +47,7 @@ export class UserController {
     return user.save();
   }
 
-  @Put('update/password')
-  @UseGuards(JwtAuthGuard)
+  @Put('password')
   async updatePassword(
     @CurrentUser() user: User,
     @Body() body: UpdatePasswordDto,
