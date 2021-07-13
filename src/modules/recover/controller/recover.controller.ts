@@ -95,6 +95,10 @@ export class RecoverController {
 
     const user = recover.owner;
 
+    if (await user.validatePassword(body.password)) {
+      throw new BadRequestException('Do not use your current password');
+    }
+
     user.password = body.password;
 
     await this.recoverService.delete(user);

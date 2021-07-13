@@ -7,7 +7,9 @@ import {
 } from '@nestjs/common';
 import { CurrentUser } from 'src/modules/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
-import { UpdateUserDto } from '../dto/update-user.dto';
+import { UpdateEmailDto } from '../dto/update-email.dto';
+import { UpdatePasswordDto } from '../dto/update-password.dto';
+import { UpdateUsernameDto } from '../dto/update-username.dto';
 import { User } from '../schema/user.schema';
 import { UserService } from '../service/user.service';
 
@@ -15,44 +17,56 @@ import { UserService } from '../service/user.service';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Put('update')
+  @Put('update/username')
   @UseGuards(JwtAuthGuard)
-  async updateUser(@CurrentUser() user: User, @Body() body: UpdateUserDto) {
-    const updatedData: Partial<User> = {};
+  async updateUsername(
+    @CurrentUser() user: User,
+    @Body() body: UpdateUsernameDto,
+  ) {
+    const usernameUser = await this.userService.getUserByName(body.username);
 
-    if (user.username !== body.username) {
-      const usernameUser = await this.userService.getUserByName(body.username);
-
-      if (usernameUser) {
-        throw new BadRequestException('Username already exists');
-      }
-
-      updatedData.username = body.username;
+    if (usernameUser) {
+      throw new BadRequestException('Username already exists');
     }
 
-    if (user.email !== body.email) {
-      const emailUser = await this.userService.getUserByName(body.email);
+    user.username = body.username;
 
-      if (emailUser) {
-        throw new BadRequestException('Email already exists');
-      }
+    return user.save();
+  }
 
-      updatedData.email = body.email;
+  @Put('update/email')
+  @UseGuards(JwtAuthGuard)
+  async updateEmail(@CurrentUser() user: User, @Body() body: UpdateEmailDto) {
+    const emailUser = await this.userService.getUserByName(body.email);
+
+    if (emailUser) {
+      throw new BadRequestException('Email already exists');
     }
 
-    if (body.password) {
-      if (!(await user.validatePassword(body.currentPassword))) {
-        throw new BadRequestException('Current password does not match');
-      }
+    user.email = body.email;
 
-      if (body.password !== body.confirmPassword) {
-        throw new BadRequestException('Passwords does not match');
-      }
+    return user.save();
+  }
 
-      updatedData.password = body.password;
+  @Put('update/password')
+  @UseGuards(JwtAuthGuard)
+  async updatePassword(
+    @CurrentUser() user: User,
+    @Body() body: UpdatePasswordDto,
+  ) {
+    if (!(await user.validatePassword(body.currentPassword))) {
+      throw new BadRequestException('Current password does not match');
     }
 
-    Object.assign(user, updatedData);
+    if (body.password !== body.confirmPassword) {
+      throw new BadRequestException('Passwords does not match');
+    }
+
+    if (await user.validatePassword(body.password)) {
+      throw new BadRequestException('Do not use your current password');
+    }
+
+    user.password = body.password;
 
     return user.save();
   }
