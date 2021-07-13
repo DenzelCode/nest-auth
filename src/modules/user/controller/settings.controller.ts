@@ -15,7 +15,7 @@ import { UserService } from '../service/user.service';
 
 @Controller('settings')
 @UseGuards(JwtAuthGuard)
-export class UserController {
+export class SettingsController {
   constructor(private userService: UserService) {}
 
   @Put('username')

@@ -1,4 +1,4 @@
-import { UserController } from './controller/settings.controller';
+import { SettingsController } from './controller/settings.controller';
 import { UserService } from './service/user.service';
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -15,7 +15,7 @@ import { AuthModule } from '../auth/auth.module';
     ]),
     forwardRef(() => AuthModule),
   ],
-  controllers: [UserController],
+  controllers: [SettingsController],
   providers: [UserService],
   exports: [UserService],
 })
