@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 import { User } from '../schema/user.schema';
+import { use } from 'passport';
 
 @Injectable()
 export class UserService {
@@ -70,6 +71,10 @@ export class UserService {
   }
 
   create(body: RegisterDto) {
-    return new this.userModel(body).save();
+    const user = new this.userModel(body);
+
+    user.generateSessionToken();
+
+    return user.save();
   }
 }

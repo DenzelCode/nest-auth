@@ -49,15 +49,35 @@ export class AuthService {
     }
 
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.jwtService.signAsync(
+        payload,
+        this.getAccessTokenOptions(user),
+      ),
       refresh_token,
     };
   }
 
   getRefreshTokenOptions(user: User): JwtSignOptions {
-    return {
-      secret: this.configService.get('REFRESH_TOKEN_SECRET') + user.password,
-      expiresIn: this.configService.get('REFRESH_TOKEN_EXPIRATION'),
+    return this.getTokenOptions('REFRESH_TOKEN', user);
+  }
+
+  getAccessTokenOptions(user: User): JwtSignOptions {
+    return this.getTokenOptions('ACCESS_TOKEN', user);
+  }
+
+  private getTokenOptions(type: 'ACCESS_TOKEN' | 'REFRESH_TOKEN', user: User) {
+    const configService: ConfigService = this.configService;
+
+    const options: JwtSignOptions = {
+      secret: configService.get(`${type}_SECRET`) + user.sessionToken,
     };
+
+    const expiration = configService.get(`${type}_EXPIRATION`);
+
+    if (expiration) {
+      options.expiresIn = expiration;
+    }
+
+    return options;
   }
 }

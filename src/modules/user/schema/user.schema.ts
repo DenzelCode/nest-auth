@@ -2,6 +2,7 @@ import * as bcrypt from 'bcrypt';
 import { Prop, Schema } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { createSchemaForClassWithMethods } from 'src/common/mongoose/create-schema';
+import { randomString } from 'src/utils/random-string';
 
 @Schema()
 export class User extends Document {
@@ -28,6 +29,13 @@ export class User extends Document {
   email: string;
 
   @Prop()
+  sessionToken: string;
+
+  generateSessionToken() {
+    this.sessionToken = randomString(60);
+  }
+
+  @Prop()
   password?: string;
 
   validatePassword(password: string): Promise<boolean> {
@@ -37,7 +45,7 @@ export class User extends Document {
 
 export const UserSchema = createSchemaForClassWithMethods(User);
 
-// Update password into an encrypted one.
+// Update password into a hashed one.
 UserSchema.pre('save', async function(next) {
   const user: User = this as any;
 

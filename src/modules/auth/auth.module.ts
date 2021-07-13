@@ -19,24 +19,7 @@ import { Dictionary } from 'code-config';
       defaultStrategy: JwtStrategy.strategyName,
       property: 'user',
     }),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService<GlobalConfig>) => {
-        const signOptions: Dictionary = {};
-
-        const expiration = configService.get('ACCESS_TOKEN_EXPIRATION');
-
-        if (expiration) {
-          signOptions.expiresIn = expiration;
-        }
-
-        return {
-          secret: configService.get('ACCESS_TOKEN_SECRET'),
-          signOptions: signOptions,
-        };
-      },
-    }),
+    JwtModule.register({}),
     UserModule,
   ],
   controllers: [AuthController],
