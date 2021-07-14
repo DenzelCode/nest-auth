@@ -7,9 +7,7 @@ import {
 } from '@nestjs/common';
 import { CurrentUser } from 'src/modules/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
-import { UpdateEmailDto } from '../dto/update-email.dto';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
-import { UpdateUsernameDto } from '../dto/update-username.dto';
 import { User } from '../schema/user.schema';
 import { UserService } from '../service/user.service';
 
@@ -21,28 +19,28 @@ export class SettingsController {
   @Put('username')
   async updateUsername(
     @CurrentUser() user: User,
-    @Body() body: UpdateUsernameDto,
+    @Body('username') username: string,
   ) {
-    const usernameUser = await this.userService.getUserByName(body.username);
+    const usernameUser = await this.userService.getUserByName(username);
 
     if (usernameUser) {
       throw new BadRequestException('Username already exists');
     }
 
-    user.username = body.username;
+    user.username = username;
 
     return user.save();
   }
 
   @Put('email')
-  async updateEmail(@CurrentUser() user: User, @Body() body: UpdateEmailDto) {
-    const emailUser = await this.userService.getUserByName(body.email);
+  async updateEmail(@CurrentUser() user: User, @Body('email') email: string) {
+    const emailUser = await this.userService.getUserByName(email);
 
     if (emailUser) {
       throw new BadRequestException('Email already exists');
     }
 
-    user.email = body.email;
+    user.email = email;
 
     return user.save();
   }

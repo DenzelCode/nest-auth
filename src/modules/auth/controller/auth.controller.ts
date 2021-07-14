@@ -14,7 +14,6 @@ import { AuthService } from '../service/auth.service';
 import { JwtAuthGuard, Token } from '../guard/jwt-auth.guard';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
-import { RefreshTokenDto } from '../dto/refresh-token.dto';
 import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
@@ -33,9 +32,9 @@ export class AuthController {
   }
 
   @Post('refresh-token')
-  async refreshToken(@Body() body: RefreshTokenDto) {
+  async refreshToken(@Body('refreshToken') refreshToken: string) {
     try {
-      const decoded = this.jwtService.decode(body.refreshToken) as Token;
+      const decoded = this.jwtService.decode(refreshToken) as Token;
 
       if (!decoded) {
         throw new Error();
@@ -44,7 +43,7 @@ export class AuthController {
       const user = await this.userService.validateUser(decoded.sub);
 
       await this.jwtService.verifyAsync<Token>(
-        body.refreshToken,
+        refreshToken,
         this.authService.getRefreshTokenOptions(user),
       );
 
