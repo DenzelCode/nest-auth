@@ -68,6 +68,16 @@ export class AuthController {
     return this.authService.login(user);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('update-session-token')
+  async updateSessionToken(@CurrentUser() user: User) {
+    user.generateSessionToken();
+
+    await user.save();
+
+    return this.authService.login(user);
+  }
+
   @Get('me')
   @UseGuards(JwtAuthGuard)
   me(@CurrentUser() user: User) {
