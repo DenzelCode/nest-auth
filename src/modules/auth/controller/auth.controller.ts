@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Post,
   UnauthorizedException,
@@ -69,7 +70,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('logout-from-all-devices')
+  @Delete('logout-from-all-devices')
   async logoutFromAllDevices(@CurrentUser() user: User) {
     user.generateSessionToken();
 
