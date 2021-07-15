@@ -69,8 +69,8 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('update-session-token')
-  async updateSessionToken(@CurrentUser() user: User) {
+  @Post('logout-from-all-devices')
+  async logoutFromAllDevices(@CurrentUser() user: User) {
     user.generateSessionToken();
 
     await user.save();
