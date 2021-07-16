@@ -4,10 +4,11 @@ import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 import { User } from '../schema/user.schema';
-import { use } from 'passport';
 
 @Injectable()
 export class UserService {
+  private filteredFields: (keyof User)[] = ['password', 'sessionToken'];
+
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
   getUserByName(name: string) {
@@ -65,7 +66,9 @@ export class UserService {
   filterUser(user: User) {
     const userObject = JSON.parse(JSON.stringify(user));
 
-    delete userObject.password;
+    for (const field of this.filteredFields) {
+      delete userObject[field];
+    }
 
     return userObject;
   }
