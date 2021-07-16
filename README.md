@@ -1,4 +1,4 @@
-## NestJS authentication with Passport, MongoDB, WebSocket and JWT
+## NestJS authentication with MongoDB, WebSocket and JWT
 
 To use this server, get the [Angular Client](https://github.com/DenzelCode/nest-angular-auth-client) or [Flutter App](https://github.com/DenzelCode/flutter-auth) up and running.
 
