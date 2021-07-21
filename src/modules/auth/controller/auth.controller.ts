@@ -16,6 +16,7 @@ import { JwtAuthGuard, Token } from '../guard/jwt-auth.guard';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { FacebookAuthService } from 'facebook-auth-nestjs';
 
 @Controller('auth')
 export class AuthController {
@@ -23,6 +24,7 @@ export class AuthController {
     private authService: AuthService,
     private userService: UserService,
     private jwtService: JwtService,
+    private facebookService: FacebookAuthService,
   ) {}
 
   @Post('login')
@@ -30,6 +32,46 @@ export class AuthController {
     const user = await this.authService.validate(body.username, body.password);
 
     return this.authService.login(user);
+  }
+
+  @Post('facebook-login')
+  async facebookLogin(@Body('accessToken') accessToken: string) {
+    try {
+      const {
+        name,
+        email,
+        id: facebookId,
+      } = await this.facebookService.getUser(
+        accessToken,
+        'name',
+        'email',
+        'id',
+      );
+
+      const facebookUser = await this.userService.getUserByFacebookId(
+        facebookId,
+      );
+
+      if (facebookUser) {
+        return this.authService.login(facebookUser);
+      }
+
+      const username = await this.userService.generateUsername(name);
+
+      if (await this.userService.getUserByEmail(email)) {
+        throw new BadRequestException('Email already exists');
+      }
+
+      const user = await this.userService.create({
+        username,
+        email,
+        facebookId,
+      });
+
+      return this.authService.login(user);
+    } catch (e) {
+      throw new UnauthorizedException('Invalid access token');
+    }
   }
 
   @Post('refresh-token')

@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 import { User } from '../schema/user.schema';
+import { randomString } from 'src/utils/random-string';
 
 @Injectable()
 export class UserService {
@@ -23,8 +24,26 @@ export class UserService {
     return this.userModel.findOne({ email }).exec();
   }
 
+  getUserByFacebookId(id: string) {
+    return this.userModel.findOne({ facebookId: id }).exec();
+  }
+
+  getUserByGoogleId(id: string) {
+    return this.userModel.findOne({ googleId: id }).exec();
+  }
+
   getUserById(id: ObjectId | string) {
     return this.userModel.findById(id).exec();
+  }
+
+  async generateUsername(base: string) {
+    const name = base.replace(/\s/g, '');
+
+    if (!(await this.getUserByName(name))) {
+      return name;
+    }
+
+    return this.generateUsername(name + randomString(6));
   }
 
   async validateUser(id: ObjectId | string) {
@@ -73,7 +92,7 @@ export class UserService {
     return userObject;
   }
 
-  create(body: RegisterDto) {
+  create(body: Partial<User>) {
     const user = new this.userModel(body);
 
     user.generateSessionToken();

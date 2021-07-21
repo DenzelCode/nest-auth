@@ -34,6 +34,7 @@
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "code-config": "^1.0.26",
+    "facebook-auth-nestjs": "^0.0.3",
     "handlebars": "^4.7.7",
     "mongoose": "^5.12.2",
     "nodemailer": "^6.6.1",
