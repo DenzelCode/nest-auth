@@ -3,6 +3,6 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "assets": ["**/*.hbs"],
-    "watchAssets": true
+    "watchAssets": false
   }
 }
