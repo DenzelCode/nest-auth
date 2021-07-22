@@ -11,5 +11,9 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "files": true
   }
 }
