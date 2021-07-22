@@ -1,0 +1,13 @@
+{
+	"transport": {
+		"host": "smtp.example.com",
+		"secure": false,
+		"auth": {
+			"user": "user@example.com",
+			"pass": "topsecret"
+		}
+	},
+	"defaults": {
+		"from": "\"No Reply\" <noreply@example.com>"
+	}
+}
