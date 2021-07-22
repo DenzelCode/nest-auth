@@ -1,6 +1,6 @@
 import { ExecutionContext } from '@nestjs/common';
 import { Dictionary } from 'code-config';
-import { User } from 'src/modules/user/schema/user.schema';
+import { User } from '../../modules/user/schema/user.schema';
 
 export interface Client {
   headers: Dictionary<string>;

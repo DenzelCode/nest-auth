@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
-import { ObjectId } from 'src/common/types/object-id';
+import { ObjectId } from '../../../common/types/object-id';
 import { Task } from '../schema/task.schema';
 
 @Injectable()

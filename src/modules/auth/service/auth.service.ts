@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import { GlobalConfig } from 'src/common/types/global-config';
+import { GlobalConfig } from '../../../common/types/global-config';
 import { User } from '../../user/schema/user.schema';
 import { UserService } from '../../user/service/user.service';
 import { Token } from '../guard/jwt-auth.guard';

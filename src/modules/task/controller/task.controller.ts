@@ -9,12 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ObjectId } from 'mongoose';
-import { CurrentUser } from 'src/modules/auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
-import { ParseObjectIdPipe } from 'src/common/pipe/parse-object-id.pipe';
-import { User } from 'src/modules/user/schema/user.schema';
 import { TaskDto } from '../dto/task.dto';
 import { TaskService } from '../service/task.service';
+import { User } from '../../user/schema/user.schema';
+import { ParseObjectIdPipe } from '../../../common/pipe/parse-object-id.pipe';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('task')

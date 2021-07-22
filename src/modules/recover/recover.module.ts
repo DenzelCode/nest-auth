@@ -4,8 +4,8 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Recover, RecoverSchema } from './schema/recover.schema';
 import { UserModule } from '../user/user.module';
-import { CoreModule } from 'src/core/core.module';
 import { ConfigModule } from '@nestjs/config';
+import { CoreModule } from '../../core/core.module';
 
 @Module({
   imports: [

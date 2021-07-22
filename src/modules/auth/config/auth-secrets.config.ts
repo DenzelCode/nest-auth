@@ -1,6 +1,6 @@
 import { ConfigFactory } from 'code-config';
 import { join } from 'path';
-import { CONFIG_PATH } from 'src/common/config/config';
+import { CONFIG_PATH } from '../../../common/config/config';
 
 interface Secret {
   appId: number | string;

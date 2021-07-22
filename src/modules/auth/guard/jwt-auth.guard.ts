@@ -7,9 +7,9 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { GlobalConfig } from 'src/common/types/global-config';
-import { getClient, Client } from 'src/common/utils/get-client';
-import { UserService } from 'src/modules/user/service/user.service';
+import { GlobalConfig } from '../../../common/types/global-config';
+import { Client, getClient } from '../../../common/utils/get-client';
+import { UserService } from '../../user/service/user.service';
 import { AuthService } from '../service/auth.service';
 
 export interface Token {

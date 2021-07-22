@@ -1,8 +1,8 @@
 import * as bcrypt from 'bcrypt';
 import { Prop, Schema } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { createSchemaForClassWithMethods } from 'src/common/mongoose/create-schema';
-import { randomString } from 'src/utils/random-string';
+import { randomString } from '../../../utils/random-string';
+import { createSchemaForClassWithMethods } from '../../../common/mongoose/create-schema';
 
 @Schema()
 export class User extends Document {

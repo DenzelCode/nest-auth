@@ -5,8 +5,8 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentUser } from 'src/modules/auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from 'src/modules/auth/guard/jwt-auth.guard';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { User } from '../schema/user.schema';
 import { UserService } from '../service/user.service';
