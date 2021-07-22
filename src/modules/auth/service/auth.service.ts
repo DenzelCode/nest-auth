@@ -98,6 +98,8 @@ export class AuthService {
         throw e;
       }
 
+      console.log(e);
+
       throw new UnauthorizedException('Invalid access token');
     }
   }

@@ -39,7 +39,14 @@ export class AuthController {
   @Post('facebook-login')
   async facebookLogin(@Body('accessToken') accessToken: string) {
     return this.authService.socialLogin('facebookId', () =>
-      this.facebookService.getUser(accessToken, 'id', 'name', 'email'),
+      this.facebookService.getUser(
+        accessToken,
+        'id',
+        'name',
+        'email',
+        'first_name',
+        'last_name',
+      ),
     );
   }
 
