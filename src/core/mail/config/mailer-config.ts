@@ -8,7 +8,7 @@ export interface MailerSchema {
 }
 
 export const mailerConfig = ConfigFactory.getConfig<MailerSchema>(
-  join(__dirname, '../../../../mailer-config.json'),
+  join(__dirname, '../../../../config/mailer-config.json'),
   {
     transport: {
       host: 'smtp.example.com',

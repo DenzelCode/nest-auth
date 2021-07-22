@@ -2181,10 +2181,10 @@ co@^4.6.0:
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
   integrity sha1-bqa989hTrlTMuOR7+gvz+QMfsYQ=
 
-code-config@^1.0.26:
-  version "1.0.26"
-  resolved "https://registry.yarnpkg.com/code-config/-/code-config-1.0.26.tgz#893f284f9ca53a0fcb50637963bdf868f0406ee1"
-  integrity sha512-/njWtLJ6H7Gz24zrDXyeDV4qoI6w1F6hW9H4ZBauqUk4JFA9rbyJ0DXP3OrENfIXtCki8bJVnDK7dn/mEGab3Q==
+code-config@^1.0.30:
+  version "1.0.30"
+  resolved "https://registry.yarnpkg.com/code-config/-/code-config-1.0.30.tgz#097c13f7891c279654b8dcf9b78d7ded181627a4"
+  integrity sha512-KKI+ij1ToBxuP2xhdIYbify4wgXOBzGqHWb7nz6nI+dqdbwcEIeJy7TdTMidSZ5zQcaeteVCMYEOpRuCwbqhjQ==
   dependencies:
     lodash "^4.17.21"
 
