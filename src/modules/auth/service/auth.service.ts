@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { GlobalConfig } from 'src/common/types/global-config';
@@ -10,6 +15,14 @@ export interface TokenResponse {
   access_token: string;
   refresh_token: string;
 }
+
+export interface SocialUser {
+  id: number | string;
+  name: string;
+  email: string;
+}
+
+export type GetSocialUserHandler = () => Promise<Partial<SocialUser>>;
 
 @Injectable()
 export class AuthService {
@@ -55,6 +68,38 @@ export class AuthService {
       ),
       refresh_token,
     };
+  }
+
+  async socialLogin(fieldId: keyof User, getSocialUser: GetSocialUserHandler) {
+    try {
+      const { name, email, id } = await getSocialUser();
+
+      const socialUser = await this.userService.getUserBy({ [fieldId]: id });
+
+      if (socialUser) {
+        return this.login(socialUser);
+      }
+
+      if (await this.userService.getUserByEmail(email)) {
+        throw new BadRequestException('Email already exists');
+      }
+
+      const username = await this.userService.generateUsername(name);
+
+      const user = await this.userService.create({
+        username,
+        email,
+        [fieldId]: id,
+      });
+
+      return this.login(user);
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      throw new UnauthorizedException('Invalid access token');
+    }
   }
 
   getRefreshTokenOptions(user: User): JwtSignOptions {

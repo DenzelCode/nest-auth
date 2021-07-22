@@ -7,6 +7,7 @@ import { UserModule } from '../user/user.module';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { FacebookAuthModule } from 'facebook-auth-nestjs';
 import { authSecretsConfig } from './config/auth-secrets.config';
+import { GoogleAuthService } from './service/google-auth.service';
 
 const facebook = authSecretsConfig.facebook;
 
@@ -21,7 +22,7 @@ const facebook = authSecretsConfig.facebook;
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtAuthGuard],
+  providers: [AuthService, JwtAuthGuard, GoogleAuthService],
   exports: [JwtAuthGuard, AuthService, JwtModule, ConfigModule],
 })
 export class AuthModule {}

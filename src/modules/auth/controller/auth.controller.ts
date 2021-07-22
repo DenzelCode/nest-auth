@@ -17,6 +17,7 @@ import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { FacebookAuthService } from 'facebook-auth-nestjs';
+import { GoogleAuthService } from '../service/google-auth.service';
 
 @Controller('auth')
 export class AuthController {
@@ -25,6 +26,7 @@ export class AuthController {
     private userService: UserService,
     private jwtService: JwtService,
     private facebookService: FacebookAuthService,
+    private googleService: GoogleAuthService,
   ) {}
 
   @Post('login')
@@ -36,42 +38,16 @@ export class AuthController {
 
   @Post('facebook-login')
   async facebookLogin(@Body('accessToken') accessToken: string) {
-    try {
-      const {
-        name,
-        email,
-        id: facebookId,
-      } = await this.facebookService.getUser(
-        accessToken,
-        'name',
-        'email',
-        'id',
-      );
+    return this.authService.socialLogin('facebookId', () =>
+      this.facebookService.getUser(accessToken, 'id', 'name', 'email'),
+    );
+  }
 
-      const facebookUser = await this.userService.getUserByFacebookId(
-        facebookId,
-      );
-
-      if (facebookUser) {
-        return this.authService.login(facebookUser);
-      }
-
-      const username = await this.userService.generateUsername(name);
-
-      if (await this.userService.getUserByEmail(email)) {
-        throw new BadRequestException('Email already exists');
-      }
-
-      const user = await this.userService.create({
-        username,
-        email,
-        facebookId,
-      });
-
-      return this.authService.login(user);
-    } catch (e) {
-      throw new UnauthorizedException('Invalid access token');
-    }
+  @Post('google-login')
+  async googleLogin(@Body('accessToken') accessToken: string) {
+    return this.authService.socialLogin('googleId', () =>
+      this.googleService.getUser(accessToken),
+    );
   }
 
   @Post('refresh-token')

@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 import { User } from '../schema/user.schema';
@@ -24,8 +24,8 @@ export class UserService {
     return this.userModel.findOne({ email }).exec();
   }
 
-  getUserByFacebookId(id: string) {
-    return this.userModel.findOne({ facebookId: id }).exec();
+  getUserBy(filter: FilterQuery<User>) {
+    return this.userModel.findOne(filter).exec();
   }
 
   getUserByGoogleId(id: string) {
