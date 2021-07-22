@@ -6,6 +6,4 @@ export interface GlobalConfig {
   MONGO_URI: string;
   FRONTEND_URL: string;
   CODE_EXPIRATION: number;
-  FACEBOOK_APP_ID: number;
-  FACEBOOK_APP_SECRET: string;
 }
