@@ -2,7 +2,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
-import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 import { User } from '../schema/user.schema';
 import { randomString } from 'src/utils/random-string';
 

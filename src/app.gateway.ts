@@ -21,7 +21,7 @@ export class AppGateway
 
   online = 0;
 
-  handleConnection(client: Socket, ...args: any[]) {
+  handleConnection(client: Socket) {
     this.online++;
 
     this.logger.log(`User ${client.id} connected; ${this.online}`);

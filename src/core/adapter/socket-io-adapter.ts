@@ -83,7 +83,7 @@ export class SocketIoAdapter extends AbstractWsAdapter {
     });
   }
 
-  public mapPayload(payload: any): { data: any; ack?: Function } {
+  public mapPayload(payload: any): { data: any; ack?: () => any } {
     if (!Array.isArray(payload)) {
       return { data: payload };
     }
