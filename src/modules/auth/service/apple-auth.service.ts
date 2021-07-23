@@ -42,7 +42,7 @@ export class AppleAuthService {
 
     const json = this.jwtService.decode(accessToken) as TokenResponse;
 
-    console.log(json);
+    console.log(accessToken, json);
 
     if (json == null) {
       throw new UnauthorizedException('Invalid Apple token');
