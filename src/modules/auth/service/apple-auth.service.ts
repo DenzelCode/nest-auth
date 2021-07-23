@@ -3,10 +3,11 @@ import { JwtService } from '@nestjs/jwt';
 import { AppleLoginDto } from '../dto/apple-login.dto';
 import { join } from 'path';
 import { SECRETS_PATH } from '../../../common/constants/secrets';
-import { ConfigService } from '@nestjs/config';
 import { GlobalConfig } from '../../../common/types/global-config';
 import appleSignin from 'apple-signin-auth';
-import { readFileSync } from 'fs';
+import { config } from 'dotenv';
+
+config();
 
 interface TokenResponse {
   email: string;
