@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AppleLoginDto } from '../dto/apple-login.dto';
 import { join } from 'path';
@@ -20,29 +24,37 @@ export class AppleAuthService {
   constructor(private jwtService: JwtService) {}
 
   async getUser({ name, authorizationCode }: AppleLoginDto) {
-    const options = {
-      clientID: auth.clientId,
-      redirectUri: auth.redirectUri,
-      clientSecret: clientSecret,
-    };
+    try {
+      const options = {
+        clientID: auth.clientId,
+        redirectUri: auth.redirectUri,
+        clientSecret: clientSecret,
+      };
 
-    const response = await appleSignin.getAuthorizationToken(
-      authorizationCode,
-      options,
-    );
+      const response = await appleSignin.getAuthorizationToken(
+        authorizationCode,
+        options,
+      );
 
-    const accessToken = response.id_token;
+      const accessToken = response.id_token;
 
-    const json = this.jwtService.decode(accessToken) as AppleIdTokenType;
+      const json = this.jwtService.decode(accessToken) as AppleIdTokenType;
 
-    if (json == null) {
-      throw new UnauthorizedException('Invalid Apple token');
+      if (json == null) {
+        throw new UnauthorizedException('Invalid Apple token');
+      }
+
+      return {
+        name,
+        id: json.sub,
+        email: json.email,
+      };
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+
+      throw new UnauthorizedException(e.message || e);
     }
-
-    return {
-      name,
-      id: json.sub,
-      email: json.email,
-    };
   }
 }
