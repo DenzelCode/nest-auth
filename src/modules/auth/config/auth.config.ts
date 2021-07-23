@@ -36,7 +36,7 @@ const defaultValue: SecretsSchema = {
 };
 
 export const authConfig = ConfigFactory.getConfig<SecretsSchema>(
-  join(CONFIG_PATH, 'auth-config.json'),
+  join(CONFIG_PATH, 'auth.config.json'),
   defaultValue,
 )
   .init(false)
