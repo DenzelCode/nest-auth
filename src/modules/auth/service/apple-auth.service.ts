@@ -38,7 +38,7 @@ export class AppleAuthService {
       options,
     );
 
-    const accessToken = response.access_token;
+    const accessToken = response.id_token;
 
     const json = this.jwtService.decode(accessToken) as TokenResponse;
 
