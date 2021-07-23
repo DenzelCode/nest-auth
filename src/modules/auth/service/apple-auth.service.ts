@@ -29,15 +29,13 @@ export class AppleAuthService {
         keyIdentifier: auth.keyIdentifier,
       });
 
-      const options = {
-        clientSecret,
-        clientID: auth.clientId,
-        redirectUri: auth.redirectUri,
-      };
-
       const response = await appleSignin.getAuthorizationToken(
         authorizationCode,
-        options,
+        {
+          clientSecret,
+          clientID: auth.clientId,
+          redirectUri: auth.redirectUri,
+        },
       );
 
       try {
