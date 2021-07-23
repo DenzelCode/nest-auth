@@ -3,30 +3,36 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { AppleLoginDto } from '../dto/apple-login.dto';
 import { join } from 'path';
 import { SECRETS_PATH } from '../../../common/constants/secrets';
-import appleSignin, { AppleIdTokenType } from 'apple-signin-auth';
+import appleSignin from 'apple-signin-auth';
 import { authConfig } from '../config/auth.config';
+import { SocialUser } from './auth.service';
+import { readFileSync } from 'fs';
 
 const auth = authConfig.apple;
 
-const clientSecret = appleSignin.getClientSecret({
-  clientID: auth.clientId,
-  teamID: auth.teamId,
-  privateKeyPath: join(SECRETS_PATH, 'apple-key.p8'),
-  keyIdentifier: auth.keyIdentifier,
-});
+const privateKey = readFileSync(join(SECRETS_PATH, 'apple-key.p8'), 'utf-8');
 
 @Injectable()
 export class AppleAuthService {
-  async getUser({ name, authorizationCode }: AppleLoginDto) {
+  async getUser({
+    name,
+    authorizationCode,
+  }: AppleLoginDto): Promise<SocialUser> {
     try {
+      const clientSecret = appleSignin.getClientSecret({
+        privateKey,
+        clientID: auth.clientId,
+        teamID: auth.teamId,
+        keyIdentifier: auth.keyIdentifier,
+      });
+
       const options = {
+        clientSecret,
         clientID: auth.clientId,
         redirectUri: auth.redirectUri,
-        clientSecret: clientSecret,
       };
 
       const response = await appleSignin.getAuthorizationToken(
@@ -46,7 +52,7 @@ export class AppleAuthService {
           email: json.email,
         };
       } catch (e) {
-        throw new UnauthorizedException('Invalid Apple token');
+        throw new UnauthorizedException(e.message || e);
       }
     } catch (e) {
       if (e instanceof HttpException) {
