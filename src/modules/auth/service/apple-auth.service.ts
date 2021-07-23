@@ -21,8 +21,6 @@ const clientSecret = appleSignin.getClientSecret({
 
 @Injectable()
 export class AppleAuthService {
-  constructor(private jwtService: JwtService) {}
-
   async getUser({ name, authorizationCode }: AppleLoginDto) {
     try {
       const options = {
@@ -36,19 +34,19 @@ export class AppleAuthService {
         options,
       );
 
-      const accessToken = response.id_token;
+      try {
+        const json = await appleSignin.verifyIdToken(response.id_token, {
+          audience: auth.clientId,
+        });
 
-      const json = this.jwtService.decode(accessToken) as AppleIdTokenType;
-
-      if (json == null) {
+        return {
+          name,
+          id: json.sub,
+          email: json.email,
+        };
+      } catch (e) {
         throw new UnauthorizedException('Invalid Apple token');
       }
-
-      return {
-        name,
-        id: json.sub,
-        email: json.email,
-      };
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
