@@ -1,11 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AppleLoginDto } from '../dto/apple-login.dto';
-import * as AppleAuth from 'apple-auth';
 import { join } from 'path';
 import { SECRETS_PATH } from '../../../common/constants/secrets';
 import { ConfigService } from '@nestjs/config';
 import { GlobalConfig } from '../../../common/types/global-config';
+import appleSignin from 'apple-signin-auth';
+import { readFileSync } from 'fs';
 
 interface TokenResponse {
   email: string;
@@ -13,34 +14,37 @@ interface TokenResponse {
   email_verified: boolean;
 }
 
-const path = join(SECRETS_PATH, 'apple-key.p8');
+const env = (process.env as unknown) as GlobalConfig;
+
+const clientSecret = appleSignin.getClientSecret({
+  clientID: env.APPLE_CLIENT_ID,
+  teamID: env.APPLE_TEAM_ID,
+  privateKeyPath: join(SECRETS_PATH, 'apple-key.p8'),
+  keyIdentifier: env.APPLE_KEY_IDENTIFIER,
+  expAfter: 15777000,
+});
 
 @Injectable()
 export class AppleAuthService {
-  private auth = new AppleAuth(
-    {
-      client_id: this.configService.get('APPLE_CLIENT_ID'),
-      scope: 'name email',
-      key_id: '',
-      team_id: '',
-      redirect_uri: '',
-    },
-    path,
-    'file',
-  );
-
-  constructor(
-    private jwtService: JwtService,
-    private configService: ConfigService<GlobalConfig>,
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
   async getUser({ name, authorizationCode }: AppleLoginDto) {
-    console.log(name);
-    const response = await this.auth.accessToken(authorizationCode);
+    const options = {
+      clientID: env.APPLE_CLIENT_ID,
+      redirectUri: '',
+      clientSecret: clientSecret,
+    };
+
+    const response = await appleSignin.getAuthorizationToken(
+      authorizationCode,
+      options,
+    );
 
     const accessToken = response.access_token;
 
     const json = this.jwtService.decode(accessToken) as TokenResponse;
+
+    console.log(json);
 
     if (json == null) {
       throw new UnauthorizedException('Invalid Apple token');

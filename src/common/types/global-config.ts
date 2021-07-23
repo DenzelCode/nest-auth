@@ -7,4 +7,6 @@ export interface GlobalConfig {
   FRONTEND_URL: string;
   CODE_EXPIRATION: number;
   APPLE_CLIENT_ID: string;
+  APPLE_TEAM_ID: string;
+  APPLE_KEY_IDENTIFIER: string;
 }
