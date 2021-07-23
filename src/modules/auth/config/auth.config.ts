@@ -10,9 +10,14 @@ interface Secret {
 export interface SecretsSchema {
   facebook: Secret;
   google: Secret;
+  apple: {
+    clientId: string;
+    teamId: string;
+    keyIdentifier: string;
+  };
 }
 
-const defaultValue = {
+const defaultValue: SecretsSchema = {
   facebook: {
     appId: 1234,
     appSecret: 'secret',
@@ -20,6 +25,11 @@ const defaultValue = {
   google: {
     appId: 1234,
     appSecret: 'secret',
+  },
+  apple: {
+    clientId: 'com.code.auth',
+    teamId: 'XQ4XH57P3K',
+    keyIdentifier: '7DBG84VR62',
   },
 };
 

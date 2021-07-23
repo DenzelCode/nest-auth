@@ -3,11 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { AppleLoginDto } from '../dto/apple-login.dto';
 import { join } from 'path';
 import { SECRETS_PATH } from '../../../common/constants/secrets';
-import { GlobalConfig } from '../../../common/types/global-config';
 import appleSignin from 'apple-signin-auth';
-import { config } from 'dotenv';
-
-config();
+import { authConfig } from '../config/auth.config';
 
 interface TokenResponse {
   email: string;
@@ -15,13 +12,13 @@ interface TokenResponse {
   email_verified: boolean;
 }
 
-const env = (process.env as unknown) as GlobalConfig;
+const auth = authConfig.apple;
 
 const clientSecret = appleSignin.getClientSecret({
-  clientID: env.APPLE_CLIENT_ID,
-  teamID: env.APPLE_TEAM_ID,
+  clientID: auth.clientId,
+  teamID: auth.teamId,
   privateKeyPath: join(SECRETS_PATH, 'apple-key.p8'),
-  keyIdentifier: env.APPLE_KEY_IDENTIFIER,
+  keyIdentifier: auth.keyIdentifier,
   expAfter: 15777000,
 });
 
@@ -31,7 +28,7 @@ export class AppleAuthService {
 
   async getUser({ name, authorizationCode }: AppleLoginDto) {
     const options = {
-      clientID: env.APPLE_CLIENT_ID,
+      clientID: auth.clientId,
       redirectUri: '',
       clientSecret: clientSecret,
     };
