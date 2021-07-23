@@ -18,6 +18,8 @@ import { LoginDto } from '../dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { FacebookAuthService } from 'facebook-auth-nestjs';
 import { GoogleAuthService } from '../service/google-auth.service';
+import { AppleAuthService } from '../service/apple-auth.service';
+import { AppleLoginDto } from '../dto/apple-login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -27,6 +29,7 @@ export class AuthController {
     private jwtService: JwtService,
     private facebookService: FacebookAuthService,
     private googleService: GoogleAuthService,
+    private appleService: AppleAuthService,
   ) {}
 
   @Post('login')
@@ -54,6 +57,13 @@ export class AuthController {
   async googleLogin(@Body('accessToken') accessToken: string) {
     return this.authService.socialLogin('googleId', () =>
       this.googleService.getUser(accessToken),
+    );
+  }
+
+  @Post('apple-login')
+  async appleLogin(@Body() body: AppleLoginDto) {
+    return this.authService.socialLogin('appleId', () =>
+      this.appleService.getUser(body),
     );
   }
 

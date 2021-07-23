@@ -44,6 +44,9 @@ export class User extends Document {
   @Prop()
   googleId?: string;
 
+  @Prop()
+  appleId?: string;
+
   validatePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password || '');
   }

@@ -6,4 +6,5 @@ export interface GlobalConfig {
   MONGO_URI: string;
   FRONTEND_URL: string;
   CODE_EXPIRATION: number;
+  APPLE_CLIENT_ID: string;
 }

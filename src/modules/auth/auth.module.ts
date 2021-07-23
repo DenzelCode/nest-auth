@@ -6,10 +6,11 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from '../user/user.module';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { FacebookAuthModule } from 'facebook-auth-nestjs';
-import { authSecretsConfig } from './config/auth-secrets.config';
+import { authConfig } from './config/auth.config';
 import { GoogleAuthService } from './service/google-auth.service';
+import { AppleAuthService } from './service/apple-auth.service';
 
-const facebook = authSecretsConfig.facebook;
+const facebook = authConfig.facebook;
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ const facebook = authSecretsConfig.facebook;
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtAuthGuard, GoogleAuthService],
+  providers: [AuthService, JwtAuthGuard, GoogleAuthService, AppleAuthService],
   exports: [JwtAuthGuard, AuthService, JwtModule, ConfigModule],
 })
 export class AuthModule {}

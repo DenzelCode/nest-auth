@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { google } from 'googleapis';
-import { authSecretsConfig } from '../config/auth-secrets.config';
+import { authConfig } from '../config/auth.config';
 
-const auth = authSecretsConfig.google;
+const auth = authConfig.google;
 
 @Injectable()
 export class GoogleAuthService {

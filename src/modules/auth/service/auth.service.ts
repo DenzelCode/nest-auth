@@ -70,13 +70,26 @@ export class AuthService {
     };
   }
 
-  async socialLogin(fieldId: keyof User, getSocialUser: GetSocialUserHandler) {
+  async socialLogin(
+    fieldId: keyof User,
+    getSocialUser: GetSocialUserHandler,
+    customName?: string,
+  ) {
     try {
       const { name, email, id } = await getSocialUser();
 
       const internalUser = await this.userService.getUserBy({ [fieldId]: id });
 
       if (internalUser) {
+        if (
+          internalUser.email != email &&
+          !(await this.userService.getUserByEmail(email))
+        ) {
+          internalUser.email = email;
+
+          await internalUser.save();
+        }
+
         return this.login(internalUser);
       }
 
@@ -84,7 +97,9 @@ export class AuthService {
         throw new BadRequestException('Email already exists');
       }
 
-      const username = await this.userService.generateUsername(name);
+      const username = await this.userService.generateUsername(
+        customName || name,
+      );
 
       const user = await this.userService.create({
         username,
@@ -97,8 +112,6 @@ export class AuthService {
       if (e instanceof HttpException) {
         throw e;
       }
-
-      console.log(e);
 
       throw new UnauthorizedException('Invalid access token');
     }
