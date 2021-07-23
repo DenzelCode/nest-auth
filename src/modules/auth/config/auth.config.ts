@@ -14,6 +14,7 @@ export interface SecretsSchema {
     clientId: string;
     teamId: string;
     keyIdentifier: string;
+    redirectUri: string;
   };
 }
 
@@ -30,6 +31,7 @@ const defaultValue: SecretsSchema = {
     clientId: 'com.code.auth',
     teamId: 'XQ4XH57P3K',
     keyIdentifier: '7DBG84VR62',
+    redirectUri: '',
   },
 };
 

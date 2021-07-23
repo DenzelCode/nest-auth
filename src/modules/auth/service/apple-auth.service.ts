@@ -29,7 +29,7 @@ export class AppleAuthService {
   async getUser({ name, authorizationCode }: AppleLoginDto) {
     const options = {
       clientID: auth.clientId,
-      redirectUri: '',
+      redirectUri: auth.redirectUri,
       clientSecret: clientSecret,
     };
 
@@ -41,8 +41,6 @@ export class AppleAuthService {
     const accessToken = response.id_token;
 
     const json = this.jwtService.decode(accessToken) as TokenResponse;
-
-    console.log(accessToken, json);
 
     if (json == null) {
       throw new UnauthorizedException('Invalid Apple token');
