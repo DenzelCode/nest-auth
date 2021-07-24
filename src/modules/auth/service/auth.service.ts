@@ -70,7 +70,7 @@ export class AuthService {
     };
   }
 
-  async socialLogin(
+  async loginWithThirdParty(
     fieldId: keyof User,
     getSocialUser: GetSocialUserHandler,
     customName?: string,
@@ -114,6 +114,27 @@ export class AuthService {
       }
 
       throw new UnauthorizedException('Invalid access token');
+    }
+  }
+
+  async loginWithRefreshToken(refreshToken: string) {
+    try {
+      const decoded = this.jwtService.decode(refreshToken) as Token;
+
+      if (!decoded) {
+        throw new Error();
+      }
+
+      const user = await this.userService.validateUser(decoded.sub);
+
+      await this.jwtService.verifyAsync<Token>(
+        refreshToken,
+        this.getRefreshTokenOptions(user),
+      );
+
+      return this.login(user);
+    } catch {
+      throw new UnauthorizedException('Invalid token');
     }
   }
 

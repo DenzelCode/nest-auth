@@ -41,7 +41,7 @@ export class AuthController {
 
   @Post('facebook-login')
   async facebookLogin(@Body('accessToken') accessToken: string) {
-    return this.authService.socialLogin('facebookId', () =>
+    return this.authService.loginWithThirdParty('facebookId', () =>
       this.facebookService.getUser(
         accessToken,
         'id',
@@ -55,38 +55,21 @@ export class AuthController {
 
   @Post('google-login')
   async googleLogin(@Body('accessToken') accessToken: string) {
-    return this.authService.socialLogin('googleId', () =>
+    return this.authService.loginWithThirdParty('googleId', () =>
       this.googleService.getUser(accessToken),
     );
   }
 
   @Post('apple-login')
   async appleLogin(@Body() body: AppleLoginDto) {
-    return this.authService.socialLogin('appleId', () =>
+    return this.authService.loginWithThirdParty('appleId', () =>
       this.appleService.getUser(body),
     );
   }
 
   @Post('refresh-token')
   async refreshToken(@Body('refreshToken') refreshToken: string) {
-    try {
-      const decoded = this.jwtService.decode(refreshToken) as Token;
-
-      if (!decoded) {
-        throw new Error();
-      }
-
-      const user = await this.userService.validateUser(decoded.sub);
-
-      await this.jwtService.verifyAsync<Token>(
-        refreshToken,
-        this.authService.getRefreshTokenOptions(user),
-      );
-
-      return this.authService.login(user);
-    } catch {
-      throw new UnauthorizedException('Invalid token');
-    }
+    return this.authService.loginWithRefreshToken(refreshToken);
   }
 
   @Post('register')
