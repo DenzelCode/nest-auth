@@ -12,6 +12,7 @@ export interface SecretsSchema {
   google: Secret;
   apple: {
     clientId: string;
+    webClientId: string;
     teamId: string;
     keyIdentifier: string;
     redirectUri: string;
@@ -29,6 +30,7 @@ const defaultValue: SecretsSchema = {
   },
   apple: {
     clientId: 'com.code.auth',
+    webClientId: 'nest-auth.ubbly.club',
     teamId: '',
     keyIdentifier: '',
     redirectUri: '',

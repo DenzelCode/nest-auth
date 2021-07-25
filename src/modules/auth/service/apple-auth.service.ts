@@ -20,11 +20,14 @@ export class AppleAuthService {
   async getUser({
     name,
     authorizationCode,
+    type,
   }: AppleLoginDto): Promise<SocialUser> {
     try {
+      const clientID = type === 'web' ? auth.webClientId : auth.clientId;
+
       const clientSecret = appleSignin.getClientSecret({
         privateKey,
-        clientID: auth.clientId,
+        clientID,
         teamID: auth.teamId,
         keyIdentifier: auth.keyIdentifier,
       });
@@ -33,7 +36,7 @@ export class AppleAuthService {
         authorizationCode,
         {
           clientSecret,
-          clientID: auth.clientId,
+          clientID,
           redirectUri: auth.redirectUri,
         },
       );

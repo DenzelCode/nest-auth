@@ -15,4 +15,9 @@ export class AppleLoginDto {
   @IsNotEmpty()
   @IsString()
   authorizationCode?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  type?: 'web' | 'mobile';
 }
