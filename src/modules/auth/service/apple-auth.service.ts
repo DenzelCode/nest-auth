@@ -49,7 +49,7 @@ export class AppleAuthService {
 
       try {
         const json = await appleSignin.verifyIdToken(response.id_token, {
-          audience: auth.clientId,
+          audience: clientID,
           ignoreExpiration: true,
         });
 
