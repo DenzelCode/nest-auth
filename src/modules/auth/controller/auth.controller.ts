@@ -22,7 +22,7 @@ import { AppleLoginDto } from '../dto/apple-login.dto';
 import { Dictionary } from 'code-config';
 import { Response } from 'express';
 import { authConfig } from '../config/auth.config';
-import qs from 'qs';
+import { stringify } from 'qs';
 
 @Controller('auth')
 export class AuthController {
@@ -95,11 +95,9 @@ export class AuthController {
 
     const apple = authConfig.apple;
 
-    const uri = `intent://callback?${qs.stringify(body)}#Intent;package=${
+    const uri = `intent://callback?${stringify(body)}#Intent;package=${
       apple.androidPackageId
     };scheme=signinwithapple;end`;
-
-    console.log(uri);
 
     return res.redirect(uri);
   }
