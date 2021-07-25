@@ -2,5 +2,5 @@
   "watch": ["src"],
   "ext": "ts, hbs, env, json",
   "ignore": ["src/**/*.spec.ts", "config/**.json"],
-  "exec": "npm run start"
+  "exec": "yarn run start"
 }

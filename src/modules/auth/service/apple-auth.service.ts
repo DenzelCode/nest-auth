@@ -23,12 +23,7 @@ export class AppleAuthService {
     type,
   }: AppleLoginDto): Promise<SocialUser> {
     try {
-      const clientID =
-        type === 'web'
-          ? auth.webClientId
-          : type === 'android'
-          ? auth.androidClientId
-          : auth.iOSClientId;
+      const clientID = auth[type].clientId;
 
       const clientSecret = appleSignin.getClientSecret({
         privateKey,
@@ -42,7 +37,7 @@ export class AppleAuthService {
         {
           clientSecret,
           clientID,
-          redirectUri: auth.redirectUri,
+          redirectUri: auth[type].redirectUri,
         },
       );
 

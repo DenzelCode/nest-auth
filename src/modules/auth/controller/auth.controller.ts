@@ -92,7 +92,7 @@ export class AuthController {
   @Post('apple-callback')
   appleCallback(@Body() body: Dictionary, @Res() res: Response) {
     const uri = `intent://callback?${stringify(body)}#Intent;package=${
-      authConfig.apple.androidPackageId
+      authConfig.apple.android.packageId
     };scheme=signinwithapple;end`;
 
     return res.redirect(uri);

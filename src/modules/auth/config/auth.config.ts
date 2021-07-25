@@ -7,17 +7,21 @@ interface Secret {
   appSecret: string;
 }
 
+interface Platform {
+  clientId: string;
+  redirectUri: string;
+  packageId?: string;
+}
+
 export interface SecretsSchema {
   facebook: Secret;
   google: Secret;
   apple: {
-    iOSClientId: string;
-    webClientId: string;
-    androidClientId: string;
-    androidPackageId: string;
+    ios: Platform;
+    web: Platform;
+    android: Platform;
     teamId: string;
     keyIdentifier: string;
-    redirectUri: string;
   };
 }
 
@@ -31,13 +35,21 @@ const defaultValue: SecretsSchema = {
     appSecret: 'secret',
   },
   apple: {
-    iOSClientId: 'com.code.auth',
-    androidClientId: 'nest-auth.ubbly.club',
-    androidPackageId: 'com.code.auth',
-    webClientId: 'nest-auth.ubbly.club',
+    ios: {
+      clientId: 'com.code.auth',
+      redirectUri: 'https://nest-auth.ubbly.club/',
+    },
+    android: {
+      clientId: 'nest-auth.ubbly.club',
+      packageId: 'com.code.auth',
+      redirectUri: 'https://nest-auth.ubbly.club/api/auth/apple-callback',
+    },
+    web: {
+      clientId: 'nest-auth.ubbly.club',
+      redirectUri: 'https://nest-auth.ubbly.club/',
+    },
     teamId: '',
     keyIdentifier: '',
-    redirectUri: 'https://nest-auth.ubbly.club/api/auth/apple-callback',
   },
 };
 
