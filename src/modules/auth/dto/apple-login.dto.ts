@@ -19,5 +19,5 @@ export class AppleLoginDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  type?: 'web' | 'mobile';
+  type?: 'web' | 'ios' | 'android';
 }

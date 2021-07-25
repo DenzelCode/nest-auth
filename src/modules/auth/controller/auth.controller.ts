@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Post,
+  Res,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -12,13 +13,16 @@ import { User } from '../../user/schema/user.schema';
 import { UserService } from '../../user/service/user.service';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { AuthService } from '../service/auth.service';
-import { JwtAuthGuard, Token } from '../guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../guard/jwt-auth.guard';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
 import { FacebookAuthService } from 'facebook-auth-nestjs';
 import { GoogleAuthService } from '../service/google-auth.service';
 import { AppleAuthService } from '../service/apple-auth.service';
 import { AppleLoginDto } from '../dto/apple-login.dto';
+import { Dictionary } from 'code-config';
+import { Response } from 'express';
+import { authConfig } from '../config/auth.config';
 
 @Controller('auth')
 export class AuthController {
@@ -83,6 +87,19 @@ export class AuthController {
     const user = await this.userService.create(body);
 
     return this.authService.login(user);
+  }
+
+  @Post('apple-callback')
+  async appleCallback(@Body() body: Dictionary, @Res() res: Response) {
+    console.log(body);
+
+    const apple = authConfig.apple;
+
+    res.redirect(
+      `intent://callback?${encodeURIComponent(
+        JSON.stringify(body),
+      )}#Intent;package=${apple.androidPackageId}scheme=signinwithapple;end`,
+    );
   }
 
   @UseGuards(JwtAuthGuard)

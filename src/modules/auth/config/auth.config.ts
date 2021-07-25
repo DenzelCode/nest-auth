@@ -11,8 +11,10 @@ export interface SecretsSchema {
   facebook: Secret;
   google: Secret;
   apple: {
-    clientId: string;
+    iOSClientId: string;
     webClientId: string;
+    androidClientId: string;
+    androidPackageId: string;
     teamId: string;
     keyIdentifier: string;
     redirectUri: string;
@@ -29,7 +31,9 @@ const defaultValue: SecretsSchema = {
     appSecret: 'secret',
   },
   apple: {
-    clientId: 'com.code.auth',
+    iOSClientId: 'com.code.auth',
+    androidClientId: 'nest-auth.ubbly.club',
+    androidPackageId: 'com.code.auth',
     webClientId: 'nest-auth.ubbly.club',
     teamId: '',
     keyIdentifier: '',
