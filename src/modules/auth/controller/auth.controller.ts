@@ -6,7 +6,6 @@ import {
   Get,
   Post,
   Res,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { User } from '../../user/schema/user.schema';
@@ -23,6 +22,7 @@ import { AppleLoginDto } from '../dto/apple-login.dto';
 import { Dictionary } from 'code-config';
 import { Response } from 'express';
 import { authConfig } from '../config/auth.config';
+import qs from 'qs';
 
 @Controller('auth')
 export class AuthController {
@@ -90,16 +90,18 @@ export class AuthController {
   }
 
   @Post('apple-callback')
-  async appleCallback(@Body() body: Dictionary, @Res() res: Response) {
+  appleCallback(@Body() body: Dictionary, @Res() res: Response) {
     console.log(body);
 
     const apple = authConfig.apple;
 
-    res.redirect(
-      `intent://callback?${encodeURIComponent(
-        JSON.stringify(body),
-      )}#Intent;package=${apple.androidPackageId}scheme=signinwithapple;end`,
-    );
+    const uri = `intent://callback?${qs.stringify(body)}#Intent;package=${
+      apple.androidPackageId
+    };scheme=signinwithapple;end`;
+
+    console.log(uri);
+
+    return res.redirect(uri);
   }
 
   @UseGuards(JwtAuthGuard)
