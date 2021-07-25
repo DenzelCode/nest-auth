@@ -29,8 +29,8 @@ const defaultValue: SecretsSchema = {
   },
   apple: {
     clientId: 'com.code.auth',
-    teamId: 'XQ4XH57P3K',
-    keyIdentifier: '7DBG84VR62',
+    teamId: '',
+    keyIdentifier: '',
     redirectUri: '',
   },
 };
