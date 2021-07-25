@@ -41,7 +41,7 @@ export class AppleAuthService {
         },
       );
 
-      if (!response) {
+      if (!response?.id_token) {
         throw new UnauthorizedException(
           `Access token cannot be retrieved from Apple`,
         );
