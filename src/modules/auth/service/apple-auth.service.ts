@@ -23,7 +23,7 @@ export class AppleAuthService {
     type,
   }: AppleLoginDto): Promise<SocialUser> {
     try {
-      const clientID = auth[type].clientId;
+      const clientID = auth[type || 'ios'].clientId;
 
       const clientSecret = appleSignin.getClientSecret({
         privateKey,
