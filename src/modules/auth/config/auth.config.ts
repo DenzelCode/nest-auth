@@ -37,6 +37,7 @@ const defaultValue: SecretsSchema = {
   apple: {
     ios: {
       clientId: 'com.code.auth',
+      packageId: 'com.code.auth',
       redirectUri: 'https://nest-auth.ubbly.club/',
     },
     android: {
