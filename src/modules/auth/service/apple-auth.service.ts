@@ -41,6 +41,12 @@ export class AppleAuthService {
         },
       );
 
+      if (!response) {
+        throw new UnauthorizedException(
+          `Access token cannot be retrieved from Apple`,
+        );
+      }
+
       try {
         const json = await appleSignin.verifyIdToken(response.id_token, {
           audience: auth.clientId,
