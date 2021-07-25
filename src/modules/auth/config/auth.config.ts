@@ -37,7 +37,7 @@ const defaultValue: SecretsSchema = {
     webClientId: 'nest-auth.ubbly.club',
     teamId: '',
     keyIdentifier: '',
-    redirectUri: '',
+    redirectUri: 'https://nest-auth.ubbly.club/api/auth/apple-callback',
   },
 };
 
