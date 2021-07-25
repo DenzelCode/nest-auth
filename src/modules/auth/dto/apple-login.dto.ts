@@ -1,15 +1,18 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class AppleLoginDto {
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
   name?: string;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
-  accessToken: string;
+  accessToken?: string;
 
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
-  authorizationCode: string;
+  authorizationCode?: string;
 }

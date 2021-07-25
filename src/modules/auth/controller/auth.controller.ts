@@ -15,7 +15,6 @@ import { AuthService } from '../service/auth.service';
 import { JwtAuthGuard, Token } from '../guard/jwt-auth.guard';
 import { RegisterDto } from '../dto/register.dto';
 import { LoginDto } from '../dto/login.dto';
-import { JwtService } from '@nestjs/jwt';
 import { FacebookAuthService } from 'facebook-auth-nestjs';
 import { GoogleAuthService } from '../service/google-auth.service';
 import { AppleAuthService } from '../service/apple-auth.service';
@@ -26,7 +25,6 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private userService: UserService,
-    private jwtService: JwtService,
     private facebookService: FacebookAuthService,
     private googleService: GoogleAuthService,
     private appleService: AppleAuthService,
