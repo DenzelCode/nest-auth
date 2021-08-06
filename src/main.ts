@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { SocketIoAdapter } from './core/adapter/socket-io-adapter';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { GlobalConfig } from './common/types/global-config';
+import { GlobalConfig } from './shared/types/global-config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

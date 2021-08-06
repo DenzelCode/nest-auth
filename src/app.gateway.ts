@@ -8,9 +8,9 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { CurrentUser } from './modules/auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from './modules/auth/guard/jwt-auth.guard';
-import { User } from './modules/user/schema/user.schema';
+import { CurrentUser } from './features/auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from './features/auth/guard/jwt-auth.guard';
+import { User } from './features/user/schema/user.schema';
 
 @WebSocketGateway()
 export class AppGateway

@@ -1,7 +1,7 @@
 import { MailerOptions } from '@nestjs-modules/mailer';
 import { ConfigFactory } from 'code-config';
 import { join } from 'path';
-import { CONFIG_PATH } from '../../../common/constants/config';
+import { CONFIG_PATH } from '../../../shared/constants/config';
 
 export interface MailerSchema {
   transport: MailerOptions['transport'];
