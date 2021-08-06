@@ -1,6 +1,6 @@
 import { ConfigFactory } from 'code-config';
 import { join } from 'path';
-import { CONFIG_PATH } from '../../../shared/constants/config';
+import { PATHS } from '../../../shared/constants/paths';
 import { authConfigDefault } from './auth-config.default';
 
 interface Secret {
@@ -27,7 +27,7 @@ export interface SecretsSchema {
 }
 
 export const authConfig = ConfigFactory.getConfig<SecretsSchema>(
-  join(CONFIG_PATH, 'auth.config.json'),
+  join(PATHS.config, 'auth.config.json'),
   authConfigDefault,
 )
   .init(false)

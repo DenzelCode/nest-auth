@@ -5,15 +5,15 @@ import {
 } from '@nestjs/common';
 import { AppleLoginDto } from '../dto/apple-login.dto';
 import { join } from 'path';
-import { SECRETS_PATH } from '../../../shared/constants/secrets';
 import appleSignin from 'apple-signin-auth';
 import { authConfig } from '../config/auth.config';
 import { SocialUser } from './auth.service';
 import { readFileSync } from 'fs';
+import { PATHS } from '../../../shared/constants/paths';
 
 const auth = authConfig.apple;
 
-const privateKey = readFileSync(join(SECRETS_PATH, 'apple-key.p8'), 'utf-8');
+const privateKey = readFileSync(join(PATHS.secrets, 'apple-key.p8'), 'utf-8');
 
 @Injectable()
 export class AppleAuthService {
