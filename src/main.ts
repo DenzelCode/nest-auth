@@ -4,17 +4,28 @@ import { SocketIoAdapter } from './core/adapter/socket-io-adapter';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { GlobalConfig } from './shared/types/global-config';
+import { RedisIoAdapter } from './core/adapter/redis.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
 
-  app.useWebSocketAdapter(new SocketIoAdapter(app));
+  const configService = app.get<ConfigService<GlobalConfig>>(ConfigService);
+
+  if (configService.get('REDIS_ENABLED')) {
+    app.useWebSocketAdapter(
+      new RedisIoAdapter(
+        configService.get('REDIS_HOST'),
+        configService.get('REDIS_PORT'),
+        app,
+      ),
+    );
+  } else {
+    app.useWebSocketAdapter(new SocketIoAdapter(app));
+  }
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-
-  const configService = app.get<ConfigService<GlobalConfig>>(ConfigService);
 
   const port = configService.get('PORT') || 3000;
 

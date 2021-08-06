@@ -7,4 +7,7 @@ export interface GlobalConfig {
   MONGO_URI: string;
   FRONTEND_URL: string;
   CODE_EXPIRATION: number;
+  REDIS_ENABLED: boolean;
+  REDIS_HOST: string;
+  REDIS_PORT: number;
 }

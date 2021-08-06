@@ -11,6 +11,7 @@ services:
         condition: on-failure
     depends_on:
       - mongo
+      - redis
   nginx:
     image: nginx:1.19-alpine
     ports:
@@ -32,3 +33,7 @@ services:
       - '27018:27017'
     volumes:
       - ./docker/volumes/mongodb_data_container:/data/db
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
