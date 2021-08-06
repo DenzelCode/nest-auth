@@ -13,7 +13,7 @@ async function bootstrap() {
 
   const configService = app.get<ConfigService<GlobalConfig>>(ConfigService);
 
-  if (Boolean(configService.get('REDIS_ENABLED'))) {
+  if (configService.get('REDIS_ENABLED') === 'true') {
     app.useWebSocketAdapter(
       new RedisIoAdapter(
         configService.get('REDIS_HOST'),
