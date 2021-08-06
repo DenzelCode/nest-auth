@@ -33,7 +33,7 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-config/**.json
-secrets/*
+config/
+secrets/
 
-/volumes
+/docker/volumes

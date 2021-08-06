@@ -1,9 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
+import { hostname } from 'os';
 
 @Controller()
 export class AppController {
   @Get()
   main(): string {
-    return 'NestJS Passport JWT Authentication';
+    return `NestJS Passport JWT Authentication ${hostname()}`;
   }
 }

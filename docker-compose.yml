@@ -1,14 +1,34 @@
-version: '2'
+version: '3.7'
 services:
   app:
     build: .
-    ports:
-      - '3000:3000'
+    environment:
+      - PORT=3000
+    deploy:
+      replicas: 3
+      restart_policy:
+        max_attempts: 3
+        condition: on-failure
     depends_on:
       - mongo
+  nginx:
+    image: nginx:1.19-alpine
+    ports:
+      - '3000:80'
+    depends_on:
+      - app
+    environment:
+      NGINX_ENVSUBST_TEMPLATE_SUFFIX: '.conf'
+      API_HOST: app
+      API_PORT: 3000
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    volumes:
+      - ./docker/nginx/templates:/etc/nginx/templates/
   mongo:
     image: mongo
     ports:
       - '27018:27017'
     volumes:
-      - ./volumes/mongodb_data_container:/data/db
+      - ./docker/volumes/mongodb_data_container:/data/db
