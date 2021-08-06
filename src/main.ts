@@ -4,7 +4,7 @@ import { SocketIoAdapter } from './core/adapter/socket-io-adapter';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { GlobalConfig } from './shared/types/global-config';
-import { RedisIoAdapter } from './core/adapter/redis.adapter';
+import { RedisIoAdapter } from './core/adapter/redis-io.adapter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
