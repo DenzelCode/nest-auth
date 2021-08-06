@@ -49,20 +49,16 @@ export class AppleAuthService {
         );
       }
 
-      try {
-        const json = await appleSignin.verifyIdToken(response.id_token, {
-          audience: clientID,
-          ignoreExpiration: true,
-        });
+      const json = await appleSignin.verifyIdToken(response.id_token, {
+        audience: clientID,
+        ignoreExpiration: true,
+      });
 
-        return {
-          name,
-          id: json.sub,
-          email: json.email,
-        };
-      } catch (e) {
-        throw new UnauthorizedException(e.message || e);
-      }
+      return {
+        name,
+        id: json.sub,
+        email: json.email,
+      };
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
