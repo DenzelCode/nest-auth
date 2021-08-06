@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { User } from '../schema/user.schema';
-import { randomString } from '../../../shared/utils/utils/random-string';
+import { randomString } from '../../../shared/utils/random-string';
 
 @Injectable()
 export class UserService {
