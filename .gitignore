@@ -36,4 +36,4 @@ lerna-debug.log*
 config/**.json
 secrets/*
 
-.volumes
+/volumes
