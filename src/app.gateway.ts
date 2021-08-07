@@ -7,6 +7,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { hostname } from 'os';
 import { Server, Socket } from 'socket.io';
 import { CurrentUser } from './features/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from './features/auth/guard/jwt-auth.guard';
@@ -24,13 +25,17 @@ export class AppGateway
   handleConnection(client: Socket) {
     this.online++;
 
-    this.logger.log(`User ${client.id} connected; ${this.online}`);
+    this.logger.log(
+      `User ${client.id} connected; ${this.online}; ${hostname()}`,
+    );
   }
 
   handleDisconnect(client: Socket) {
     this.online--;
 
-    this.logger.log(`User ${client.id} disconnected; ${this.online}`);
+    this.logger.log(
+      `User ${client.id} disconnected; ${this.online}; ${hostname()}`,
+    );
   }
 
   @SubscribeMessage('test')
