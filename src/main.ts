@@ -5,15 +5,16 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { GlobalConfig } from './shared/types/global-config';
 import { RedisIoAdapter } from './core/adapter/redis-io.adapter';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors();
 
   const configService = app.get<ConfigService<GlobalConfig>>(ConfigService);
 
-  app.getHttpServer().set('trust proxy', configService.get('PROXY_ENABLED') === 'true');
+  app.set('trust proxy', configService.get('PROXY_ENABLED') === 'true');
 
   if (configService.get('REDIS_ENABLED') === 'true') {
     app.useWebSocketAdapter(
