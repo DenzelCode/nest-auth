@@ -26,7 +26,9 @@ export class AppGateway
     this.online++;
 
     this.logger.log(
-      `User ${client.id} connected; ${this.online}; ${hostname()}`,
+      `User ${client.id}:${client.handshake.address} connected; ${
+        this.online
+      }; ${hostname()}`,
     );
   }
 
@@ -34,7 +36,9 @@ export class AppGateway
     this.online--;
 
     this.logger.log(
-      `User ${client.id} disconnected; ${this.online}; ${hostname()}`,
+      `User ${client.id}:${client.handshake.address} disconnected; ${
+        this.online
+      }; ${hostname()}`,
     );
   }
 
