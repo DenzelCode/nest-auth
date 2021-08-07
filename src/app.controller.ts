@@ -8,7 +8,7 @@ export class AppController {
     return `NestJS Passport JWT Authentication ${hostname()}`;
   }
 
-  @Get()
+  @Get('test')
   test(): string {
     return hostname();
   }
