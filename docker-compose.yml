@@ -30,6 +30,7 @@ services:
         constraints: [node.role == manager]
     volumes:
       - ./docker/nginx/templates:/etc/nginx/templates/
+    network_mode: host
   mongo:
     image: mongo
     ports:
