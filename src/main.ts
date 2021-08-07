@@ -11,7 +11,7 @@ async function bootstrap() {
 
   app.enableCors();
 
-  this.app.set('trust proxy', true);
+  app.set('trust proxy', true);
 
   const configService = app.get<ConfigService<GlobalConfig>>(ConfigService);
 
