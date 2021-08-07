@@ -1,15 +1,20 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
+import { Request } from 'express';
 import { hostname } from 'os';
 
 @Controller()
 export class AppController {
   @Get()
-  main(): string {
-    return `NestJS Passport JWT Authentication ${hostname()}`;
+  main(@Req() req: Request): string {
+    return this.getContainer(req);
   }
 
   @Get('test')
-  test(): string {
-    return hostname();
+  test(@Req() req: Request): string {
+    return this.getContainer(req);
+  }
+
+  private getContainer(req: Request) {
+    return `${req.ip} - ${hostname()}`;
   }
 }
