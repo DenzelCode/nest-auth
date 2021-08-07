@@ -11,6 +11,8 @@ async function bootstrap() {
 
   app.enableCors();
 
+  this.app.set('trust proxy', true);
+
   const configService = app.get<ConfigService<GlobalConfig>>(ConfigService);
 
   if (configService.get('REDIS_ENABLED') === 'true') {
