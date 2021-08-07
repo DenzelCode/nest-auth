@@ -11,9 +11,9 @@ async function bootstrap() {
 
   app.enableCors();
 
-  app.set('trust proxy', true);
-
   const configService = app.get<ConfigService<GlobalConfig>>(ConfigService);
+
+  app.getHttpServer().set('trust proxy', configService.get('PROXY_ENABLED') === 'true');
 
   if (configService.get('REDIS_ENABLED') === 'true') {
     app.useWebSocketAdapter(

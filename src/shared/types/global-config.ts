@@ -1,4 +1,5 @@
 export interface GlobalConfig {
+  PROXY_ENABLED: 'true' | 'false';
   PORT: number;
   ACCESS_TOKEN_SECRET: string;
   ACCESS_TOKEN_EXPIRATION: string;
