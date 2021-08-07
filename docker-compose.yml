@@ -1,19 +1,22 @@
-version: '3.7'
+version: '3.9'
 services:
   app:
     build: .
     environment:
       - PORT=3000
     deploy:
-      replicas: 3
+      replicas: 5
       restart_policy:
         max_attempts: 3
         condition: on-failure
+      update_config:
+        parallelism: 3
+        delay: 10s
     depends_on:
       - mongo
       - redis
   nginx:
-    image: nginx:1.19-alpine
+    image: nginx
     ports:
       - '3000:80'
     depends_on:
