@@ -3,9 +3,9 @@ import { RecoverController } from './controller/recover.controller';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Recover, RecoverSchema } from './schema/recover.schema';
-import { UserModule } from '../user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { CoreModule } from '../../core/core.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { CoreModule } from '../../core/core.module';
         schema: RecoverSchema,
       },
     ]),
-    UserModule,
+    AuthModule,
     CoreModule,
     ConfigModule,
   ],

@@ -20,6 +20,7 @@ import { GlobalConfig } from './shared/types/global-config';
       useFactory: (configService: ConfigService<GlobalConfig>) => ({
         uri: configService.get('MONGO_URI'),
         autoIndex: false,
+        useFindAndModify: false,
       }),
     }),
   ],

@@ -2,19 +2,29 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { remove } from 'lodash';
 import { Model, UpdateQuery } from 'mongoose';
+import { use } from 'passport';
+import { Socket } from 'socket.io';
 import { User } from '../../user/schema/user.schema';
 import { RoomDto } from '../dto/room.dto';
+import { RoomGateway } from '../gateway/room.gateway';
 import { Room } from '../schema/room.schema';
 
 @Injectable()
 export class RoomService {
-  constructor(@InjectModel(Room.name) private roomModel: Model<Room>) {}
+  constructor(
+    @InjectModel(Room.name) private roomModel: Model<Room>,
+    private roomGateway: RoomGateway,
+  ) {}
 
   create(room: RoomDto, user: User) {
     return new this.roomModel({
       ...room,
       owner: user._id,
     }).save();
+  }
+
+  deleteUserRooms(user: User) {
+    return this.roomModel.deleteMany({ owner: user._id }).exec();
   }
 
   update(roomId: string, room: UpdateQuery<Room>, user: User) {
@@ -24,6 +34,8 @@ export class RoomService {
   }
 
   delete(roomId: string, user: User) {
+    this.roomGateway.server.in(roomId).emit('');
+
     return this.roomModel.deleteOne({ _id: roomId, owner: user._id }).exec();
   }
 
@@ -41,6 +53,14 @@ export class RoomService {
       .exec();
   }
 
+  subscribeSocket(socket: Socket, user: User) {
+    return socket.join(`room_${user._id}`);
+  }
+
+  sendMessage<T>(room: Room, event: string, message: T) {
+    this.roomGateway.server.in(`room_${room._id}`).emit(event, message);
+  }
+
   async join(roomId: string, user: User) {
     const room = await this.getRoom(roomId);
 
@@ -56,7 +76,8 @@ export class RoomService {
       throw new BadRequestException('User does not have a room');
     }
 
-    remove(room.members, member => member === user._id);
+    const index = room.members.findIndex(member => member === user._id);
+    room.members.splice(index, 1);
 
     return room.save();
   }

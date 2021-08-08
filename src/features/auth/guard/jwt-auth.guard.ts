@@ -3,6 +3,8 @@ import {
   CanActivate,
   ExecutionContext,
   UnauthorizedException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
@@ -24,7 +26,7 @@ export class JwtAuthGuard implements CanActivate {
   constructor(
     private authService: AuthService,
     private jwtService: JwtService,
-    private userService: UserService,
+    @Inject(forwardRef(() => UserService)) private userService: UserService,
     private configService: ConfigService<GlobalConfig>,
   ) {
     this.reflector = new Reflector();

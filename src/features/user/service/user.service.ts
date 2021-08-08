@@ -1,15 +1,25 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { User } from '../schema/user.schema';
 import { randomString } from '../../../shared/utils/random-string';
+import { UserGateway } from '../gateway/user.gateway';
+import { Socket } from 'socket.io';
 
 @Injectable()
 export class UserService {
   private filteredFields: (keyof User)[] = ['password', 'sessionToken'];
 
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    @Inject(forwardRef(() => UserGateway)) private userGateway: UserGateway,
+  ) {}
 
   getUserByName(name: string) {
     const username = { $regex: new RegExp(`^${name}$`, 'i') };
@@ -33,6 +43,14 @@ export class UserService {
 
   getUserById(id: ObjectId | string) {
     return this.userModel.findById(id).exec();
+  }
+
+  subscribeSocket(socket: Socket, user: User) {
+    return socket.join(`user_${user._id}`);
+  }
+
+  sendMessage<T>(user: User, event: string, message: T) {
+    this.userGateway.server.in(`user_${user._id}`).emit(event, message);
   }
 
   async generateUsername(base: string) {

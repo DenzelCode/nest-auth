@@ -34,7 +34,9 @@ export class RoomController {
   }
 
   @Post()
-  create(@Body() room: RoomDto, @CurrentUser() user: User) {
+  async create(@Body() room: RoomDto, @CurrentUser() user: User) {
+    await this.roomService.deleteUserRooms(user);
+
     return this.roomService.create(room, user);
   }
 

@@ -1,14 +1,18 @@
 import { AuthController } from './controller/auth.controller';
 import { AuthService } from './service/auth.service';
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { UserModule } from '../user/user.module';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { FacebookAuthModule } from 'facebook-auth-nestjs';
 import { authConfig } from './config/auth.config';
 import { GoogleAuthService } from './service/google-auth.service';
 import { AppleAuthService } from './service/apple-auth.service';
+import { UserService } from '../user/service/user.service';
+import { User, UserSchema } from '../user/schema/user.schema';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UserGateway } from '../user/gateway/user.gateway';
+import { UserModule } from '../user/user.module';
 
 const facebook = authConfig.facebook;
 
@@ -16,11 +20,11 @@ const facebook = authConfig.facebook;
   imports: [
     ConfigModule,
     JwtModule.register(null),
-    UserModule,
     FacebookAuthModule.forRoot({
       clientId: facebook.appId as number,
       clientSecret: facebook.appSecret,
     }),
+    UserModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAuthGuard, GoogleAuthService, AppleAuthService],
