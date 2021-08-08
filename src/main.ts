@@ -1,6 +1,6 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { SocketIoAdapter } from './core/adapter/socket-io-adapter';
+import { ExternalSocketIoAdapter } from './core/adapter/external-socket-io-adapter';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { GlobalConfig } from './shared/types/global-config';
@@ -21,11 +21,10 @@ async function bootstrap() {
       new RedisIoAdapter(
         configService.get('REDIS_HOST'),
         configService.get('REDIS_PORT'),
-        app,
       ),
     );
   } else {
-    app.useWebSocketAdapter(new SocketIoAdapter(app));
+    app.useWebSocketAdapter(new ExternalSocketIoAdapter(app));
   }
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));

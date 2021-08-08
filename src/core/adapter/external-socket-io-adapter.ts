@@ -9,7 +9,7 @@ import { fromEvent, Observable } from 'rxjs';
 import { filter, first, map, mergeMap, share, takeUntil } from 'rxjs/operators';
 import { Server } from 'socket.io';
 
-export class SocketIoAdapter extends AbstractWsAdapter {
+export class ExternalSocketIoAdapter extends AbstractWsAdapter {
   constructor(
     appOrHttpServer?: INestApplicationContext | any,
     private readonly corsOrigins: string | string[] = '*',
