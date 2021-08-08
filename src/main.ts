@@ -21,6 +21,7 @@ async function bootstrap() {
       new RedisIoAdapter(
         configService.get('REDIS_HOST'),
         configService.get('REDIS_PORT'),
+        app,
       ),
     );
   } else {

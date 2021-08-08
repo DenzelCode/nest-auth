@@ -11,10 +11,10 @@ import { Server } from 'socket.io';
 
 export class ExternalSocketIoAdapter extends AbstractWsAdapter {
   constructor(
-    appOrHttpServer?: INestApplicationContext | any,
-    private readonly corsOrigins: string | string[] = '*',
+    app?: INestApplicationContext,
+    private readonly cors: string | string[] = '*',
   ) {
-    super(appOrHttpServer);
+    super(app);
   }
 
   public create(
@@ -36,7 +36,7 @@ export class ExternalSocketIoAdapter extends AbstractWsAdapter {
     if (this.httpServer && port === 0) {
       const s = new Server(this.httpServer, {
         cors: {
-          origin: this.corsOrigins,
+          origin: this.cors,
           methods: ['GET', 'POST'],
           credentials: true,
         },
