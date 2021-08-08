@@ -6,9 +6,9 @@ import { Client } from './get-client';
 
 config();
 
-const isProxy = process.env.PROXY_ENABLED === 'true';
+const getAddressFrom = (ip: string, headers: Client['headers']) => {
+  const isProxy = process.env.PROXY_ENABLED === 'true';
 
-const getIp = (ip: string, headers: Client['headers']) => {
   return (
     (!isProxy && ip) || headers['x-forwarded-for'] || headers['x-real-ip'] || ip
   );
@@ -16,11 +16,11 @@ const getIp = (ip: string, headers: Client['headers']) => {
 
 export const getAddress = (client: Socket | Request): string => {
   if (client instanceof Socket) {
-    return getIp(
+    return getAddressFrom(
       client.handshake.address,
       client.handshake.headers as Dictionary,
     );
   }
 
-  return getIp(client.ip, client.headers as Dictionary);
+  return getAddressFrom(client.ip, client.headers as Dictionary);
 };
