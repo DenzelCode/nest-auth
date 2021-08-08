@@ -1,8 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { remove } from 'lodash';
 import { Model, UpdateQuery } from 'mongoose';
-import { use } from 'passport';
 import { Socket } from 'socket.io';
 import { User } from '../../user/schema/user.schema';
 import { RoomDto } from '../dto/room.dto';
@@ -53,8 +51,8 @@ export class RoomService {
       .exec();
   }
 
-  subscribeSocket(socket: Socket, user: User) {
-    return socket.join(`room_${user._id}`);
+  subscribeSocket(socket: Socket, room: Room) {
+    return socket.join(`room_${room._id}`);
   }
 
   sendMessage<T>(room: Room, event: string, message: T) {
