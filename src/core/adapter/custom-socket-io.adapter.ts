@@ -1,5 +1,4 @@
-import { ServerOptions } from 'https';
-import { Server } from 'socket.io';
+import { Server, ServerOptions } from 'socket.io';
 import { getAddress } from '../../shared/utils/get-address';
 import { ExternalSocketIoAdapter } from './external-socket-io-adapter';
 

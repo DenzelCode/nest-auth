@@ -8,7 +8,7 @@ export class RedisIoAdapter extends CustomSocketIoAdapter {
   private redisAdapter: RedisAdapter;
 
   constructor(host: string, port: number, app: INestApplicationContext) {
-    super();
+    super(app);
 
     const pubClient = new RedisClient({ host, port });
     const subClient = pubClient.duplicate();
@@ -18,7 +18,7 @@ export class RedisIoAdapter extends CustomSocketIoAdapter {
   createIOServer(port: number, options?: ServerOptions) {
     const server = super.createIOServer(port, options);
 
-    server.adapter(this.redisAdapter);
+    server.adapter(this.redisAdapter as any);
 
     return server;
   }
