@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, UpdateQuery } from 'mongoose';
 import { Socket } from 'socket.io';
+import { remove } from '../../../shared/utils/remove';
 import { User } from '../../user/schema/user.schema';
 import { RoomDto } from '../dto/room.dto';
 import { RoomGateway } from '../gateway/room.gateway';
@@ -42,13 +43,13 @@ export class RoomService {
   }
 
   getUserRoom(user: User) {
-    return this.roomModel
-      .findOne({
-        members: {
-          $in: user._id,
-        },
-      })
-      .exec();
+    const filter = {
+      members: {
+        $in: user._id,
+      },
+    };
+
+    return this.roomModel.findOne(filter).exec();
   }
 
   subscribeSocket(socket: Socket, room: Room) {
@@ -78,8 +79,7 @@ export class RoomService {
       throw new BadRequestException('User does not have a room');
     }
 
-    const index = room.members.findIndex(member => member === user._id);
-    room.members.splice(index, 1);
+    remove(room.members, member => member === user._id);
 
     return room.save();
   }
