@@ -6,7 +6,7 @@ import { Client } from './get-client';
 
 config();
 
-const isProxy = process.env.PROXY_ENABLED !== 'true';
+const isProxy = process.env.PROXY_ENABLED === 'true';
 
 const getIp = (ip: string, headers: Client['headers']) => {
   return (
