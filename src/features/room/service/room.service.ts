@@ -53,6 +53,7 @@ export class RoomService {
   }
 
   subscribeSocket(socket: Socket, room: Room) {
+    
     return socket.join(`room_${room._id}`);
   }
 

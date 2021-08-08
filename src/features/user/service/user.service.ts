@@ -50,7 +50,7 @@ export class UserService {
   }
 
   sendMessage<T>(user: User, event: string, message: T) {
-    this.userGateway.server.in(`user_${user._id}`).emit(event, message);
+    return this.userGateway.server.in(`user_${user._id}`).emit(event, message);
   }
 
   async generateUsername(base: string) {
