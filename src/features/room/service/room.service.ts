@@ -62,9 +62,13 @@ export class RoomService {
   async join(roomId: string, user: User) {
     const room = await this.getRoom(roomId);
 
-    room.members.push(user._id);
+    if (!room.members.includes(user._id)) {
+      room.members.push(user._id);
 
-    return room.save();
+      return room.save();
+    }
+
+    return room;
   }
 
   async leave(user: User) {
