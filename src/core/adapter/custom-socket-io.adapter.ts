@@ -6,11 +6,10 @@ export class CustomSocketIoAdapter extends SocketIoAdapter {
   createIOServer(port: number, options?: ServerOptions) {
     const server = super.createIOServer(port, options) as Server;
 
-    server.use((client, next) => {
-      client.handshake.address = getAddress(client);
-
-      next();
-    });
+    server.on(
+      'connection',
+      client => (client.handshake.address = getAddress(client)),
+    );
 
     return server;
   }
