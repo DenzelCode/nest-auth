@@ -4,7 +4,6 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Task, TaskSchema } from './schema/task.schema';
 import { AuthModule } from '../auth/auth.module';
-import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -14,7 +13,6 @@ import { UserModule } from '../user/user.module';
         schema: TaskSchema,
       },
     ]),
-    UserModule,
     AuthModule,
   ],
   controllers: [TaskController],

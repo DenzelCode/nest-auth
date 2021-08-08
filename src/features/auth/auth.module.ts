@@ -16,7 +16,7 @@ const facebook = authConfig.facebook;
   imports: [
     ConfigModule,
     JwtModule.register(null),
-    forwardRef(() => UserModule),
+    UserModule,
     FacebookAuthModule.forRoot({
       clientId: facebook.appId as number,
       clientSecret: facebook.appSecret,
@@ -24,6 +24,6 @@ const facebook = authConfig.facebook;
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAuthGuard, GoogleAuthService, AppleAuthService],
-  exports: [JwtAuthGuard, AuthService, JwtModule, ConfigModule],
+  exports: [JwtAuthGuard, AuthService, JwtModule, ConfigModule, UserModule],
 })
 export class AuthModule {}

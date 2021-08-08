@@ -80,7 +80,11 @@ export class JwtAuthGuard implements CanActivate {
   }
 
   private getToken(client: Client): string {
-    const authorization = client.headers.authorization.split(' ');
+    const authorization = client.headers.authorization?.split(' ');
+
+    if (!authorization) {
+      throw new UnauthorizedException('Token not found');
+    }
 
     if (authorization[0].toLowerCase() !== 'bearer') {
       throw new UnauthorizedException('Authorization type not valid');

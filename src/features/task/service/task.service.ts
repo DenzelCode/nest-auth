@@ -1,30 +1,44 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
-import { ObjectId } from '../../../shared/types/object-id';
+import { Model } from 'mongoose';
+import { User } from '../../user/schema/user.schema';
 import { Task } from '../schema/task.schema';
 
 @Injectable()
 export class TaskService {
   constructor(@InjectModel(Task.name) private taskModel: Model<Task>) {}
 
-  create(task: Partial<Task>) {
-    return new this.taskModel(task).save();
+  create(task: Partial<Task>, user: User) {
+    return new this.taskModel({
+      task,
+      owner: user._id,
+    }).save();
   }
 
-  update(id: ObjectId, task: Partial<Task>) {
-    return this.taskModel.findByIdAndUpdate(id, task).exec();
+  update(id: string, task: Partial<Task>, user: User) {
+    return this.taskModel
+      .updateOne(
+        {
+          _id: id,
+          owner: user._id,
+        },
+        task,
+      )
+      .exec();
   }
 
-  get(id: ObjectId) {
+  get(id: string) {
     return this.taskModel.findById(id).exec();
   }
 
-  getAll(filter?: FilterQuery<Task>) {
-    return this.taskModel.find(filter).exec();
+  getAll(user: User) {
+    return this.taskModel.find({ owner: user._id }).exec();
   }
 
-  delete(filter?: FilterQuery<Task>) {
-    return this.taskModel.findOneAndDelete(filter);
+  delete(id: string, user: User) {
+    return this.taskModel.findOneAndDelete({
+      _id: id,
+      owner: user.id,
+    });
   }
 }

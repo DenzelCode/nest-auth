@@ -23,39 +23,25 @@ export class TaskController {
 
   @Get()
   getAll(@CurrentUser() user: User) {
-    return this.taskService.getAll({
-      owner: user._id,
-    });
+    return this.taskService.getAll(user);
   }
 
   @Post()
-  create(@CurrentUser() user: User, @Body() body: TaskDto) {
-    return this.taskService.create({
-      ...body,
-      owner: user._id,
-    });
+  create(@Body() body: TaskDto, @CurrentUser() user: User) {
+    return this.taskService.create(body, user);
   }
 
   @Put(':id')
   update(
-    @CurrentUser() user: User,
-    @Param('id', ParseObjectIdPipe) id: ObjectId,
+    @Param('id') id: string,
     @Body() body: TaskDto,
+    @CurrentUser() user: User,
   ) {
-    return this.taskService.update(id, {
-      ...body,
-      owner: user._id,
-    });
+    return this.taskService.update(id, body, user);
   }
 
   @Delete(':id')
-  delete(
-    @CurrentUser() user: User,
-    @Param('id', ParseObjectIdPipe) id: ObjectId,
-  ) {
-    return this.taskService.delete({
-      _id: id,
-      owner: user._id,
-    });
+  delete(@Param('id') id: string, @CurrentUser() user: User) {
+    return this.taskService.delete(id, user);
   }
 }
