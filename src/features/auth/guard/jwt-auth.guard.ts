@@ -21,8 +21,6 @@ export interface Token {
 export class JwtAuthGuard implements CanActivate {
   reflector: Reflector;
 
-  private readonly headerProperty = 'Authorization';
-
   constructor(
     private authService: AuthService,
     private jwtService: JwtService,
@@ -82,15 +80,7 @@ export class JwtAuthGuard implements CanActivate {
   }
 
   private getToken(client: Client): string {
-    const property = Object.keys(client.headers).find(
-      prop => prop.toLowerCase() === this.headerProperty.toLowerCase(),
-    );
-
-    if (!property) {
-      throw new UnauthorizedException('Token not found');
-    }
-
-    const authorization = client.headers[property].split(' ');
+    const authorization = client.headers.authorization.split(' ');
 
     if (authorization[0].toLowerCase() !== 'bearer') {
       throw new UnauthorizedException('Authorization type not valid');

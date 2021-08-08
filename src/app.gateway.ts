@@ -12,6 +12,7 @@ import { Server, Socket } from 'socket.io';
 import { CurrentUser } from './features/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from './features/auth/guard/jwt-auth.guard';
 import { User } from './features/user/schema/user.schema';
+import { getAddress } from './shared/utils/get-address';
 
 @WebSocketGateway()
 export class AppGateway
@@ -24,6 +25,8 @@ export class AppGateway
 
   handleConnection(client: Socket) {
     this.online++;
+
+    client.handshake.address = getAddress(client);
 
     this.logger.log(
       `User ${client.id}:${client.handshake.address} connected; ${
