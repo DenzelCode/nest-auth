@@ -1,6 +1,3 @@
-import { MessageGateway } from './features/messages/gateway/message.gateway';
-import { MessageController } from './features/messages/controller/message.controller';
-import { MessageModule } from './features/messages/messages.module';
 import { FeaturesModule } from './features/features.module';
 import { CoreModule } from './core/core.module';
 import { CommonModule } from './shared/shared.module';
@@ -12,7 +9,6 @@ import { GlobalConfig } from './shared/types/global-config';
 
 @Module({
   imports: [
-    MessageModule,
     FeaturesModule,
     CoreModule,
     CommonModule,
