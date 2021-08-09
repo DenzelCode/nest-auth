@@ -1,17 +1,12 @@
-import { Logger, UseGuards } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import {
-  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { hostname } from 'os';
 import { Server, Socket } from 'socket.io';
-import { CurrentUser } from './features/auth/decorators/current-user.decorator';
-import { JwtAuthGuard } from './features/auth/guard/jwt-auth.guard';
-import { User } from './features/user/schema/user.schema';
 
 @WebSocketGateway()
 export class AppGateway
@@ -40,11 +35,5 @@ export class AppGateway
         this.online
       }; ${hostname()}`,
     );
-  }
-
-  @SubscribeMessage('test')
-  @UseGuards(JwtAuthGuard)
-  handleTestMessage(@MessageBody() data: string, @CurrentUser() user: User) {
-    this.logger.log(`Message received: ${data} from ${user.username}`);
   }
 }

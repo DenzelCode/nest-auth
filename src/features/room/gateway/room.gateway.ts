@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  NotFoundException,
-  UseGuards,
-} from '@nestjs/common';
+import { forwardRef, Inject, UseGuards } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, UpdateQuery } from 'mongoose';
 import { Socket } from 'socket.io';
@@ -39,7 +43,11 @@ export class RoomService {
   }
 
   getRoom(roomId: string) {
-    return this.roomModel.findOne({ _id: roomId }).exec();
+    return this.roomModel
+      .findOne({ _id: roomId })
+      .populate('members')
+      .populate('owner', '-password -sessionToken')
+      .exec();
   }
 
   getUserRoom(user: User) {
@@ -52,17 +60,31 @@ export class RoomService {
     return this.roomModel.findOne(filter).exec();
   }
 
+  getPublicRooms() {
+    return this.roomModel
+      .find({ isPublic: true })
+      .populate('owner', '-password -sessionToken')
+      .exec();
+  }
+
+  getUserRooms(user: User) {
+    return this.roomModel.find({ owner: user._id }).exec();
+  }
+
   subscribeSocket(socket: Socket, room: Room) {
-    
     return socket.join(`room_${room._id}`);
   }
 
   sendMessage<T>(room: Room, event: string, message: T) {
-    this.roomGateway.server.in(`room_${room._id}`).emit(event, message);
+    this.roomGateway.server.to(`room_${room._id}`).emit(event, message);
   }
 
   async join(roomId: string, user: User) {
     const room = await this.getRoom(roomId);
+
+    if (!room) {
+      return undefined;
+    }
 
     if (!room.members.includes(user._id)) {
       room.members.push(user._id);
