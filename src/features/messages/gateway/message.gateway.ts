@@ -38,9 +38,13 @@ export class MessageGateway {
       throw new WsException('User not found');
     }
 
-    const message = await this.messageService.createDirectMessage(user, userTo, body.message);
+    const message = await this.messageService.createDirectMessage(
+      user,
+      userTo,
+      body.message,
+    );
 
-    this.userService.sendMessage(userTo, 'message:direct', body.message);
+    this.userService.sendMessage(userTo, 'message:direct', message);
   }
 
   @SubscribeMessage('message:room')
@@ -54,8 +58,12 @@ export class MessageGateway {
       throw new WsException('Room not found');
     }
 
-    this.messageService.createRoomMessage(user, room, body.message);
+    const message = await this.messageService.createRoomMessage(
+      user,
+      room,
+      body.message,
+    );
 
-    this.roomService.sendMessage(room, 'message:room', body.message);
+    this.roomService.sendMessage(room, 'message:room', message);
   }
 }

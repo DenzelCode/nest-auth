@@ -8,7 +8,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppGateway } from './app.gateway';
 import { GlobalConfig } from './shared/types/global-config';
 
 @Module({
@@ -29,6 +28,5 @@ import { GlobalConfig } from './shared/types/global-config';
     }),
   ],
   controllers: [AppController],
-  providers: [AppGateway],
 })
 export class AppModule {}

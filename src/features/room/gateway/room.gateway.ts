@@ -28,7 +28,6 @@ export class RoomGateway implements OnGatewayDisconnect<Socket> {
     if (!user) {
       return;
     }
-    console.log(`${user.username} leaving room for disconnect`);
 
     this.roomService.leave(user);
   }
