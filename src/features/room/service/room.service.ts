@@ -19,13 +19,13 @@ export class RoomService {
     private roomGateway: RoomGateway,
   ) {}
 
-  create(room: RoomDto, user: User) {
-    return new this.roomModel({
+  async create(room: RoomDto, user: User) {
+    const object = await new this.roomModel({
       ...room,
       owner: user._id,
-    })
-      .populate('owner', '-password -sessionToken')
-      .save();
+    }).save();
+
+    return object.populate('owner', '-password -sessionToken').execPopulate();
   }
 
   deleteUserRooms(user: User) {

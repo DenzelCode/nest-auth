@@ -21,7 +21,7 @@ export class MessageController {
     private messageService: MessageService,
   ) {}
 
-  @Get('roomId')
+  @Get('room/:roomId')
   async getRoomMessages(@Param('roomId') roomId: string) {
     const room = await this.roomService.getRoom(roomId);
 

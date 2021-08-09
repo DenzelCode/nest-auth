@@ -12,7 +12,10 @@ export class MessageService {
   ) {}
 
   getRoomMessages(room: Room) {
-    return this.messageModel.find({ room: room._id }).exec();
+    return this.messageModel
+      .find({ room: room._id })
+      .populate('from', '-password -sessionToken')
+      .exec();
   }
 
   getDirectMessages(from: User, to: User) {
@@ -29,26 +32,27 @@ export class MessageService {
           },
         ],
       })
+      .populate('from', '-password -sessionToken')
       .exec();
   }
 
-  createRoomMessage(user: User, room: Room, message: string) {
-    return new this.messageModel({
-      from: user._id,
+  async createRoomMessage(from: User, room: Room, message: string) {
+    const object = await new this.messageModel({
+      from: from._id,
       room: room._id,
       message,
-    })
-      .populate('from', '-password -sessionToken')
-      .save();
+    }).save();
+
+    return object.populate('from', '-password -sessionToken').execPopulate();
   }
 
-  createDirectMessage(from: User, to: User, message: string) {
-    return new this.messageModel({
+  async createDirectMessage(from: User, to: User, message: string) {
+    const object = await new this.messageModel({
       from: from._id,
       to: to._id,
       message,
-    })
-      .populate('from', '-password -sessionToken')
-      .save();
+    }).save();
+
+    return object.populate('from', '-password -sessionToken').execPopulate();
   }
 }
