@@ -38,7 +38,7 @@ export class MessageGateway {
       throw new WsException('User not found');
     }
 
-    this.messageService.createDirectMessage(user, userTo, body.message);
+    const message = await this.messageService.createDirectMessage(user, userTo, body.message);
 
     this.userService.sendMessage(userTo, 'message:direct', body.message);
   }

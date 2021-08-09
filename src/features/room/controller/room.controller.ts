@@ -46,13 +46,13 @@ export class RoomController {
     return this.roomService.create(room, user);
   }
 
-  @Put(':id')
+  @Put(':roomId')
   async update(
-    @Param('id') id: string,
+    @Param() params: RoomIdDto,
     @Body() room: RoomDto,
     @CurrentUser() user: User,
   ) {
-    return this.roomService.update(id, room, user);
+    return this.roomService.update(params.roomId, room, user);
   }
 
   @Post('join')
@@ -67,7 +67,13 @@ export class RoomController {
   }
 
   @Delete()
-  leave(@CurrentUser() user: User) {
-    return this.roomService.leave(user);
+  async leave(@CurrentUser() user: User) {
+    const room = await this.roomService.leave(user);
+
+    if (!room) {
+      throw new NotFoundException('User does not have a room');
+    }
+
+    return room;
   }
 }

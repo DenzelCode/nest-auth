@@ -23,7 +23,9 @@ export class RoomService {
     return new this.roomModel({
       ...room,
       owner: user._id,
-    }).save();
+    })
+      .populate('owner', '-password -sessionToken')
+      .save();
   }
 
   deleteUserRooms(user: User) {
@@ -45,7 +47,7 @@ export class RoomService {
   getRoom(roomId: string) {
     return this.roomModel
       .findOne({ _id: roomId })
-      .populate('members')
+      .populate('members', '-password -sessionToken')
       .populate('owner', '-password -sessionToken')
       .exec();
   }
@@ -99,7 +101,7 @@ export class RoomService {
     const room = await this.getUserRoom(user);
 
     if (!room) {
-      throw new BadRequestException('User does not have a room');
+      return undefined;
     }
 
     remove(room.members, member => member === user._id);

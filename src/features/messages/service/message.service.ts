@@ -37,7 +37,9 @@ export class MessageService {
       from: user._id,
       room: room._id,
       message,
-    }).save();
+    })
+      .populate('from', '-password -sessionToken')
+      .save();
   }
 
   createDirectMessage(from: User, to: User, message: string) {
@@ -45,6 +47,8 @@ export class MessageService {
       from: from._id,
       to: to._id,
       message,
-    }).save();
+    })
+      .populate('from', '-password -sessionToken')
+      .save();
   }
 }
