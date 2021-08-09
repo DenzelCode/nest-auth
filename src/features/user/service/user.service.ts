@@ -53,6 +53,15 @@ export class UserService {
     return this.userGateway.server.in(`user_${user._id}`).emit(event, message);
   }
 
+  sendMessageExclude<T>(
+    exclude: Socket,
+    user: User,
+    event: string,
+    message: T,
+  ) {
+    exclude.broadcast.to(`user_${user._id}`).emit(event, message);
+  }
+
   async generateUsername(base: string) {
     const name = base.replace(/\s/g, '');
 
