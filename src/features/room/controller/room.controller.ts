@@ -68,12 +68,6 @@ export class RoomController {
 
   @Delete()
   async leave(@CurrentUser() user: User) {
-    const room = await this.roomService.leave(user);
-
-    if (!room) {
-      throw new NotFoundException('User does not have a room');
-    }
-
-    return room;
+    return this.roomService.leave(user);
   }
 }

@@ -48,14 +48,14 @@ export class RoomService {
       .exec();
   }
 
-  getUserRoom(user: User) {
+  getUserCurrentRooms(user: User) {
     const filter = {
       members: {
         $in: user._id,
       },
     };
 
-    return this.roomModel.findOne(filter).exec();
+    return this.roomModel.find(filter).exec();
   }
 
   getPublicRooms() {
@@ -103,14 +103,12 @@ export class RoomService {
   }
 
   async leave(user: User) {
-    const room = await this.getUserRoom(user);
+    const rooms = await this.getUserCurrentRooms(user);
 
-    if (!room) {
-      return undefined;
+    for (const room of rooms) {
+      remove(room.members, member => member === user._id);
+
+      room.save();
     }
-
-    remove(room.members, member => member === user._id);
-
-    return room.save();
   }
 }
