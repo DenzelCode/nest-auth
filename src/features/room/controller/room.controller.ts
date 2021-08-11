@@ -56,14 +56,14 @@ export class RoomController {
   }
 
   @Post('join')
-  join(@Body() body: RoomIdDto, @CurrentUser() user: User) {
-    const room = this.roomService.join(body.roomId, user);
+  async join(@Body() body: RoomIdDto, @CurrentUser() user: User) {
+    const room = await this.roomService.join(body.roomId, user);
 
     if (!room) {
       throw new NotFoundException('Room not found');
     }
 
-    return room;
+    return room.populate('members', '-password -sessionToken').execPopulate();
   }
 
   @Delete()

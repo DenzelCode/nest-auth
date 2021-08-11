@@ -103,7 +103,7 @@ export class RoomService {
       return undefined;
     }
 
-    if (!room.members.includes(user._id)) {
+    if (room.members.findIndex(member => user.id === member.id) === -1) {
       room.members.push(user._id);
 
       this.handleJoinRoom(user, room);
