@@ -1,4 +1,9 @@
-import { UseGuards } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import {
   MessageBody,
   SubscribeMessage,
@@ -7,6 +12,7 @@ import {
   WsException,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
+import { ExceptionsFilter } from '../../../core/filter/exception.filter';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { RoomService } from '../../room/service/room.service';
@@ -16,6 +22,8 @@ import { DirectMessageDto } from '../dto/direct-message.dto';
 import { RoomMessageDto } from '../dto/room-message.dto';
 import { MessageService } from '../service/message.service';
 
+@UsePipes(new ValidationPipe())
+@UseFilters(new ExceptionsFilter())
 @UseGuards(JwtAuthGuard)
 @WebSocketGateway()
 export class MessageGateway {
