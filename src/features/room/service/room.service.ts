@@ -32,9 +32,11 @@ export class RoomService {
   async update(room: Room, body: UpdateQuery<Room>, user: User) {
     this.handleUpdateRoom(room, body as Room);
 
-    return this.roomModel
+    const updatedRoom = await this.roomModel
       .updateOne({ _id: room._id, owner: user._id }, body)
       .exec();
+
+    return Object.assign(updatedRoom, body);
   }
 
   handleUpdateRoom(room: Room, body: Partial<Room>) {
