@@ -48,12 +48,16 @@ export class RoomService {
   }
 
   delete(room: Room, user: User) {
-    this.sendMessage(room, 'room:delete', room);
+    this.handleDeleteRoom(room);
 
     return Promise.all([
       this.roomModel.deleteOne({ _id: room._id, owner: user._id }).exec(),
       this.messageService.deleteRoomMessages(room),
     ]);
+  }
+
+  handleDeleteRoom(room: Room) {
+    this.sendMessage(room, 'room:delete', room);
   }
 
   getRoomWithOwner(roomId: string, owner: User) {
