@@ -84,7 +84,7 @@ export class RoomService {
   }
 
   sendMessage<T>(room: Room, event: string, message: T) {
-    this.roomGateway.server.to(`room_${room._id}`).emit(event, message);
+    return this.roomGateway.server.to(`room_${room._id}`).emit(event, message);
   }
 
   sendMessageExclude<T>(
@@ -93,7 +93,7 @@ export class RoomService {
     event: string,
     message: T,
   ) {
-    exclude.broadcast.to(`room_${room._id}`).emit(event, message);
+    return exclude.broadcast.to(`room_${room._id}`).emit(event, message);
   }
 
   async join(roomId: string, user: User) {

@@ -59,7 +59,7 @@ export class UserService {
     event: string,
     message: T,
   ) {
-    exclude.broadcast.to(`user_${user._id}`).emit(event, message);
+    return exclude.broadcast.to(`user_${user._id}`).emit(event, message);
   }
 
   async generateUsername(base: string) {

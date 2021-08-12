@@ -52,7 +52,7 @@ export class MessageGateway {
       body.message,
     );
 
-    this.userService.sendMessage(userTo, 'message:direct', message);
+    return this.userService.sendMessage(userTo, 'message:direct', message);
   }
 
   @SubscribeMessage('message:room')
@@ -72,6 +72,6 @@ export class MessageGateway {
       body.message,
     );
 
-    this.roomService.sendMessage(room, 'message:room', message);
+    return this.roomService.sendMessage(room, 'message:room', message);
   }
 }
