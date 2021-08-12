@@ -1,4 +1,5 @@
 import {
+  NotFoundException,
   UseFilters,
   UseGuards,
   UsePipes,
@@ -9,7 +10,6 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsException,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { ExceptionsFilter } from '../../../core/filter/exception.filter';
@@ -43,7 +43,7 @@ export class MessageGateway {
     const userTo = await this.userService.getUserById(body.to);
 
     if (!userTo) {
-      throw new WsException('User not found');
+      throw new NotFoundException('User not found');
     }
 
     const message = await this.messageService.createDirectMessage(
@@ -63,7 +63,7 @@ export class MessageGateway {
     const room = await this.roomService.getRoom(body.roomId);
 
     if (!room) {
-      throw new WsException('Room not found');
+      throw new NotFoundException('Room not found');
     }
 
     const message = await this.messageService.createRoomMessage(

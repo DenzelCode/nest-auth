@@ -6,12 +6,9 @@ import {
   Inject,
   forwardRef,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { GlobalConfig } from '../../../shared/types/global-config';
 import { Client, getClient } from '../../../shared/utils/get-client';
 import { UserService } from '../../user/service/user.service';
 import { AuthService } from '../service/auth.service';

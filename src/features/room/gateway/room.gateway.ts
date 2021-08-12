@@ -1,4 +1,9 @@
-import { forwardRef, Inject, UseGuards } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  NotFoundException,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -6,7 +11,6 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Client } from '../../../shared/utils/get-client';
@@ -40,7 +44,7 @@ export class RoomGateway implements OnGatewayDisconnect<Socket> {
     const room = await this.roomService.getRoom(roomId);
 
     if (!room) {
-      throw new WsException('Room not found');
+      throw new NotFoundException('Room not found');
     }
 
     return this.roomService.subscribeSocket(client, room);

@@ -6,7 +6,6 @@ import {
   ConnectedSocket,
   OnGatewayDisconnect,
   OnGatewayConnection,
-  WsException,
 } from '@nestjs/websockets';
 import { hostname } from 'os';
 import { Server, Socket } from 'socket.io';
