@@ -49,7 +49,7 @@ export class UserService {
     return socket.join(`user_${user._id}`);
   }
 
-  sendMessage<T>(user: User, event: string, message: T) {
+  sendMessage<T>(user: User, event: string, message?: T) {
     return this.userGateway.server.to(`user_${user._id}`).emit(event, message);
   }
 

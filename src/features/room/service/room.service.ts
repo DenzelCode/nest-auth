@@ -29,21 +29,17 @@ export class RoomService {
     return object.populate('owner', '-password -sessionToken').execPopulate();
   }
 
-  deleteUserRooms(user: User) {
-    return this.roomModel.deleteMany({ owner: user._id }).exec();
-  }
-
   async update(roomId: string, room: UpdateQuery<Room>, user: User) {
     await this.roomModel
       .updateOne({ _id: roomId, owner: user._id }, room)
       .exec();
 
-    this.handleUpdateRoom(user, room as Room);
+    this.handleUpdateRoom(room as Room);
 
     return room;
   }
 
-  handleUpdateRoom(user: User, room: Room) {
+  handleUpdateRoom(room: Room) {
     this.sendMessage(room, 'room:update', room);
   }
 
@@ -101,7 +97,7 @@ export class RoomService {
     return socket.join(`room_${room._id}`);
   }
 
-  sendMessage<T>(room: Room, event: string, message: T) {
+  sendMessage<T>(room: Room, event: string, message?: T) {
     return this.roomGateway.server.to(`room_${room._id}`).emit(event, message);
   }
 

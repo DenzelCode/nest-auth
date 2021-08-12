@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Room } from '../../room/schema/room.schema';
 import { RoomService } from '../../room/service/room.service';
 import { User } from '../../user/schema/user.schema';
+import { UserService } from '../../user/service/user.service';
 import { Message } from '../schema/message.schema';
 
 @Injectable()
@@ -11,6 +12,7 @@ export class MessageService {
   constructor(
     @InjectModel(Message.name) private messageModel: Model<Message>,
     @Inject(forwardRef(() => RoomService)) private roomService: RoomService,
+    private userService: UserService,
   ) {}
 
   getRoomMessages(room: Room) {
@@ -49,15 +51,13 @@ export class MessageService {
   }
 
   async deleteRoomMessages(room: Room) {
-    const output = await this.messageModel
+    this.roomService.sendMessage(room, 'room:delete_messages', room);
+
+    return this.messageModel
       .deleteMany({
         room: room._id,
       })
       .exec();
-
-    this.roomService.sendMessage(room, 'room:delete_messages', room);
-
-    return output;
   }
 
   async createDirectMessage(from: User, to: User, message: string) {
@@ -68,5 +68,42 @@ export class MessageService {
     }).save();
 
     return object.populate('from', '-password -sessionToken').execPopulate();
+  }
+
+  async deleteDirectMessage(from: User, to: User, messageId: string) {
+    this.userService.sendMessage(from, 'direct:delete_message', messageId);
+    this.userService.sendMessage(to, 'direct:delete_message', messageId);
+
+    return this.messageModel
+      .deleteOne({
+        _id: messageId,
+        from: from._id,
+        to: to._id,
+      })
+      .exec();
+  }
+
+  async deleteRoomMessage(owner: User, room: Room, messageId: string) {
+    this.roomService.sendMessage(room, 'room:delete_message', messageId);
+
+    return this.messageModel
+      .deleteOne({
+        _id: messageId,
+        room: room._id,
+        owner: owner._id,
+      })
+      .exec();
+  }
+
+  async deleteDirectMessages(from: User, to: User) {
+    this.userService.sendMessage(from, 'direct:delete_messages');
+    this.userService.sendMessage(to, 'direct:delete_messages');
+
+    return this.messageModel
+      .deleteMany({
+        from: from._id,
+        to: to._id,
+      })
+      .exec();
   }
 }

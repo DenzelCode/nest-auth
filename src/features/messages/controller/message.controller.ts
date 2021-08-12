@@ -1,8 +1,11 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
@@ -10,6 +13,8 @@ import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { RoomService } from '../../room/service/room.service';
 import { User } from '../../user/schema/user.schema';
 import { UserService } from '../../user/service/user.service';
+import { DeleteDirectMessageDto } from '../dto/delete-direct-message.dto';
+import { DeleteRoomMessageDto } from '../dto/delete-room-message.dto';
 import { MessageService } from '../service/message.service';
 
 @UseGuards(JwtAuthGuard)
@@ -44,5 +49,45 @@ export class MessageController {
     }
 
     return this.messageService.getDirectMessages(user, userTo);
+  }
+
+  @Delete('room')
+  async deleteRoomMessage(
+    @Body() body: DeleteRoomMessageDto,
+    @CurrentUser() user: User,
+  ) {
+    const room = await this.roomService.getRoom(body.roomId);
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    if (!body.messageId) {
+      if (user._id !== room.owner._id) {
+        throw new UnauthorizedException('You are not the room owner');
+      }
+
+      return this.messageService.deleteRoomMessages(room);
+    }
+
+    return this.messageService.deleteRoomMessage(user, room, body.messageId);
+  }
+
+  @Delete('direct')
+  async deleteDirectMessage(
+    @Body() body: DeleteDirectMessageDto,
+    @CurrentUser() from: User,
+  ) {
+    const to = await this.userService.getUserById(body.to);
+
+    if (!to) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!body.messageId) {
+      return this.messageService.deleteDirectMessages(from, to);
+    }
+
+    return this.messageService.deleteDirectMessage(from, to, body.messageId);
   }
 }
