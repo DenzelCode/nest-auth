@@ -9,6 +9,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
+import { WsException } from '@nestjs/websockets';
+import { Socket } from 'socket.io';
 import { GlobalConfig } from '../../../shared/types/global-config';
 import { Client, getClient } from '../../../shared/utils/get-client';
 import { UserService } from '../../user/service/user.service';
@@ -27,7 +29,6 @@ export class JwtAuthGuard implements CanActivate {
     private authService: AuthService,
     private jwtService: JwtService,
     @Inject(forwardRef(() => UserService)) private userService: UserService,
-    private configService: ConfigService<GlobalConfig>,
   ) {
     this.reflector = new Reflector();
   }
@@ -35,14 +36,10 @@ export class JwtAuthGuard implements CanActivate {
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const client = this.getRequest(ctx);
 
-    if (client.user && !this.configService.get('ACCESS_TOKEN_EXPIRATION')) {
-      return true;
-    }
-
     const allowAny = this.reflector.get<boolean>('allow-any', ctx.getHandler());
 
     try {
-      client.user = await this.handleRequest(client);
+      client.user = await this.handleRequest(ctx, client);
     } catch (e) {
       if (allowAny) {
         return true;
@@ -54,17 +51,29 @@ export class JwtAuthGuard implements CanActivate {
     return client.user != null;
   }
 
-  private async handleRequest(client: Client) {
-    const token = this.getToken(client);
+  getSocketUser(ctx: ExecutionContext, client: Client, decoded: Token) {
+    const user = client.user;
+
+    if (!user || ctx.getType() !== 'ws') {
+      return undefined;
+    }
+
+    return user;
+  }
+
+  private async handleRequest(ctx: ExecutionContext, client: Client) {
+    const token = this.getToken(ctx, client);
 
     const decoded = this.jwtService.decode(token) as Token;
 
     if (!decoded) {
-      throw new UnauthorizedException('Unable to decode token');
+      this.throwException(ctx, 'Unable to decode token');
     }
 
+    const socketUser = this.getSocketUser(ctx, client, decoded);
+
     try {
-      const user = await this.validate(decoded);
+      const user = socketUser || (await this.validate(decoded));
 
       await this.jwtService.verifyAsync<Token>(
         token,
@@ -73,7 +82,7 @@ export class JwtAuthGuard implements CanActivate {
 
       return user;
     } catch (e) {
-      throw new UnauthorizedException('Invalid token');
+      this.throwException(ctx, 'Invalid token');
     }
   }
 
@@ -81,22 +90,35 @@ export class JwtAuthGuard implements CanActivate {
     return this.userService.validateUser(sub);
   }
 
-  private getToken(client: Client): string {
+  private getToken(ctx: ExecutionContext, client: Client): string {
     const authorization = client.headers.authorization?.split(' ');
 
     if (!authorization) {
-      throw new UnauthorizedException('Token not found');
+      this.throwException(ctx, 'Token not found');
     }
 
     if (authorization[0].toLowerCase() !== 'bearer') {
-      throw new UnauthorizedException('Authorization type not valid');
+      this.throwException(ctx, 'Authorization type not valid');
     }
 
     if (!authorization[1]) {
-      throw new UnauthorizedException('Token not provided');
+      this.throwException(ctx, 'Token not provided');
     }
 
     return authorization[1];
+  }
+
+  throwException(ctx: ExecutionContext, message: string) {
+    if (ctx.getType() === 'ws') {
+      ctx
+        .switchToWs()
+        .getClient<Socket>()
+        .disconnect(true);
+
+      throw new WsException(message);
+    }
+
+    throw new UnauthorizedException(message);
   }
 
   private getRequest(ctx: ExecutionContext) {

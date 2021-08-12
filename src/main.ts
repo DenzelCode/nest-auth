@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { GlobalConfig } from './shared/types/global-config';
 import { RedisIoAdapter } from './core/adapter/redis-io.adapter';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { BaseWsExceptionFilter } from '@nestjs/websockets';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);

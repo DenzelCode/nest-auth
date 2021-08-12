@@ -6,6 +6,7 @@ import {
   ConnectedSocket,
   OnGatewayDisconnect,
   OnGatewayConnection,
+  WsException,
 } from '@nestjs/websockets';
 import { hostname } from 'os';
 import { Server, Socket } from 'socket.io';
@@ -48,7 +49,10 @@ export class UserGateway implements OnGatewayDisconnect, OnGatewayConnection {
   }
 
   @SubscribeMessage('user:subscribe')
-  subscribe(@ConnectedSocket() client: Socket, @CurrentUser() user: User) {
+  async subscribe(
+    @ConnectedSocket() client: Socket,
+    @CurrentUser() user: User,
+  ) {
     this.logger.log(
       `User ${user.username} joined the server ${hostname()}; ${this.online}`,
     );
