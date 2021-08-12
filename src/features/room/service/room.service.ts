@@ -29,17 +29,15 @@ export class RoomService {
     return object.populate('owner', '-password -sessionToken').execPopulate();
   }
 
-  async update(roomId: string, room: UpdateQuery<Room>, user: User) {
-    await this.roomModel
-      .updateOne({ _id: roomId, owner: user._id }, room)
+  async update(room: Room, body: UpdateQuery<Room>, user: User) {
+    this.handleUpdateRoom(room, body as Room);
+
+    return this.roomModel
+      .updateOne({ _id: room._id, owner: user._id }, body)
       .exec();
-
-    this.handleUpdateRoom(room as Room);
-
-    return room;
   }
 
-  handleUpdateRoom(room: Room) {
+  handleUpdateRoom(room: Room, body: Partial<Room>) {
     this.sendMessage(room, 'room:update', room);
   }
 

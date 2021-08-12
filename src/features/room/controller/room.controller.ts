@@ -64,7 +64,7 @@ export class RoomController {
       throw new NotFoundException('Room not found');
     }
 
-    return this.roomService.update(params.roomId, body, user);
+    return this.roomService.update(room, body, user);
   }
 
   @Post('join')
