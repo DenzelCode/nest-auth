@@ -114,8 +114,6 @@ export class JwtAuthGuard implements CanActivate {
         .switchToWs()
         .getClient<Socket>()
         .disconnect(true);
-
-      throw new WsException(message);
     }
 
     throw new UnauthorizedException(message);
