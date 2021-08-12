@@ -1,15 +1,17 @@
 import { RoomService } from './service/room.service';
 import { RoomController } from './controller/room.controller';
 
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Room, RoomSchema } from './schema/room.schema';
 import { AuthModule } from '../auth/auth.module';
 import { RoomGateway } from './gateway/room.gateway';
+import { MessagesModule } from '../messages/messages.module';
 
 @Module({
   imports: [
     AuthModule,
+    forwardRef(() => MessagesModule),
     MongooseModule.forFeature([
       {
         name: Room.name,

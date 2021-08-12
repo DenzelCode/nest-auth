@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, UpdateQuery } from 'mongoose';
 import { Socket } from 'socket.io';
 import { remove } from '../../../shared/utils/remove';
+import { MessageService } from '../../messages/service/message.service';
 import { User } from '../../user/schema/user.schema';
 import { UserService } from '../../user/service/user.service';
 import { RoomDto } from '../dto/room.dto';
@@ -15,6 +16,8 @@ export class RoomService {
     @InjectModel(Room.name) private roomModel: Model<Room>,
     private roomGateway: RoomGateway,
     private userService: UserService,
+    @Inject(forwardRef(() => MessageService))
+    private messageService: MessageService,
   ) {}
 
   async create(room: RoomDto, user: User) {
@@ -44,10 +47,21 @@ export class RoomService {
     this.sendMessage(room, 'room:update', room);
   }
 
-  delete(roomId: string, user: User) {
-    this.roomGateway.server.in(roomId).emit('');
+  delete(room: Room, user: User) {
+    this.sendMessage(room, 'room:delete', room);
 
-    return this.roomModel.deleteOne({ _id: roomId, owner: user._id }).exec();
+    return Promise.all([
+      this.roomModel.deleteOne({ _id: room._id, owner: user._id }).exec(),
+      this.messageService.deleteRoomMessages(room),
+    ]);
+  }
+
+  getRoomWithOwner(roomId: string, owner: User) {
+    return this.roomModel
+      .findOne({ _id: roomId, owner: owner._id })
+      .populate('members', '-password -sessionToken')
+      .populate('owner', '-password -sessionToken')
+      .exec();
   }
 
   getRoom(roomId: string) {

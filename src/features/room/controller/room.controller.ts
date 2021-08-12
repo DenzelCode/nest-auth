@@ -37,8 +37,14 @@ export class RoomController {
   }
 
   @Delete(':id')
-  delete(@Param('id') roomId: string, @CurrentUser() user: User) {
-    return this.roomService.delete(roomId, user);
+  async delete(@Param('id') roomId: string, @CurrentUser() user: User) {
+    const room = await this.roomService.getRoomWithOwner(roomId, user);
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    return this.roomService.delete(room, user);
   }
 
   @Post()
@@ -49,10 +55,16 @@ export class RoomController {
   @Put(':roomId')
   async update(
     @Param() params: RoomIdDto,
-    @Body() room: RoomDto,
+    @Body() body: RoomDto,
     @CurrentUser() user: User,
   ) {
-    return this.roomService.update(params.roomId, room, user);
+    const room = await this.roomService.getRoomWithOwner(params.roomId, user);
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    return this.roomService.update(params.roomId, body, user);
   }
 
   @Post('join')
