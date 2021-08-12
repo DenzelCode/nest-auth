@@ -38,7 +38,7 @@ export class RoomService {
   }
 
   handleUpdateRoom(room: Room, body: Partial<Room>) {
-    this.sendMessage(room, 'room:update', { ...room, ...body });
+    this.sendMessage(room, 'room:update', Object.assign(room, body));
   }
 
   delete(room: Room, user: User) {
