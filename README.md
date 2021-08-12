@@ -6,6 +6,12 @@ You can also use this API using Postman or any other request framework.
 
 Try it out now! [Demo](https://nest-auth.ubbly.club/)
 
-It also contains a websocket implementation of the authentication too :D
-
-![image](https://user-images.githubusercontent.com/27902328/118452301-047bce80-b6c4-11eb-86c8-5eb2f7352585.png)
+# Features
+- Login
+- Register
+- Google Login
+- Facebook Login
+- Apple Login
+- WebSockets authentication
+- Http authentication
+- Websockets real-time chat.
