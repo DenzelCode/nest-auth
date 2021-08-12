@@ -12,7 +12,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { ExceptionsFilter } from '../../../core/filter/exception.filter';
+import { ExceptionsFilter } from '../../../core/filter/exceptions.filter';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { RoomService } from '../../room/service/room.service';

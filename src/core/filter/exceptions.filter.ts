@@ -48,6 +48,12 @@ export class ExceptionsFilter implements ExceptionFilter {
         break;
 
       case 'ws':
+        const callback = host.getArgByIndex(2);
+
+        if (typeof callback === 'function') {
+          callback(response);
+        }
+
         request.emit('exception', response);
         break;
 

@@ -7,7 +7,7 @@ import { AppController } from './app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GlobalConfig } from './shared/types/global-config';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
-import { ExceptionsFilter } from './core/filter/exception.filter';
+import { ExceptionsFilter } from './core/filter/exceptions.filter';
 
 @Module({
   imports: [
