@@ -22,12 +22,14 @@ export class Message extends Document {
   to?: User;
 
   @Prop({
-    default: () => new Date(),
+    type: Date,
+    default: Date.now,
   })
   createdAt: Date;
 
   @Prop({
-    default: () => new Date(),
+    type: Date,
+    default: Date.now,
   })
   updatedAt: Date;
 }
