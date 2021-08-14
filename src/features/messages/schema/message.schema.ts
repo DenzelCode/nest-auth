@@ -21,10 +21,14 @@ export class Message extends Document {
   @Prop({ type: ObjectId, ref: User.name })
   to?: User;
 
-  @Prop()
+  @Prop({
+    default: () => new Date(),
+  })
   createdAt: Date;
 
-  @Prop()
+  @Prop({
+    default: () => new Date(),
+  })
   updatedAt: Date;
 }
 
