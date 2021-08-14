@@ -63,7 +63,7 @@ export class MessageController {
     }
 
     if (!body.messageId) {
-      if (user._id !== room.owner._id) {
+      if (user.id !== room.owner.id) {
         throw new UnauthorizedException('You are not the room owner');
       }
 
@@ -75,8 +75,7 @@ export class MessageController {
     if (!message) {
       throw new NotFoundException('Message not found');
     }
-
-    if (room.owner._id !== user._id && message.from._id !== user._id) {
+    if (room.owner.id !== user.id && message.from.id !== user.id) {
       throw new UnauthorizedException('You are not the message owner');
     }
 
