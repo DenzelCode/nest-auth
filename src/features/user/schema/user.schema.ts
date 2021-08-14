@@ -31,10 +31,6 @@ export class User extends Document {
   @Prop()
   sessionToken: string;
 
-  generateSessionToken() {
-    this.sessionToken = randomString(60);
-  }
-
   @Prop()
   password?: string;
 
@@ -46,6 +42,13 @@ export class User extends Document {
 
   @Prop()
   appleId?: string;
+
+  @Prop([String])
+  sockets: string[];
+
+  generateSessionToken() {
+    this.sessionToken = randomString(60);
+  }
 
   validatePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password || '');

@@ -48,16 +48,6 @@ export class JwtAuthGuard implements CanActivate {
     return client.user != null;
   }
 
-  getSocketUser(ctx: ExecutionContext, client: Client, decoded: Token) {
-    const user = client.user;
-
-    if (!user || ctx.getType() !== 'ws') {
-      return undefined;
-    }
-
-    return user;
-  }
-
   private async handleRequest(ctx: ExecutionContext, client: Client) {
     const token = this.getToken(ctx, client);
 
@@ -67,10 +57,8 @@ export class JwtAuthGuard implements CanActivate {
       this.throwException(ctx, 'Unable to decode token');
     }
 
-    const socketUser = this.getSocketUser(ctx, client, decoded);
-
     try {
-      const user = socketUser || (await this.validate(decoded));
+      const user = await this.validate(decoded);
 
       await this.jwtService.verifyAsync<Token>(
         token,

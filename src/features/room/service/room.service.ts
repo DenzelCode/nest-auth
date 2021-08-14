@@ -2,6 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, UpdateQuery } from 'mongoose';
 import { Socket } from 'socket.io';
+import { getSocketUser } from '../../../shared/utils/get-socket-user';
 import { remove } from '../../../shared/utils/remove';
 import { MessageService } from '../../messages/service/message.service';
 import { User } from '../../user/schema/user.schema';
@@ -91,8 +92,28 @@ export class RoomService {
     return this.roomModel.find({ owner: user._id }).exec();
   }
 
+  getSockets(room: Room) {
+    return this.roomGateway.server.in(`room_${room._id}`).allSockets();
+  }
+
+  async hasUserSockets(room: Room, user: User) {
+    const clients = await this.getSockets(room);
+
+    return user.sockets.some(socket => clients.has(socket));
+  }
+
+  async hasSocket(room: Room, socket: Socket) {
+    const clients = await this.getSockets(room);
+
+    return clients.has(socket.id);
+  }
+
   subscribeSocket(socket: Socket, room: Room) {
     return socket.join(`room_${room._id}`);
+  }
+
+  unsubscribeSocket(socket: Socket, room: Room) {
+    return socket.leave(`room_${room._id}`);
   }
 
   sendMessage<T>(room: Room, event: string, message?: T) {
@@ -130,16 +151,40 @@ export class RoomService {
     this.sendMessage(room, 'room:join', this.userService.filterUser(user));
   }
 
-  async leave(user: User) {
-    const rooms = await this.getUserCurrentRooms(user);
+  async leave(socket: Socket, room: Room) {
+    const user = getSocketUser(socket);
 
-    for (const room of rooms) {
+    if (!user) {
+      return;
+    }
+
+    await this.unsubscribeSocket(socket, room);
+
+    if (!(await this.hasUserSockets(room, user))) {
       remove(room.members, member => member === user._id);
 
       this.handleLeaveRoom(user, room);
 
       room.save();
     }
+  }
+
+  async getSocketRooms(socket: Socket) {
+    const user = getSocketUser(socket);
+
+    if (!user) {
+      return undefined;
+    }
+
+    const rooms = await this.getUserCurrentRooms(user);
+
+    return rooms.filter(room => this.hasSocket(room, socket));
+  }
+
+  async leaveAllSocketRooms(socket: Socket) {
+    const rooms = await this.getSocketRooms(socket);
+
+    rooms.forEach(room => this.leave(socket, room));
   }
 
   handleLeaveRoom(user: User, room: Room) {

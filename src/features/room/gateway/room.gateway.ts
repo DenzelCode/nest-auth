@@ -26,14 +26,8 @@ export class RoomGateway implements OnGatewayDisconnect<Socket> {
     @Inject(forwardRef(() => RoomService)) private roomService: RoomService,
   ) {}
 
-  handleDisconnect(client: Socket) {
-    const user = ((client.handshake as unknown) as Client).user;
-
-    if (!user) {
-      return;
-    }
-
-    this.roomService.leave(user);
+  handleDisconnect(socket: Socket) {
+    this.roomService.leaveAllSocketRooms(socket);
   }
 
   @SubscribeMessage('room:subscribe')

@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, UpdateQuery } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { User } from '../schema/user.schema';
 import { randomString } from '../../../shared/utils/random-string';
@@ -45,8 +45,40 @@ export class UserService {
     return this.userModel.findById(id).exec();
   }
 
-  subscribeSocket(socket: Socket, user: User) {
+  async subscribeSocket(socket: Socket, user: User) {
+    await this.addUserSocket(user, socket);
+
     return socket.join(`user_${user._id}`);
+  }
+
+  private async addUserSocket(user: User, socket: Socket) {
+    const update = await this.updateUser(user, {
+      $push: {
+        sockets: socket.id,
+      },
+    });
+
+    await this.updateUserObject(user);
+
+    return update;
+  }
+
+  async unsubscribeSocket(socket: Socket, user: User) {
+    await this.removeUserSocket(user, socket);
+
+    return socket.leave(`user_${user._id}`);
+  }
+
+  private async removeUserSocket(user: User, socket: Socket) {
+    const update = this.updateUser(user, {
+      $pull: {
+        sockets: socket.id,
+      },
+    });
+
+    await this.updateUserObject(user);
+
+    return update;
   }
 
   sendMessage<T>(user: User, event: string, message?: T) {
@@ -104,7 +136,7 @@ export class UserService {
     return this.filterUser(user);
   }
 
-  updateUser(user: User, data: Partial<User>) {
+  updateUser(user: User, data: UpdateQuery<User>) {
     return this.userModel.updateOne({ _id: user._id }, data).exec();
   }
 
@@ -116,6 +148,12 @@ export class UserService {
     }
 
     return userObject;
+  }
+
+  async updateUserObject(user: User) {
+    const newInput = await this.getUserById(user._id);
+
+    return Object.assign(user, newInput);
   }
 
   create(body: Partial<User>) {

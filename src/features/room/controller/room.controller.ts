@@ -77,9 +77,4 @@ export class RoomController {
 
     return room.populate('members', '-password -sessionToken').execPopulate();
   }
-
-  @Delete()
-  async leave(@CurrentUser() user: User) {
-    return this.roomService.leave(user);
-  }
 }

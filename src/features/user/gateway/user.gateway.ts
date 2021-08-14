@@ -10,6 +10,7 @@ import {
 import { hostname } from 'os';
 import { Server, Socket } from 'socket.io';
 import { Client } from '../../../shared/utils/get-client';
+import { getSocketUser } from '../../../shared/utils/get-socket-user';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { User } from '../schema/user.schema';
@@ -36,7 +37,7 @@ export class UserGateway implements OnGatewayDisconnect, OnGatewayConnection {
   handleDisconnect(socket: Socket) {
     this.online--;
 
-    const user = ((socket.handshake as unknown) as Client).user;
+    const user = getSocketUser(socket);
 
     if (!user) {
       return;
@@ -45,6 +46,8 @@ export class UserGateway implements OnGatewayDisconnect, OnGatewayConnection {
     this.logger.log(
       `User ${user.username} left the server ${hostname()}; ${this.online}`,
     );
+
+    return this.userService.unsubscribeSocket(socket, user);
   }
 
   @SubscribeMessage('user:subscribe')
