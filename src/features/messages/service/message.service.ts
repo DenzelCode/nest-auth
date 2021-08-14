@@ -15,6 +15,13 @@ export class MessageService {
     private userService: UserService,
   ) {}
 
+  getMessage(id: string) {
+    return this.messageModel
+      .findById(id)
+      .populate('from', '-password -sessionToken')
+      .exec();
+  }
+
   getRoomMessages(room: Room) {
     return this.messageModel
       .find({ room: room._id })
@@ -77,20 +84,18 @@ export class MessageService {
     return this.messageModel
       .deleteOne({
         _id: messageId,
-        from: from._id,
         to: to._id,
       })
       .exec();
   }
 
-  async deleteRoomMessage(from: User, room: Room, messageId: string) {
+  async deleteRoomMessage(room: Room, messageId: string) {
     this.roomService.sendMessage(room, 'room:delete_message', messageId);
 
     return this.messageModel
       .deleteOne({
         _id: messageId,
         room: room._id,
-        from: from._id,
       })
       .exec();
   }

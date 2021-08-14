@@ -70,7 +70,17 @@ export class MessageController {
       return this.messageService.deleteRoomMessages(room);
     }
 
-    return this.messageService.deleteRoomMessage(user, room, body.messageId);
+    const message = await this.messageService.getMessage(body.messageId);
+
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+
+    if (room.owner._id !== user._id && message.from._id !== user._id) {
+      throw new UnauthorizedException('You are not the message owner');
+    }
+
+    return this.messageService.deleteRoomMessage(room, body.messageId);
   }
 
   @Delete('direct')
