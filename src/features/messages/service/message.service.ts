@@ -83,14 +83,14 @@ export class MessageService {
       .exec();
   }
 
-  async deleteRoomMessage(owner: User, room: Room, messageId: string) {
+  async deleteRoomMessage(from: User, room: Room, messageId: string) {
     this.roomService.sendMessage(room, 'room:delete_message', messageId);
 
     return this.messageModel
       .deleteOne({
         _id: messageId,
         room: room._id,
-        owner: owner._id,
+        from: from._id,
       })
       .exec();
   }
