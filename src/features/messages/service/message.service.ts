@@ -101,8 +101,8 @@ export class MessageService {
   }
 
   async deleteDirectMessages(from: User, to: User) {
-    this.userService.sendMessage(from, 'direct:delete_messages');
-    this.userService.sendMessage(to, 'direct:delete_messages');
+    this.userService.sendMessage(from, 'direct:delete_messages', to);
+    this.userService.sendMessage(to, 'direct:delete_messages', from);
 
     return this.messageModel
       .deleteMany({
