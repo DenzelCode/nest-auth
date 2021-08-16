@@ -62,24 +62,35 @@ export class MessageController {
       throw new NotFoundException('Room not found');
     }
 
-    if (!body.messageId) {
-      if (user.id !== room.owner.id) {
-        throw new UnauthorizedException('You are not the room owner');
-      }
-
-      return this.messageService.deleteRoomMessages(room);
-    }
-
     const message = await this.messageService.getMessage(body.messageId);
 
     if (!message) {
       throw new NotFoundException('Message not found');
     }
+
     if (room.owner.id !== user.id && message.from.id !== user.id) {
       throw new UnauthorizedException('You are not the message owner');
     }
 
     return this.messageService.deleteRoomMessage(room, body.messageId);
+  }
+
+  @Delete('room/all')
+  async deleteRoomMessages(
+    @Body() body: DeleteRoomMessageDto,
+    @CurrentUser() user: User,
+  ) {
+    const room = await this.roomService.getRoom(body.roomId);
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    if (user.id !== room.owner.id) {
+      throw new UnauthorizedException('You are not the room owner');
+    }
+
+    return this.messageService.deleteRoomMessages(room);
   }
 
   @Delete('direct')
@@ -93,10 +104,20 @@ export class MessageController {
       throw new NotFoundException('User not found');
     }
 
-    if (!body.messageId) {
-      return this.messageService.deleteDirectMessages(from, to);
+    return this.messageService.deleteDirectMessage(from, to, body.messageId);
+  }
+
+  @Delete('direct/all')
+  async deleteDirectMessages(
+    @Body() body: DeleteDirectMessageDto,
+    @CurrentUser() from: User,
+  ) {
+    const to = await this.userService.getUserById(body.to);
+
+    if (!to) {
+      throw new NotFoundException('User not found');
     }
 
-    return this.messageService.deleteDirectMessage(from, to, body.messageId);
+    return this.messageService.deleteDirectMessages(from, to);
   }
 }
