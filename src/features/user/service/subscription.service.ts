@@ -54,6 +54,14 @@ export class SubscriptionService {
       .exec();
   }
 
+  deleteAll(user: User) {
+    return this.subscriptionModel
+      .deleteMany({
+        user: user._id,
+      })
+      .exec();
+  }
+
   async sendNotification(user: User, payload: Partial<NotificationPayload>) {
     const subscriptions = await this.getAll(user);
 

@@ -23,6 +23,7 @@ import { Dictionary } from 'code-config';
 import { Response } from 'express';
 import { authConfig } from '../config/auth.config';
 import { stringify } from 'qs';
+import { SubscriptionService } from '../../user/service/subscription.service';
 
 @Controller('auth')
 export class AuthController {
@@ -32,6 +33,7 @@ export class AuthController {
     private facebookService: FacebookAuthService,
     private googleService: GoogleAuthService,
     private appleService: AppleAuthService,
+    private subscriptionService: SubscriptionService,
   ) {}
 
   @Post('login')
@@ -104,6 +106,8 @@ export class AuthController {
     user.generateSessionToken();
 
     await user.save();
+
+    await this.subscriptionService.deleteAll(user);
 
     return this.authService.login(user);
   }
