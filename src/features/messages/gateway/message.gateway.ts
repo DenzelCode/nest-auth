@@ -62,11 +62,17 @@ export class MessageGateway {
 
     const url = this.configService.get('FRONTEND_URL');
 
+    // https://angular.io/guide/service-worker-notifications
     this.subscriptionService.sendNotification(userTo, {
       title: user.username,
       body: message.message,
       data: {
-        url: `${url}/direct-message/${user.username}`,
+        onActionClick: {
+          default: {
+            operation: 'navigateLastFocusedOrOpen',
+            url: `${url}/direct-message/${user.username}`,
+          },
+        },
       },
     });
 
