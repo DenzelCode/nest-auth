@@ -15,14 +15,14 @@ services:
     depends_on:
       - mongo
       - redis
-    volumes:
-      - type: bind
-        source: ./config/notification.config.json
-        target: /app/config/notification.config.json
-    # environment:
-    #   VAPID_SUBJECT: 'mailto:denzelcodedev@gmail.com'
-    #   VAPID_PRIVATE_KEY: ''
-    #   VAPID_PUBLIC_KEY: ''
+    # volumes:
+    #   - type: bind
+    #     source: ./config/notification.config.json
+    #     target: /app/config/notification.config.json
+    environment:
+      VAPID_SUBJECT: 'mailto:denzelcodedev@gmail.com'
+      VAPID_PRIVATE_KEY: ''
+      VAPID_PUBLIC_KEY: ''
   nginx:
     image: nginx
     ports:
