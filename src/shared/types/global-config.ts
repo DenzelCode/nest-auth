@@ -11,4 +11,7 @@ export interface GlobalConfig {
   REDIS_ENABLED: 'true' | 'false';
   REDIS_HOST: string;
   REDIS_PORT: number;
+  VAPID_PUBLIC_KEY?: string;
+  VAPID_PRIVATE_KEY?: string;
+  VAPID_SUBJECT?: string;
 }
