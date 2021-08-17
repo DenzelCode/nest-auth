@@ -1,19 +1,16 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { forwardRef, Module, OnModuleInit } from '@nestjs/common';
 import { NotificationController } from './controller/notification.controller';
 import { MobileNotificationService } from './service/mobile-notification.service';
 import { WebNotificationService } from './service/web-notification.service';
 import { generateVAPIDKeys, setVapidDetails } from 'web-push';
 import { notificationConfig } from './config/notification.config';
-import { UserNotificationService } from './service/user-notification.service';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [],
+  imports: [forwardRef(() => AuthModule)],
   controllers: [NotificationController],
-  providers: [
-    MobileNotificationService,
-    WebNotificationService,
-    UserNotificationService,
-  ],
+  providers: [MobileNotificationService, WebNotificationService],
+  exports: [MobileNotificationService, WebNotificationService],
 })
 export class NotificationModule implements OnModuleInit {
   onModuleInit() {

@@ -8,10 +8,6 @@ import { FacebookAuthModule } from 'facebook-auth-nestjs';
 import { authConfig } from './config/auth.config';
 import { GoogleAuthService } from './service/google-auth.service';
 import { AppleAuthService } from './service/apple-auth.service';
-import { UserService } from '../user/service/user.service';
-import { User, UserSchema } from '../user/schema/user.schema';
-import { MongooseModule } from '@nestjs/mongoose';
-import { UserGateway } from '../user/gateway/user.gateway';
 import { UserModule } from '../user/user.module';
 
 const facebook = authConfig.facebook;

@@ -1,19 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { notificationConfig } from '../config/notification.config';
-import { MobileNotificationService } from '../service/mobile-notification.service';
-import { WebNotificationService } from '../service/web-notification.service';
+import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('notification')
 export class NotificationController {
-  constructor(
-    private webNotificationService: WebNotificationService,
-    private mobileNotificationService: MobileNotificationService,
-  ) {}
-
   @Get('config')
-  getWebConfig() {
-    return {
-      publicKey: notificationConfig.vapid.publicKey,
-    };
+  getConfig() {
+    return { webPublicKey: notificationConfig.vapid.publicKey };
   }
 }
