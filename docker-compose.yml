@@ -16,7 +16,9 @@ services:
       - mongo
       - redis
     volumes:
-      - ./config/notification.config.json:/app/config/notification.config.json
+      - type: bind
+        source: ./config/notification.config.json
+        target: /app/config/notification.config.json
     # environment:
     #   VAPID_SUBJECT: 'mailto:denzelcodedev@gmail.com'
     #   VAPID_PRIVATE_KEY: ''
