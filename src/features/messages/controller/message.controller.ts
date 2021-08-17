@@ -108,6 +108,10 @@ export class MessageController {
       body.messageId,
     );
 
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+
     if (message.from.id !== from.id && message.to.id !== from.id) {
       throw new UnauthorizedException('You do not have access to this chat');
     }
