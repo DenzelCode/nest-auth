@@ -51,6 +51,16 @@ export class SubscriptionService {
     }).save();
   }
 
+  delete(user: User, type: SubscriptionType, subscription: string) {
+    return this.userNotificationModel
+      .deleteOne({
+        user: user._id,
+        type,
+        subscription,
+      })
+      .exec();
+  }
+
   async sendNotification(user: User, payload: Partial<NotificationPayload>) {
     const subscriptions = await this.getAll(user);
 

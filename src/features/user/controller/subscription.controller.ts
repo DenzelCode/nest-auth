@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Post,
   UseGuards,
@@ -16,6 +17,14 @@ import { SubscriptionService } from '../service/subscription.service';
 @Controller('subscription')
 export class SubscriptionController {
   constructor(private userNotificationService: SubscriptionService) {}
+
+  @Get()
+  sendTestingNotification(@CurrentUser() user: User) {
+    return this.userNotificationService.sendNotification(user, {
+      title: 'Testing',
+      body: 'Testing notification',
+    });
+  }
 
   @Post('web')
   createWebSubscription(
@@ -57,11 +66,35 @@ export class SubscriptionController {
     );
   }
 
-  @Get()
-  sendTestingNotification(@CurrentUser() user: User) {
-    return this.userNotificationService.sendNotification(user, {
-      title: 'Testing',
-      body: 'Testing notification',
-    });
+  @Delete('web')
+  deleteWebSubscription(
+    @Body('subscription') body: PushSubscriptionJSON,
+    @CurrentUser() user: User,
+  ) {
+    return this.deleteSubscription(
+      user,
+      SubscriptionType.Web,
+      JSON.stringify(body),
+    );
+  }
+
+  @Delete('mobile')
+  deleteMobileSubscription(
+    @Body('subscription') body: string,
+    @CurrentUser() user: User,
+  ) {
+    return this.deleteSubscription(user, SubscriptionType.Mobile, body);
+  }
+
+  private async deleteSubscription(
+    user: User,
+    type: SubscriptionType,
+    body: string,
+  ) {
+    if (!body) {
+      throw new BadRequestException('Subscription body empty');
+    }
+
+    return this.userNotificationService.delete(user, type, body);
   }
 }
