@@ -5,24 +5,17 @@ import { User } from '../schema/user.schema';
 import { SubscriptionType, Subscription } from '../schema/subscription.schema';
 import { MobileNotificationService } from '../../notification/service/mobile-notification.service';
 import { WebNotificationService } from '../../notification/service/web-notification.service';
+import { messaging } from 'firebase-admin';
 
-interface NotificationPayload {
-  actions: NotificationAction[];
-  badge: string;
-  body: string;
-  data: any;
-  dir: 'auto' | 'ltr' | 'rtl';
-  icon: string;
-  image: string;
-  lang: string;
-  renotify: boolean;
-  requireInteraction: boolean;
-  silent: boolean;
-  tag: string;
-  timestamp: DOMTimeStamp;
-  title: string;
-  vibrate: number[];
+interface CustomNotification {
+  data: {
+    url: string;
+  };
 }
+
+export type NotificationPayload = messaging.NotificationMessagePayload &
+  messaging.WebpushNotification &
+  CustomNotification;
 
 @Injectable()
 export class SubscriptionService {
@@ -30,21 +23,21 @@ export class SubscriptionService {
     private webNotificationService: WebNotificationService,
     private mobileNotificationService: MobileNotificationService,
     @InjectModel(Subscription.name)
-    private userNotificationModel: Model<Subscription>,
+    private subscriptionModel: Model<Subscription>,
   ) {}
 
   getAll(user: User) {
-    return this.userNotificationModel.find({ user: user._id }).exec();
+    return this.subscriptionModel.find({ user: user._id }).exec();
   }
 
   get(user: User, type: SubscriptionType, subscription: string) {
-    return this.userNotificationModel
+    return this.subscriptionModel
       .findOne({ user: user._id, type, subscription })
       .exec();
   }
 
   create(user: User, type: SubscriptionType, subscription: string) {
-    return new this.userNotificationModel({
+    return new this.subscriptionModel({
       user: user._id,
       type,
       subscription,
@@ -52,7 +45,7 @@ export class SubscriptionService {
   }
 
   delete(user: User, type: SubscriptionType, subscription: string) {
-    return this.userNotificationModel
+    return this.subscriptionModel
       .deleteOne({
         user: user._id,
         type,

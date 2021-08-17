@@ -5,6 +5,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import {
   MessageBody,
   SubscribeMessage,
@@ -13,10 +14,12 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { ExceptionsFilter } from '../../../core/filter/exceptions.filter';
+import { GlobalConfig } from '../../../shared/types/global-config';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { RoomService } from '../../room/service/room.service';
 import { User } from '../../user/schema/user.schema';
+import { SubscriptionService } from '../../user/service/subscription.service';
 import { UserService } from '../../user/service/user.service';
 import { DirectMessageDto } from '../dto/direct-message.dto';
 import { RoomMessageDto } from '../dto/room-message.dto';
@@ -33,6 +36,8 @@ export class MessageGateway {
     private userService: UserService,
     private roomService: RoomService,
     private messageService: MessageService,
+    private subscriptionService: SubscriptionService,
+    private configService: ConfigService<GlobalConfig>,
   ) {}
 
   @SubscribeMessage('message:direct')
@@ -54,6 +59,16 @@ export class MessageGateway {
 
     this.userService.sendMessage(user, 'message:direct', message);
     this.userService.sendMessage(userTo, 'message:direct', message);
+
+    const url = this.configService.get('FRONTEND_URL');
+
+    this.subscriptionService.sendNotification(userTo, {
+      title: user.username,
+      body: message.message,
+      data: {
+        url: `${url}/direct-message/${user.username}`,
+      },
+    });
 
     return true;
   }

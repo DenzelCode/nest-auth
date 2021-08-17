@@ -5,6 +5,7 @@ import { WebNotificationService } from './service/web-notification.service';
 import { generateVAPIDKeys, setVapidDetails } from 'web-push';
 import { notificationConfig } from './config/notification.config';
 import { AuthModule } from '../auth/auth.module';
+import { initializeApp } from 'firebase-admin';
 
 @Module({
   imports: [forwardRef(() => AuthModule)],

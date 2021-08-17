@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { Dictionary } from 'code-config/dist';
+import { messaging } from 'firebase-admin';
+import { fcm } from '../api/firebase';
 
 @Injectable()
 export class MobileNotificationService {
-  async sendNotification(subscription: string, payload: Dictionary) {}
+  async sendNotification(
+    token: string | string[],
+    payload: messaging.MessagingPayload,
+  ) {
+    return fcm.sendToDevice(token, payload);
+  }
 }

@@ -16,11 +16,11 @@ import { SubscriptionService } from '../service/subscription.service';
 @UseGuards(JwtAuthGuard)
 @Controller('subscription')
 export class SubscriptionController {
-  constructor(private userNotificationService: SubscriptionService) {}
+  constructor(private SubscriptionService: SubscriptionService) {}
 
   @Get()
   sendTestingNotification(@CurrentUser() user: User) {
-    return this.userNotificationService.sendNotification(user, {
+    return this.SubscriptionService.sendNotification(user, {
       title: 'Testing',
       body: 'Testing notification',
     });
@@ -55,14 +55,14 @@ export class SubscriptionController {
       throw new BadRequestException('Subscription body empty');
     }
 
-    const subscription = await this.userNotificationService.get(
+    const subscription = await this.SubscriptionService.get(
       user,
       type,
       body,
     );
 
     return (
-      subscription || this.userNotificationService.create(user, type, body)
+      subscription || this.SubscriptionService.create(user, type, body)
     );
   }
 
@@ -95,6 +95,6 @@ export class SubscriptionController {
       throw new BadRequestException('Subscription body empty');
     }
 
-    return this.userNotificationService.delete(user, type, body);
+    return this.SubscriptionService.delete(user, type, body);
   }
 }
