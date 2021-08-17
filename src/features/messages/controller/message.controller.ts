@@ -104,7 +104,15 @@ export class MessageController {
       throw new NotFoundException('User not found');
     }
 
-    return this.messageService.deleteDirectMessage(from, to, body.messageId);
+    const message = await this.messageService.getPopulatedMessage(
+      body.messageId,
+    );
+
+    if (message.from.id !== from.id && message.to.id !== from.id) {
+      throw new UnauthorizedException('You do not have access to this chat');
+    }
+
+    return this.messageService.deleteDirectMessage(message);
   }
 
   @Delete('direct/all')

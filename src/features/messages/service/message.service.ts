@@ -22,6 +22,15 @@ export class MessageService {
       .exec();
   }
 
+  getPopulatedMessage(id: string) {
+    return this.messageModel
+      .findById(id)
+      .populate('from', '-password -sessionToken')
+      .populate('to', '-password -sessionToken')
+      .populate('room')
+      .exec();
+  }
+
   getRoomMessages(room: Room) {
     return this.messageModel
       .find({ room: room._id })
@@ -77,14 +86,23 @@ export class MessageService {
     return object.populate('from', '-password -sessionToken').execPopulate();
   }
 
-  async deleteDirectMessage(from: User, to: User, messageId: string) {
-    this.userService.sendMessage(from, 'direct:delete_message', messageId);
-    this.userService.sendMessage(to, 'direct:delete_message', messageId);
+  async deleteDirectMessage(message: Message) {
+    this.userService.sendMessage(
+      message.from,
+      'direct:delete_message',
+      message._id,
+    );
+
+    this.userService.sendMessage(
+      message.to,
+      'direct:delete_message',
+      message._id,
+    );
 
     return this.messageModel
       .deleteOne({
-        _id: messageId,
-        to: to._id,
+        _id: message._id,
+        to: message.to._id,
       })
       .exec();
   }
