@@ -2,7 +2,7 @@ import { Prop, Schema } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { createSchemaForClassWithMethods } from '../../../shared/mongoose/create-schema';
 import { ObjectId } from '../../../shared/types/object-id';
-import { User } from '../../user/schema/user.schema';
+import { User } from './user.schema';
 
 @Schema()
 export class Recover extends Document {

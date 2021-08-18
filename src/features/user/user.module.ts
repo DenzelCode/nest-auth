@@ -15,6 +15,9 @@ import {
   SocketConnectionSchema,
 } from './schema/socket-connection.schema';
 import { SocketConnectionService } from './service/socket-connection.service';
+import { Recover, RecoverSchema } from './schema/recover.schema';
+import { RecoverController } from './controller/recover.controller';
+import { RecoverService } from './service/recover.service';
 
 @Module({
   imports: [
@@ -22,6 +25,10 @@ import { SocketConnectionService } from './service/socket-connection.service';
       {
         name: User.name,
         schema: UserSchema,
+      },
+      {
+        name: Recover.name,
+        schema: RecoverSchema,
       },
       {
         name: Subscription.name,
@@ -35,12 +42,18 @@ import { SocketConnectionService } from './service/socket-connection.service';
     forwardRef(() => AuthModule),
     forwardRef(() => NotificationModule),
   ],
-  controllers: [UserController, SettingsController, SubscriptionController],
+  controllers: [
+    UserController,
+    SettingsController,
+    SubscriptionController,
+    RecoverController,
+  ],
   providers: [
     UserService,
     UserGateway,
     SubscriptionService,
     SocketConnectionService,
+    RecoverService,
   ],
   exports: [
     UserService,

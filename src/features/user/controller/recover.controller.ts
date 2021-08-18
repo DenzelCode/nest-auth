@@ -11,11 +11,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GlobalConfig } from '../../../shared/types/global-config';
-import { UserService } from '../../user/service/user.service';
+import { UserService } from '../service/user.service';
 import { ChangePasswordDto } from '../dto/change-password.dto';
-import { RecoverPasswordDto } from '../dto/recover-password.dto';
 import { Recover } from '../schema/recover.schema';
 import { RecoverService } from '../service/recover.service';
+import { RecoverPasswordDto } from '../dto/recover-password.dto';
 
 @Controller('recover')
 export class RecoverController {
