@@ -31,7 +31,7 @@ export class MessageController {
     const room = await this.roomService.getRoom(roomId);
 
     if (!room) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Room not found');
     }
 
     return this.messageService.getRoomMessages(room);
