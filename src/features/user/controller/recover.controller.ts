@@ -12,10 +12,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { GlobalConfig } from '../../../shared/types/global-config';
 import { UserService } from '../service/user.service';
-import { ChangePasswordDto } from '../dto/change-password.dto';
 import { Recover } from '../schema/recover.schema';
 import { RecoverService } from '../service/recover.service';
 import { RecoverPasswordDto } from '../dto/recover-password.dto';
+import { UpdatePasswordDto } from '../dto/update-password.dto';
 
 @Controller('recover')
 export class RecoverController {
@@ -81,7 +81,7 @@ export class RecoverController {
   @Post(':code')
   async changePassword(
     @Param('code') code: Recover['code'],
-    @Body() body: ChangePasswordDto,
+    @Body() body: UpdatePasswordDto,
   ) {
     const recover = await this.recoverService.get(code);
 

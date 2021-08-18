@@ -50,7 +50,7 @@ export class SettingsController {
     @CurrentUser() user: User,
     @Body() body: UpdatePasswordDto,
   ) {
-    if (!(await user.validatePassword(body.currentPassword))) {
+    if (!(await user.validatePassword(body.currentPassword || ''))) {
       throw new BadRequestException('Current password does not match');
     }
 
