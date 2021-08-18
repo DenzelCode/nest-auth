@@ -24,21 +24,21 @@ export class UserService {
   getUserByName(name: string) {
     const username = { $regex: new RegExp(`^${name}$`, 'i') };
 
-    return this.userModel.findOne({ username }).exec();
+    return this.userModel.where({ username }).findOne();
   }
 
   getUserByEmail(mail: string) {
     const email = { $regex: new RegExp(`^${mail}$`, 'i') };
 
-    return this.userModel.findOne({ email }).exec();
+    return this.userModel.where({ email }).findOne();
   }
 
   getUserBy(filter: FilterQuery<User>) {
-    return this.userModel.findOne(filter).exec();
+    return this.userModel.where(filter).findOne();
   }
 
   getUserByGoogleId(id: string) {
-    return this.userModel.findOne({ googleId: id }).exec();
+    return this.userModel.where({ googleId: id }).findOne();
   }
 
   getUserById(id: ObjectId | string) {
@@ -137,7 +137,7 @@ export class UserService {
   }
 
   updateUser(user: User, data: UpdateQuery<User>) {
-    return this.userModel.updateOne({ _id: user._id }, data).exec();
+    return this.userModel.where({ _id: user._id }).updateOne(data);
   }
 
   filterUser(user: User) {
@@ -156,8 +156,8 @@ export class UserService {
     return Object.assign(user, newInput);
   }
 
-  create(body: Partial<User>) {
-    const user = new this.userModel(body);
+  async create(body: Partial<User>) {
+    const user = await this.userModel.create(body);
 
     user.generateSessionToken();
 

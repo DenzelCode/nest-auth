@@ -27,39 +27,31 @@ export class SubscriptionService {
   ) {}
 
   getAll(user: User) {
-    return this.subscriptionModel.find({ user: user._id }).exec();
+    return this.subscriptionModel.where({ user: user._id }).find();
   }
 
   get(user: User, type: SubscriptionType, subscription: string) {
     return this.subscriptionModel
-      .findOne({ user: user._id, type, subscription })
-      .exec();
+      .where({ user: user._id, type, subscription })
+      .findOne();
   }
 
   create(user: User, type: SubscriptionType, subscription: string) {
-    return new this.subscriptionModel({
+    return this.subscriptionModel.create({
       user: user._id,
       type,
       subscription,
-    }).save();
+    });
   }
 
   delete(user: User, type: SubscriptionType, subscription: string) {
     return this.subscriptionModel
-      .deleteOne({
-        user: user._id,
-        type,
-        subscription,
-      })
-      .exec();
+      .where({ user: user._id, type, subscription })
+      .deleteOne();
   }
 
   deleteAll(user: User) {
-    return this.subscriptionModel
-      .deleteMany({
-        user: user._id,
-      })
-      .exec();
+    return this.subscriptionModel.where({ user: user._id }).deleteMany();
   }
 
   async sendNotification(user: User, payload: Partial<NotificationPayload>) {

@@ -33,14 +33,14 @@ export class MessageService {
 
   getRoomMessages(room: Room) {
     return this.messageModel
-      .find({ room: room._id })
+      .where({ room: room._id })
       .populate('from', '-password -sessionToken')
-      .exec();
+      .find();
   }
 
   getDirectMessages(from: User, to: User) {
     return this.messageModel
-      .find({
+      .where({
         $or: [
           {
             from: from._id,
@@ -53,15 +53,15 @@ export class MessageService {
         ],
       })
       .populate('from', '-password -sessionToken')
-      .exec();
+      .find();
   }
 
   async createRoomMessage(from: User, room: Room, message: string) {
-    const object = await new this.messageModel({
+    const object = await this.messageModel.create({
       from: from._id,
       room: room._id,
       message,
-    }).save();
+    });
 
     return object.populate('from', '-password -sessionToken').execPopulate();
   }
@@ -69,19 +69,15 @@ export class MessageService {
   async deleteRoomMessages(room: Room) {
     this.roomService.sendMessage(room, 'room:delete_messages', room);
 
-    return this.messageModel
-      .deleteMany({
-        room: room._id,
-      })
-      .exec();
+    return this.messageModel.where({ room: room._id }).deleteMany();
   }
 
   async createDirectMessage(from: User, to: User, message: string) {
-    const object = await new this.messageModel({
+    const object = await this.messageModel.create({
       from: from._id,
       to: to._id,
       message,
-    }).save();
+    });
 
     return object.populate('from', '-password -sessionToken').execPopulate();
   }
@@ -100,33 +96,22 @@ export class MessageService {
     );
 
     return this.messageModel
-      .deleteOne({
-        _id: message._id,
-        to: message.to._id,
-      })
-      .exec();
+      .where({ _id: message._id, to: message.to._id })
+      .deleteOne();
   }
 
   async deleteRoomMessage(room: Room, messageId: string) {
     this.roomService.sendMessage(room, 'room:delete_message', messageId);
 
     return this.messageModel
-      .deleteOne({
-        _id: messageId,
-        room: room._id,
-      })
-      .exec();
+      .where({ _id: messageId, room: room._id })
+      .deleteOne();
   }
 
   async deleteDirectMessages(from: User, to: User) {
     this.userService.sendMessage(from, 'direct:delete_messages', to);
     this.userService.sendMessage(to, 'direct:delete_messages', from);
 
-    return this.messageModel
-      .deleteMany({
-        from: from._id,
-        to: to._id,
-      })
-      .exec();
+    return this.messageModel.where({ from: from._id, to: to._id }).deleteMany();
   }
 }

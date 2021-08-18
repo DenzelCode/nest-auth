@@ -22,10 +22,7 @@ export class RoomService {
   ) {}
 
   async create(room: RoomDto, user: User) {
-    const object = await new this.roomModel({
-      ...room,
-      owner: user._id,
-    }).save();
+    const object = await this.roomModel.create({ ...room, owner: user._id });
 
     return object.populate('owner', '-password -sessionToken').execPopulate();
   }
@@ -34,8 +31,8 @@ export class RoomService {
     this.handleUpdateRoom(room, body as Room);
 
     return this.roomModel
-      .updateOne({ _id: room._id, owner: user._id }, body)
-      .exec();
+      .where({ _id: room._id, owner: user._id })
+      .updateOne(body);
   }
 
   handleUpdateRoom(room: Room, body: Partial<Room>) {
@@ -46,7 +43,7 @@ export class RoomService {
     this.handleDeleteRoom(room);
 
     return Promise.all([
-      this.roomModel.deleteOne({ _id: room._id, owner: user._id }).exec(),
+      this.roomModel.where({ _id: room._id, owner: user._id }).deleteOne(),
       this.messageService.deleteRoomMessages(room),
     ]);
   }
@@ -57,39 +54,33 @@ export class RoomService {
 
   getRoomWithOwner(roomId: string, owner: User) {
     return this.roomModel
-      .findOne({ _id: roomId, owner: owner._id })
+      .where({ _id: roomId, owner: owner._id })
       .populate('members', '-password -sessionToken')
       .populate('owner', '-password -sessionToken')
-      .exec();
+      .findOne();
   }
 
   getRoom(roomId: string) {
     return this.roomModel
-      .findOne({ _id: roomId })
+      .findById({ _id: roomId })
       .populate('members', '-password -sessionToken')
       .populate('owner', '-password -sessionToken')
       .exec();
   }
 
   getUserCurrentRooms(user: User) {
-    const filter = {
-      members: {
-        $in: user._id,
-      },
-    };
-
-    return this.roomModel.find(filter).exec();
+    return this.roomModel.where({ members: { $in: user._id } }).find();
   }
 
   getPublicRooms() {
     return this.roomModel
-      .find({ isPublic: true })
+      .where({ isPublic: true })
       .populate('owner', '-password -sessionToken')
-      .exec();
+      .find();
   }
 
   getUserRooms(user: User) {
-    return this.roomModel.find({ owner: user._id }).exec();
+    return this.roomModel.where({ owner: user._id }).find();
   }
 
   getSockets(room: Room) {
