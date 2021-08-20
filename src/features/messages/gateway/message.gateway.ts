@@ -58,6 +58,10 @@ export class MessageGateway {
     this.userService.sendMessage(user, 'message:direct', message);
     this.userService.sendMessage(userTo, 'message:direct', message);
 
+    if (userTo.id === user.id) {
+      return true;
+    }
+
     const url = environments.frontEndUrl;
 
     // https://angular.io/guide/service-worker-notifications
@@ -97,6 +101,10 @@ export class MessageGateway {
     const url = environments.frontEndUrl;
 
     for (const member of room.members) {
+      if (member.id === user.id) {
+        continue;
+      }
+
       // https://angular.io/guide/service-worker-notifications
       this.subscriptionService.sendNotification(member, {
         title: room.title,
