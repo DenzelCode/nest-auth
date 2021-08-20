@@ -94,6 +94,24 @@ export class MessageGateway {
       body.message,
     );
 
+    const url = environments.frontEndUrl;
+
+    for (const member of room.members) {
+      // https://angular.io/guide/service-worker-notifications
+      this.subscriptionService.sendNotification(member, {
+        title: room.title,
+        body: `${user.username}: ${message.message}`,
+        data: {
+          onActionClick: {
+            default: {
+              operation: 'navigateLastFocusedOrOpen',
+              url: `${url}/room/${room._id}`,
+            },
+          },
+        },
+      });
+    }
+
     return this.roomService.sendMessage(room, 'message:room', message);
   }
 }
