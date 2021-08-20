@@ -15,3 +15,5 @@ Try it out now! [Demo](https://nest-auth.ubbly.club/)
 - WebSockets authentication
 - Http authentication
 - Websockets real-time chat.
+- Rooms chats
+- Private DMs
