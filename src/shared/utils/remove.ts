@@ -1,5 +1,9 @@
 export const remove = <T>(arr: T[], predicate: (item: T) => boolean) => {
-  const index = arr.findIndex(predicate);
+  const results = arr.filter(predicate);
 
-  return arr.splice(index, 1);
+  for (const result of results) {
+    arr.splice(arr.indexOf(result), 1);
+  }
+
+  return results;
 };
