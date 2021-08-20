@@ -1,6 +1,6 @@
 import { FeaturesModule } from './features/features.module';
 import { CoreModule } from './core/core.module';
-import { CommonModule } from './shared/shared.module';
+import { SharedModule } from './shared/shared.module';
 import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -13,7 +13,7 @@ import { environments } from './environments/environments';
   imports: [
     FeaturesModule,
     CoreModule,
-    CommonModule,
+    SharedModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(environments.mongoUri, {
       autoIndex: false,
