@@ -30,9 +30,7 @@ export class RoomService {
   async update(room: Room, body: UpdateQuery<Room>, user: User) {
     this.handleUpdateRoom(room, body as Room);
 
-    return this.roomModel
-      .where({ _id: room._id, owner: user._id })
-      .updateOne(body);
+    return this.roomModel.updateOne({ _id: room._id, owner: user._id }, body);
   }
 
   handleUpdateRoom(room: Room, body: Partial<Room>) {
@@ -43,7 +41,7 @@ export class RoomService {
     this.handleDeleteRoom(room);
 
     return Promise.all([
-      this.roomModel.where({ _id: room._id, owner: user._id }).deleteOne(),
+      this.roomModel.deleteOne({ _id: room._id, owner: user._id }),
       this.messageService.deleteRoomMessages(room),
     ]);
   }
@@ -54,33 +52,30 @@ export class RoomService {
 
   getRoomWithOwner(roomId: string, owner: User) {
     return this.roomModel
-      .where({ _id: roomId, owner: owner._id })
+      .findOne({ _id: roomId, owner: owner._id })
       .populate('members', '-password -sessionToken')
-      .populate('owner', '-password -sessionToken')
-      .findOne();
+      .populate('owner', '-password -sessionToken');
   }
 
   getRoom(roomId: string) {
     return this.roomModel
-      .findById({ _id: roomId })
+      .findById(roomId)
       .populate('members', '-password -sessionToken')
-      .populate('owner', '-password -sessionToken')
-      .exec();
+      .populate('owner', '-password -sessionToken');
   }
 
   getUserCurrentRooms(user: User) {
-    return this.roomModel.where({ members: { $in: user._id } }).find();
+    return this.roomModel.find({ members: { $in: user._id } });
   }
 
   getPublicRooms() {
     return this.roomModel
-      .where({ isPublic: true })
-      .populate('owner', '-password -sessionToken')
-      .find();
+      .find({ isPublic: true })
+      .populate('owner', '-password -sessionToken');
   }
 
   getUserRooms(user: User) {
-    return this.roomModel.where({ owner: user._id }).find();
+    return this.roomModel.find({ owner: user._id });
   }
 
   getSockets(room: Room) {

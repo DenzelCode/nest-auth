@@ -11,6 +11,14 @@ export class SocketConnectionService {
   ) {}
 
   getBySocketId(id: string) {
-    return this.socketConnectionModel.where({ socketId: id }).findOne();
+    return this.socketConnectionModel
+      .findOne({ socketId: id })
+      .populate('user');
+  }
+
+  async deleteConnection(connection: SocketConnection) {
+    const sockett = await this.socketConnectionModel.findById(connection._id).w;
+
+    return;
   }
 }

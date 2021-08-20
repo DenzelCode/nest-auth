@@ -24,25 +24,25 @@ export class UserService {
   getUserByName(name: string) {
     const username = { $regex: new RegExp(`^${name}$`, 'i') };
 
-    return this.userModel.where({ username }).findOne();
+    return this.userModel.findOne({ username });
   }
 
   getUserByEmail(mail: string) {
     const email = { $regex: new RegExp(`^${mail}$`, 'i') };
 
-    return this.userModel.where({ email }).findOne();
+    return this.userModel.findOne({ email });
   }
 
   getUserBy(filter: FilterQuery<User>) {
-    return this.userModel.where(filter).findOne();
+    return this.userModel.findOne(filter);
   }
 
   getUserByGoogleId(id: string) {
-    return this.userModel.where({ googleId: id }).findOne();
+    return this.userModel.findOne({ googleId: id });
   }
 
   getUserById(id: ObjectId | string) {
-    return this.userModel.findById(id).exec();
+    return this.userModel.findById(id);
   }
 
   async subscribeSocket(socket: Socket, user: User) {
@@ -137,7 +137,7 @@ export class UserService {
   }
 
   updateUser(user: User, data: UpdateQuery<User>) {
-    return this.userModel.where({ _id: user._id }).updateOne(data);
+    return this.userModel.findByIdAndUpdate(user._id, data);
   }
 
   filterUser(user: User) {

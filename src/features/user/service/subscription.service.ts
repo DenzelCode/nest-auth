@@ -27,13 +27,15 @@ export class SubscriptionService {
   ) {}
 
   getAll(user: User) {
-    return this.subscriptionModel.where({ user: user._id }).find();
+    return this.subscriptionModel.find({ user: user._id });
   }
 
   get(user: User, type: SubscriptionType, subscription: string) {
-    return this.subscriptionModel
-      .where({ user: user._id, type, subscription })
-      .findOne();
+    return this.subscriptionModel.findOne({
+      user: user._id,
+      type,
+      subscription,
+    });
   }
 
   create(user: User, type: SubscriptionType, subscription: string) {
@@ -45,13 +47,15 @@ export class SubscriptionService {
   }
 
   delete(user: User, type: SubscriptionType, subscription: string) {
-    return this.subscriptionModel
-      .where({ user: user._id, type, subscription })
-      .deleteOne();
+    return this.subscriptionModel.deleteOne({
+      user: user._id,
+      type,
+      subscription,
+    });
   }
 
   deleteAll(user: User) {
-    return this.subscriptionModel.where({ user: user._id }).deleteMany();
+    return this.subscriptionModel.deleteMany({ user: user._id });
   }
 
   async sendNotification(user: User, payload: Partial<NotificationPayload>) {

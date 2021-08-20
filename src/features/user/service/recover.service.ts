@@ -25,13 +25,10 @@ export class RecoverService {
   }
 
   get(code: Recover['code']) {
-    return this.recoveryModel
-      .where({ code })
-      .populate('owner')
-      .findOne();
+    return this.recoveryModel.findOne({ code }).populate('owner');
   }
 
   delete(user: User) {
-    return this.recoveryModel.where({ owner: user._id }).deleteMany();
+    return this.recoveryModel.deleteMany({ owner: user._id });
   }
 }
