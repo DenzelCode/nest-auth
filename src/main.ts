@@ -2,38 +2,30 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ExternalSocketIoAdapter } from './core/adapter/external-socket-io-adapter';
 import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
-import { GlobalConfig } from './shared/types/global-config';
 import { RedisIoAdapter } from './core/adapter/redis-io.adapter';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { environments } from './environments/environments';
 
-const logger = new Logger('NestApplication');
+const redis = environments.redis;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  const configService = app.get<ConfigService<GlobalConfig>>(ConfigService);
-
-  app.set('trust proxy', configService.get('PROXY_ENABLED') === 'true');
   app.enableCors();
+  app.set('trust proxy', environments.proxyEnabled);
 
-  if (configService.get('REDIS_ENABLED') === 'true') {
-    app.useWebSocketAdapter(
-      new RedisIoAdapter(
-        configService.get('REDIS_HOST'),
-        configService.get('REDIS_PORT'),
-        app,
-      ),
-    );
+  if (redis.enabled) {
+    app.useWebSocketAdapter(new RedisIoAdapter(redis.host, redis.port, app));
   } else {
     app.useWebSocketAdapter(new ExternalSocketIoAdapter(app));
   }
 
-  const port = configService.get('PORT') || 3000;
+  const port = environments.port || 3000;
+  const logger = new Logger('NestApplication');
 
-  await app.listen(port);
-
-  logger.log(`Server initialized on port ${port}`);
+  await app.listen(port, () =>
+    logger.log(`Server initialized on port ${port}`),
+  );
 }
 
 bootstrap();

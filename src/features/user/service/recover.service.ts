@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { GlobalConfig } from '../../../shared/types/global-config';
 import { randomString } from '../../../shared/utils/random-string';
 import { User } from '../schema/user.schema';
 import { Recover } from '../schema/recover.schema';
+import { environments } from '../../../environments/environments';
 
 @Injectable()
 export class RecoverService {
   constructor(
     @InjectModel(Recover.name) private recoveryModel: Model<Recover>,
-    private configService: ConfigService<GlobalConfig>,
   ) {}
 
   async create(user: User) {
@@ -21,7 +19,7 @@ export class RecoverService {
       code: randomString(50),
       owner: user._id,
       expiration: new Date(
-        Date.now() + this.configService.get<number>('CODE_EXPIRATION') * 1000,
+        Date.now() + environments.recoverCodeExpiration * 1000,
       ),
     });
   }

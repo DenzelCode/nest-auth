@@ -5,9 +5,7 @@ import { WebNotificationService } from './service/web-notification.service';
 import { generateVAPIDKeys, setVapidDetails } from 'web-push';
 import { notificationConfig } from './config/notification.config';
 import { AuthModule } from '../auth/auth.module';
-import { initializeApp } from 'firebase-admin';
-import { ConfigService } from '@nestjs/config';
-import { GlobalConfig } from '../../shared/types/global-config';
+import { environments } from '../../environments/environments';
 
 @Module({
   imports: [forwardRef(() => AuthModule)],
@@ -16,18 +14,13 @@ import { GlobalConfig } from '../../shared/types/global-config';
   exports: [MobileNotificationService, WebNotificationService],
 })
 export class NotificationModule implements OnModuleInit {
-  constructor(private configService: ConfigService<GlobalConfig>) {}
-
   onModuleInit() {
     const vapid = notificationConfig.vapid;
+    const envVapid = environments.vapid;
 
-    const envSubject = this.configService.get('VAPID_SUBJECT');
-    const envPrivateKey = this.configService.get('VAPID_PRIVATE_KEY');
-    const envPublicKey = this.configService.get('VAPID_PUBLIC_KEY');
-
-    vapid.subject = envSubject || vapid.subject;
-    vapid.publicKey = envPublicKey || vapid.publicKey;
-    vapid.privateKey = envPrivateKey || vapid.privateKey;
+    vapid.publicKey = envVapid.publicKey || vapid.publicKey;
+    vapid.privateKey = envVapid.privateKey || vapid.privateKey;
+    vapid.subject = envVapid.subject || vapid.subject;
 
     if (vapid.publicKey && vapid.privateKey) {
       setVapidDetails(vapid.subject, vapid.publicKey, vapid.privateKey);

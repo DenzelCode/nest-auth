@@ -5,7 +5,6 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import {
   MessageBody,
   SubscribeMessage,
@@ -14,7 +13,7 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { ExceptionsFilter } from '../../../core/filter/exceptions.filter';
-import { GlobalConfig } from '../../../shared/types/global-config';
+import { environments } from '../../../environments/environments';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { RoomService } from '../../room/service/room.service';
@@ -37,7 +36,6 @@ export class MessageGateway {
     private roomService: RoomService,
     private messageService: MessageService,
     private subscriptionService: SubscriptionService,
-    private configService: ConfigService<GlobalConfig>,
   ) {}
 
   @SubscribeMessage('message:direct')
@@ -60,7 +58,7 @@ export class MessageGateway {
     this.userService.sendMessage(user, 'message:direct', message);
     this.userService.sendMessage(userTo, 'message:direct', message);
 
-    const url = this.configService.get('FRONTEND_URL');
+    const url = environments.frontEndUrl;
 
     // https://angular.io/guide/service-worker-notifications
     this.subscriptionService.sendNotification(userTo, {

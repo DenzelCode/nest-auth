@@ -29,6 +29,4 @@ export interface SecretsSchema {
 export const authConfig = ConfigFactory.getConfig<SecretsSchema>(
   join(PATHS.config, 'auth.config.json'),
   authConfigDefault,
-)
-  .init(false)
-  .save(true);
+).initPrettify();

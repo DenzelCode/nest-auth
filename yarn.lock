@@ -2470,10 +2470,10 @@ co@^4.6.0:
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
   integrity sha1-bqa989hTrlTMuOR7+gvz+QMfsYQ=
 
-code-config@^1.0.30:
-  version "1.0.30"
-  resolved "https://registry.yarnpkg.com/code-config/-/code-config-1.0.30.tgz#097c13f7891c279654b8dcf9b78d7ded181627a4"
-  integrity sha512-KKI+ij1ToBxuP2xhdIYbify4wgXOBzGqHWb7nz6nI+dqdbwcEIeJy7TdTMidSZ5zQcaeteVCMYEOpRuCwbqhjQ==
+code-config@^1.0.37:
+  version "1.0.37"
+  resolved "https://registry.yarnpkg.com/code-config/-/code-config-1.0.37.tgz#879d49783ffdc112a3f307df6f7d79af1d839583"
+  integrity sha512-BDFAsbouEXvfTcpRoGPjOsENitLbFCg7bNyESPEZp1v4As9UU5LmWVgACB4orzv9k63yY6GtT6RWJ49lwVEm9g==
   dependencies:
     lodash "^4.17.21"
 

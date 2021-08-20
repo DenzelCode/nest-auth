@@ -39,7 +39,7 @@
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
-    "code-config": "^1.0.30",
+    "code-config": "^1.0.37",
     "dotenv": "^10.0.0",
     "facebook-auth-nestjs": "^0.0.3",
     "firebase-admin": "^9.11.0",

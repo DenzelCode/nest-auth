@@ -25,6 +25,4 @@ const defaultValue = {
 export const mailerConfig = ConfigFactory.getConfig<MailerSchema>(
   join(PATHS.config, 'mailer.config.json'),
   defaultValue,
-)
-  .init(false)
-  .save(true);
+).initPrettify();

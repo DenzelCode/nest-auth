@@ -6,9 +6,8 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import { GlobalConfig } from '../../../shared/types/global-config';
+import { environments } from '../../../environments/environments';
 import { User } from '../../user/schema/user.schema';
 import { UserService } from '../../user/service/user.service';
 import { Token } from '../guard/jwt-auth.guard';
@@ -31,7 +30,6 @@ export class AuthService {
   constructor(
     @Inject(forwardRef(() => UserService)) private userService: UserService,
     private jwtService: JwtService,
-    private configService: ConfigService<GlobalConfig>,
   ) {}
 
   async validate(username: string, password: string) {
@@ -56,7 +54,7 @@ export class AuthService {
 
     let refresh_token: string;
 
-    if (this.configService.get('ACCESS_TOKEN_EXPIRATION')) {
+    if (environments.accessTokenExpiration) {
       refresh_token = await this.jwtService.signAsync(
         payload,
         this.getRefreshTokenOptions(user),
@@ -141,21 +139,19 @@ export class AuthService {
   }
 
   getRefreshTokenOptions(user: User): JwtSignOptions {
-    return this.getTokenOptions('REFRESH_TOKEN', user);
+    return this.getTokenOptions('refresh', user);
   }
 
   getAccessTokenOptions(user: User): JwtSignOptions {
-    return this.getTokenOptions('ACCESS_TOKEN', user);
+    return this.getTokenOptions('access', user);
   }
 
-  private getTokenOptions(type: 'ACCESS_TOKEN' | 'REFRESH_TOKEN', user: User) {
-    const configService: ConfigService = this.configService;
-
+  private getTokenOptions(type: 'refresh' | 'access', user: User) {
     const options: JwtSignOptions = {
-      secret: configService.get(`${type}_SECRET`) + user.sessionToken,
+      secret: environments[type + 'TokenSecret'] + user.sessionToken,
     };
 
-    const expiration = configService.get(`${type}_EXPIRATION`);
+    const expiration = environments[type + 'TokenExpiration'];
 
     if (expiration) {
       options.expiresIn = expiration;

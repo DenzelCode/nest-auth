@@ -9,13 +9,12 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { GlobalConfig } from '../../../shared/types/global-config';
 import { UserService } from '../service/user.service';
 import { Recover } from '../schema/recover.schema';
 import { RecoverService } from '../service/recover.service';
 import { RecoverPasswordDto } from '../dto/recover-password.dto';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
+import { environments } from '../../../environments/environments';
 
 @Controller('recover')
 export class RecoverController {
@@ -23,7 +22,6 @@ export class RecoverController {
     private userService: UserService,
     private recoverService: RecoverService,
     private mailerService: MailerService,
-    private configService: ConfigService<GlobalConfig>,
   ) {}
 
   @Get(':code')
@@ -55,7 +53,7 @@ export class RecoverController {
 
     const { code, expiration } = await this.recoverService.create(user);
 
-    const url = this.configService.get('FRONTEND_URL');
+    const url = environments.frontEndUrl;
 
     try {
       await this.mailerService.sendMail({
