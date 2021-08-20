@@ -9,10 +9,10 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { ParseObjectIdPipe } from '../../../shared/pipe/parse-object-id.pipe';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { User } from '../../user/schema/user.schema';
-import { RoomIdDto } from '../dto/room-id.dto';
 import { RoomDto } from '../dto/room.dto';
 import { RoomService } from '../service/room.service';
 
@@ -21,14 +21,14 @@ import { RoomService } from '../service/room.service';
 export class RoomController {
   constructor(private roomService: RoomService) {}
 
-  @Get('id/:roomId')
-  get(@Param() body: RoomIdDto) {
-    return this.roomService.getRoom(body.roomId);
-  }
-
   @Get()
   getUserRooms(@CurrentUser() user: User) {
-    return this.roomService.getUserRooms(user);
+    return this.roomService.getRoomsByOwner(user);
+  }
+
+  @Get('id/:id')
+  get(@Param('id', ParseObjectIdPipe) id: string) {
+    return this.roomService.getRoom(id);
   }
 
   @Get('public')
@@ -36,9 +36,17 @@ export class RoomController {
     return this.roomService.getPublicRooms();
   }
 
-  @Delete(':id')
-  async delete(@Param('id') roomId: string, @CurrentUser() user: User) {
-    const room = await this.roomService.getRoomWithOwner(roomId, user);
+  @Get('member')
+  getRoomsByMember(@CurrentUser() user: User) {
+    return this.roomService.getRoomsByMember(user);
+  }
+
+  @Delete('delete/:id')
+  async delete(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @CurrentUser() user: User,
+  ) {
+    const room = await this.roomService.getRoomByIdAndOwner(id, user);
 
     if (!room) {
       throw new NotFoundException('Room not found');
@@ -52,13 +60,13 @@ export class RoomController {
     return this.roomService.create(room, user);
   }
 
-  @Put(':roomId')
+  @Put(':id')
   async update(
-    @Param() params: RoomIdDto,
+    @Param('id', ParseObjectIdPipe) id: string,
     @Body() body: RoomDto,
     @CurrentUser() user: User,
   ) {
-    const room = await this.roomService.getRoomWithOwner(params.roomId, user);
+    const room = await this.roomService.getRoomByIdAndOwner(id, user);
 
     if (!room) {
       throw new NotFoundException('Room not found');
@@ -68,13 +76,30 @@ export class RoomController {
   }
 
   @Post('join')
-  async join(@Body() body: RoomIdDto, @CurrentUser() user: User) {
-    const room = await this.roomService.join(body.roomId, user);
+  async join(
+    @Body('roomId', ParseObjectIdPipe) id: string,
+    @CurrentUser() user: User,
+  ) {
+    const room = await this.roomService.join(id, user);
 
     if (!room) {
       throw new NotFoundException('Room not found');
     }
 
     return room.populate('members', '-password -sessionToken').execPopulate();
+  }
+
+  @Delete('leave/:id')
+  async leave(
+    @Param('id', ParseObjectIdPipe) id: string,
+    @CurrentUser() user: User,
+  ) {
+    const room = await this.roomService.getRoom(id);
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    return this.roomService.leave(user, room);
   }
 }

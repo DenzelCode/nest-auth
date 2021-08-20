@@ -27,7 +27,7 @@ export class RoomGateway implements OnGatewayDisconnect<Socket> {
   ) {}
 
   handleDisconnect(socket: Socket) {
-    this.roomService.leaveAllSocketRooms(socket);
+    this.roomService.unsubscribeSocket(socket);
   }
 
   @SubscribeMessage('room:subscribe')

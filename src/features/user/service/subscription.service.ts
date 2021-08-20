@@ -47,7 +47,7 @@ export class SubscriptionService {
   }
 
   delete(user: User, type: SubscriptionType, subscription: string) {
-    return this.subscriptionModel.deleteOne({
+    return this.subscriptionModel.findOneAndDelete({
       user: user._id,
       type,
       subscription,

@@ -6,30 +6,17 @@ import { randomString } from '../../../shared/utils/random-string';
 
 @Schema()
 export class User extends Document {
-  @Prop({
-    index: {
-      unique: true,
-      collation: {
-        locale: 'en',
-        strength: 2,
-      },
-    },
-  })
+  @Prop()
   username: string;
 
-  @Prop({
-    index: {
-      unique: true,
-      collation: {
-        locale: 'en',
-        strength: 2,
-      },
-    },
-  })
+  @Prop()
   email: string;
 
   @Prop()
   sessionToken: string;
+
+  @Prop({ default: false })
+  online: boolean;
 
   @Prop()
   password?: string;
@@ -42,9 +29,6 @@ export class User extends Document {
 
   @Prop()
   appleId?: string;
-
-  @Prop([String])
-  sockets: string[];
 
   generateSessionToken() {
     this.sessionToken = randomString(60);

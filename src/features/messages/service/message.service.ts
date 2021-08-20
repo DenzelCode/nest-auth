@@ -91,7 +91,7 @@ export class MessageService {
       message._id,
     );
 
-    return this.messageModel.deleteOne({
+    return this.messageModel.findOneAndDelete({
       _id: message._id,
       to: message.to._id,
     });
@@ -100,13 +100,16 @@ export class MessageService {
   async deleteRoomMessage(room: Room, messageId: string) {
     this.roomService.sendMessage(room, 'room:delete_message', messageId);
 
-    return this.messageModel.deleteOne({ _id: messageId, room: room._id });
+    return this.messageModel.findOneAndDelete({
+      _id: messageId,
+      room: room._id,
+    });
   }
 
   async deleteDirectMessages(from: User, to: User) {
     this.userService.sendMessage(from, 'direct:delete_messages', to);
     this.userService.sendMessage(to, 'direct:delete_messages', from);
 
-    return this.messageModel.deleteMany({ from: from._id, to: to._id });
+    return this.messageModel.findOneAndDelete({ from: from._id, to: to._id });
   }
 }

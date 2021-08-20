@@ -5,7 +5,7 @@ config();
 const env = process.env;
 
 export const environments = {
-  port: Number(env.PORT),
+  port: Number(env.PORT || 3000),
   mongoUri: env.MONGO_URI,
   proxyEnabled: env.PROXY_ENABLED === 'true',
   frontEndUrl: env.FRONTEND_URL,

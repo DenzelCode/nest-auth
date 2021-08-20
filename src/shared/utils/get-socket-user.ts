@@ -1,5 +1,4 @@
 import { Socket } from 'socket.io';
-import { Client } from './get-client';
+import { getSocketClient } from './get-socket-client';
 
-export const getSocketUser = (socket: Socket) =>
-  ((socket.handshake as unknown) as Client).user;
+export const getSocketUser = (socket: Socket) => getSocketClient(socket).user;

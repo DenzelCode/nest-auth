@@ -7,6 +7,7 @@ import { Room, RoomSchema } from './schema/room.schema';
 import { AuthModule } from '../auth/auth.module';
 import { RoomGateway } from './gateway/room.gateway';
 import { MessagesModule } from '../messages/messages.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MessagesModule } from '../messages/messages.module';
         schema: RoomSchema,
       },
     ]),
+    SharedModule,
   ],
   controllers: [RoomController],
   providers: [RoomService, RoomGateway],

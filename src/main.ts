@@ -12,6 +12,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors();
+  app.enableShutdownHooks();
   app.set('trust proxy', environments.proxyEnabled);
 
   if (redis.enabled) {
@@ -20,7 +21,7 @@ async function bootstrap() {
     app.useWebSocketAdapter(new ExternalSocketIoAdapter(app));
   }
 
-  const port = environments.port || 3000;
+  const port = environments.port;
   const logger = new Logger('NestApplication');
 
   await app.listen(port, () =>

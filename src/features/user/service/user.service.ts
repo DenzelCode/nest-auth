@@ -11,6 +11,7 @@ import { User } from '../schema/user.schema';
 import { randomString } from '../../../shared/utils/random-string';
 import { UserGateway } from '../gateway/user.gateway';
 import { Socket } from 'socket.io';
+import { SocketConnectionService } from './socket-connection.service';
 
 @Injectable()
 export class UserService {
@@ -19,6 +20,7 @@ export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     @Inject(forwardRef(() => UserGateway)) private userGateway: UserGateway,
+    private socketConnectionService: SocketConnectionService,
   ) {}
 
   getUserByName(name: string) {
@@ -45,40 +47,20 @@ export class UserService {
     return this.userModel.findById(id);
   }
 
+  getOnlineUsers() {
+    return this.userModel.find({ online: true });
+  }
+
   async subscribeSocket(socket: Socket, user: User) {
-    await this.addUserSocket(user, socket);
+    await this.socketConnectionService.create(socket, user);
 
     return socket.join(`user_${user._id}`);
   }
 
-  private async addUserSocket(user: User, socket: Socket) {
-    const update = await this.updateUser(user, {
-      $push: {
-        sockets: socket.id,
-      },
-    });
-
-    await this.updateUserObject(user);
-
-    return update;
-  }
-
   async unsubscribeSocket(socket: Socket, user: User) {
-    await this.removeUserSocket(user, socket);
+    await this.socketConnectionService.delete(socket);
 
     return socket.leave(`user_${user._id}`);
-  }
-
-  private async removeUserSocket(user: User, socket: Socket) {
-    const update = this.updateUser(user, {
-      $pull: {
-        sockets: socket.id,
-      },
-    });
-
-    await this.updateUserObject(user);
-
-    return update;
   }
 
   sendMessage<T>(user: User, event: string, message?: T) {
@@ -115,22 +97,17 @@ export class UserService {
   }
 
   async getUser(username: string) {
-    const user =
+    return (
       (await this.getUserByName(username)) ??
-      (await this.getUserByEmail(username));
-
-    if (!user) {
-      return null;
-    }
-
-    return user;
+      (await this.getUserByEmail(username))
+    );
   }
 
   async getFilteredUser(username: string) {
     const user = await this.getUser(username);
 
     if (!user) {
-      return null;
+      return undefined;
     }
 
     return this.filterUser(user);
