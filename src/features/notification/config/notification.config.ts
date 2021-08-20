@@ -13,4 +13,6 @@ const defaultValue = {
 export const notificationConfig = ConfigFactory.getConfig(
   join(PATHS.config, 'notification.config.json'),
   defaultValue,
-).initPrettify();
+);
+
+notificationConfig.initPrettify();
