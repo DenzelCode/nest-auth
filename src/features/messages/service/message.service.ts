@@ -56,20 +56,46 @@ export class MessageService {
 
   getFirstRoomMessage(room: Room) {
     return this.messageModel
-      .find({ room: room._id })
+      .findOne({ room: room._id })
       .populate('from', '-password -sessionToken');
   }
 
-  getRoomMessages(room: Room) {
-    return this.messageModel
-      .find({ room: room._id })
-      .populate('from', '-password -sessionToken');
+  async getRoomMessages(room: Room, limit?: number, before?: Date) {
+    const filter: FilterQuery<Room> = {
+      room: room._id,
+      createdAt: { $lte: before },
+    };
+
+    if (!before) {
+      delete filter.createdAt;
+    }
+
+    return this.getMessages(filter, limit);
   }
 
-  getDirectMessages(from: User, to: User) {
-    return this.messageModel
-      .find(this.getDirectMessageFilter(from, to))
+  getDirectMessages(from: User, to: User, limit = 30, before?: Date) {
+    const filter: FilterQuery<Room> = {
+      ...this.getDirectMessageFilter(from, to),
+      createdAt: { $lte: before },
+    };
+
+    if (!before) {
+      delete filter.createdAt;
+    }
+
+    return this.getMessages(filter, limit);
+  }
+
+  private async getMessages(filter: FilterQuery<Message>, limit: number) {
+    const messages = await this.messageModel
+      .find(filter)
+      .limit(limit)
+      .sort({ createdAt: -1 })
       .populate('from', '-password -sessionToken');
+
+    return messages.sort(
+      (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+    );
   }
 
   getFirstDirectMessage(from: User, to: User) {

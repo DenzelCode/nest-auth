@@ -1,3 +1,4 @@
+import { Query } from '@nestjs/common';
 import {
   Body,
   Controller,
@@ -14,6 +15,7 @@ import { User } from '../../user/schema/user.schema';
 import { UserService } from '../../user/service/user.service';
 import { DeleteDirectMessageDto } from '../dto/delete-direct-message.dto';
 import { DeleteRoomMessageDto } from '../dto/delete-room-message.dto';
+import { FetchMessagesDto } from '../dto/fetch-messages.dto';
 import { MessageService } from '../service/message.service';
 
 @UseGuards(JwtAuthGuard)
@@ -25,12 +27,12 @@ export class MessageController {
     private messageService: MessageService,
   ) {}
 
-  @Get('direct-first-message')
-  async getFirstMessage(
+  @Get('direct-first-message/:userId')
+  async getFirstDirectMessage(
     @CurrentUser() user: User,
     @Param('userId') to: string,
   ) {
-    return this.messageService.getDirectMessages(
+    return this.messageService.getFirstDirectMessage(
       user,
       await this.userService.validateUserById(to),
     );
@@ -40,10 +42,13 @@ export class MessageController {
   async getDirectMessages(
     @CurrentUser() user: User,
     @Param('userId') to: string,
+    @Query() query: FetchMessagesDto,
   ) {
     return this.messageService.getDirectMessages(
       user,
       await this.userService.validateUserById(to),
+      query.limit,
+      query.before,
     );
   }
 
@@ -75,11 +80,23 @@ export class MessageController {
     return this.messageService.deleteDirectMessages(from, to);
   }
 
-  @Get('room/:roomId')
-  async getRoomMessages(@Param('roomId') roomId: string) {
-    const room = await this.roomService.validateRoom(roomId);
+  @Get('room-first-message/:roomId')
+  async getFirstRoomMessage(@Param('roomId') roomId: string) {
+    return this.messageService.getFirstRoomMessage(
+      await this.roomService.validateRoom(roomId),
+    );
+  }
 
-    return this.messageService.getRoomMessages(room);
+  @Get('room/:roomId')
+  async getRoomMessages(
+    @Param('roomId') roomId: string,
+    @Query() query: FetchMessagesDto,
+  ) {
+    return this.messageService.getRoomMessages(
+      await this.roomService.validateRoom(roomId),
+      query.limit,
+      query.before,
+    );
   }
 
   @Delete('room')

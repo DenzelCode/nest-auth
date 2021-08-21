@@ -21,7 +21,7 @@ import { environments } from './environments/environments';
   providers: [
     {
       provide: APP_PIPE,
-      useClass: ValidationPipe,
+      useValue: new ValidationPipe({ transform: true }),
     },
     {
       provide: APP_FILTER,
