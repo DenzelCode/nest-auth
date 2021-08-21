@@ -87,12 +87,16 @@ export class MessageService {
   }
 
   private async getMessages(filter: FilterQuery<Message>, limit: number) {
-    const messages = await this.messageModel
-      .find(filter)
-      .limit(limit)
-      .sort({ createdAt: -1 })
-      .populate('from', '-password -sessionToken');
+    return this.sortMessages(
+      await this.messageModel
+        .find(filter)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .populate('from', '-password -sessionToken'),
+    );
+  }
 
+  sortMessages(messages: Message[]) {
     return messages.sort(
       (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
     );
