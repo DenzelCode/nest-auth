@@ -97,13 +97,8 @@ export class UserService {
     return this.userGateway.server.to(`user_${user._id}`).emit(event, message);
   }
 
-  sendMessageExclude<T>(
-    exclude: Socket,
-    user: User,
-    event: string,
-    message: T,
-  ) {
-    return exclude.broadcast.to(`user_${user._id}`).emit(event, message);
+  sendMessageExcept<T>(except: Socket, user: User, event: string, message: T) {
+    return except.broadcast.to(`user_${user._id}`).emit(event, message);
   }
 
   async generateUsername(base: string) {

@@ -5,14 +5,16 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import {
+  ConnectedSocket,
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { ExceptionsFilter } from '../../../core/filter/exceptions.filter';
 import { environments } from '../../../environments/environments';
+import { ParseObjectIdPipe } from '../../../shared/pipe/parse-object-id.pipe';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { RoomService } from '../../room/service/room.service';
@@ -76,6 +78,19 @@ export class MessageGateway {
     return true;
   }
 
+  @SubscribeMessage('message:direct:typing')
+  async sendDirectTyping(
+    @MessageBody(new ParseObjectIdPipe()) userId: string,
+    @ConnectedSocket() socket: Socket,
+    @CurrentUser() user: User,
+  ) {
+    return this.userService.sendMessage(
+      await this.userService.validateUserById(userId),
+      'message:direct:typing',
+      user,
+    );
+  }
+
   @SubscribeMessage('message:room')
   async sendRoomMessage(
     @MessageBody() body: RoomMessageDto,
@@ -112,5 +127,19 @@ export class MessageGateway {
     }
 
     return this.roomService.sendMessage(room, 'message:room', message);
+  }
+
+  @SubscribeMessage('message:room:typing')
+  async sendRoomTyping(
+    @MessageBody(new ParseObjectIdPipe()) roomId: string,
+    @ConnectedSocket() socket: Socket,
+    @CurrentUser() user: User,
+  ) {
+    return this.roomService.sendMessageExcept(
+      socket,
+      await this.roomService.validateRoom(roomId),
+      'message:room:typing',
+      user,
+    );
   }
 }
