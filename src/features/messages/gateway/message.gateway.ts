@@ -86,7 +86,7 @@ export class MessageGateway {
     return this.userService.sendMessage(
       await this.userService.validateUserById(userId),
       'message:direct:typing',
-      { user },
+      { user: this.userService.filterUser(user) },
     );
   }
 
@@ -140,7 +140,7 @@ export class MessageGateway {
       socket,
       room,
       'message:room:typing',
-      { room, user },
+      { room, user: this.userService.filterUser(user) },
     );
   }
 }
