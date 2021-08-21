@@ -30,9 +30,10 @@ export class MessageController {
     @CurrentUser() user: User,
     @Param('userId') to: string,
   ) {
-    const userTo = await this.userService.validateUserById(to);
-
-    return this.messageService.getDirectMessages(user, userTo);
+    return this.messageService.getDirectMessages(
+      user,
+      await this.userService.validateUserById(to),
+    );
   }
 
   @Get('direct/:userId')
@@ -40,9 +41,10 @@ export class MessageController {
     @CurrentUser() user: User,
     @Param('userId') to: string,
   ) {
-    const userTo = await this.userService.validateUserById(to);
-
-    return this.messageService.getDirectMessages(user, userTo);
+    return this.messageService.getDirectMessages(
+      user,
+      await this.userService.validateUserById(to),
+    );
   }
 
   @Delete('direct')

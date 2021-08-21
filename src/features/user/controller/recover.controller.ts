@@ -25,18 +25,8 @@ export class RecoverController {
   ) {}
 
   @Get(':code')
-  async validateCode(@Param('code') code: Recover['code']) {
-    const recover = await this.recoverService.get(code);
-
-    if (!recover) {
-      throw new NotFoundException('Code not found');
-    }
-
-    if (recover.expiration?.getTime() < Date.now()) {
-      await this.recoverService.delete(recover.owner);
-
-      throw new NotFoundException('Code has expired');
-    }
+  async validateRecoverCode(@Param('code') code: Recover['code']) {
+    const recover = await this.validateRecoverCode(code);
 
     recover.owner = this.userService.filterUser(recover.owner);
 
@@ -45,11 +35,7 @@ export class RecoverController {
 
   @Post()
   async recoverPassword(@Body() body: RecoverPasswordDto) {
-    const user = await this.userService.getUserByEmail(body.email);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    const user = await this.userService.validateUserByEmail(body.email);
 
     const { code, expiration } = await this.recoverService.create(user);
 
@@ -81,11 +67,7 @@ export class RecoverController {
     @Param('code') code: Recover['code'],
     @Body() body: UpdatePasswordDto,
   ) {
-    const recover = await this.recoverService.get(code);
-
-    if (!recover) {
-      throw new NotFoundException('Code not found');
-    }
+    const recover = await this.validateCode(code);
 
     if (body.password !== body.confirmPassword) {
       throw new BadRequestException(`Passwords does not match`);
@@ -102,5 +84,21 @@ export class RecoverController {
     await this.recoverService.delete(user);
 
     return this.userService.filterUser(await user.save());
+  }
+
+  private async validateCode(code: string) {
+    const recover = await this.recoverService.get(code);
+
+    if (!recover) {
+      throw new NotFoundException('Code not found');
+    }
+
+    if (recover.expiration?.getTime() < Date.now()) {
+      await this.recoverService.delete(recover.owner);
+
+      throw new NotFoundException('Code has expired');
+    }
+
+    return recover;
   }
 }

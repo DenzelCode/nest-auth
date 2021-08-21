@@ -38,9 +38,9 @@ export class AuthController {
 
   @Post('login')
   async login(@Body() body: LoginDto) {
-    const user = await this.authService.validate(body.username, body.password);
-
-    return this.authService.login(user);
+    return this.authService.login(
+      await this.authService.validate(body.username, body.password),
+    );
   }
 
   @Post('facebook-login')

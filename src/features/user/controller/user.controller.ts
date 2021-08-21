@@ -7,12 +7,6 @@ export class UserController {
 
   @Get(':username')
   async getUser(@Param('username') username: string) {
-    const user = await this.userService.getUserByName(username);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    return user;
+    return this.userService.validateUserByName(username);
   }
 }

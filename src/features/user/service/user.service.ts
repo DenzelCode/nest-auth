@@ -29,10 +29,30 @@ export class UserService {
     return this.userModel.findOne({ username });
   }
 
+  async validateUserByName(username: string) {
+    const user = await this.getUserByName(username);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
+
   getUserByEmail(mail: string) {
     const email = { $regex: new RegExp(`^${mail}$`, 'i') };
 
     return this.userModel.findOne({ email });
+  }
+
+  async validateUserByEmail(email: string) {
+    const user = await this.getUserByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
   getUserBy(filter: FilterQuery<User>) {

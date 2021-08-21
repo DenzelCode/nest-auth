@@ -1,7 +1,10 @@
 import {
   forwardRef,
   Inject,
+  UseFilters,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ConnectedSocket,
@@ -12,9 +15,12 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ExceptionsFilter } from '../../../core/filter/exceptions.filter';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { RoomService } from '../service/room.service';
 
+@UsePipes(new ValidationPipe())
+@UseFilters(new ExceptionsFilter())
 @UseGuards(JwtAuthGuard)
 @WebSocketGateway()
 export class RoomGateway implements OnGatewayDisconnect<Socket> {
@@ -33,8 +39,9 @@ export class RoomGateway implements OnGatewayDisconnect<Socket> {
     @ConnectedSocket() client: Socket,
     @MessageBody() roomId: string,
   ) {
-    const room = await this.roomService.validateRoom(roomId);
-
-    return this.roomService.subscribeSocket(client, room);
+    return this.roomService.subscribeSocket(
+      client,
+      await this.roomService.validateRoom(roomId),
+    );
   }
 }
