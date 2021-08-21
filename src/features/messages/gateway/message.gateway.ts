@@ -81,13 +81,12 @@ export class MessageGateway {
   @SubscribeMessage('message:direct:typing')
   async sendDirectTyping(
     @MessageBody(new ParseObjectIdPipe()) userId: string,
-    @ConnectedSocket() socket: Socket,
     @CurrentUser() user: User,
   ) {
     return this.userService.sendMessage(
       await this.userService.validateUserById(userId),
       'message:direct:typing',
-      user,
+      { user },
     );
   }
 
@@ -135,11 +134,13 @@ export class MessageGateway {
     @ConnectedSocket() socket: Socket,
     @CurrentUser() user: User,
   ) {
+    const room = await this.roomService.validateRoom(roomId);
+
     return this.roomService.sendMessageExcept(
       socket,
-      await this.roomService.validateRoom(roomId),
+      room,
       'message:room:typing',
-      user,
+      { room, user },
     );
   }
 }
