@@ -72,7 +72,7 @@ export class JwtAuthGuard implements CanActivate {
   }
 
   private validate({ sub }: Token) {
-    return this.userService.validateUser(sub);
+    return this.userService.validateUserById(sub);
   }
 
   private getToken(ctx: ExecutionContext, client: Client): string {

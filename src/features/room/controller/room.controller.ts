@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -46,11 +45,7 @@ export class RoomController {
     @Param('id', ParseObjectIdPipe) id: string,
     @CurrentUser() user: User,
   ) {
-    const room = await this.roomService.getRoomByIdAndOwner(id, user);
-
-    if (!room) {
-      throw new NotFoundException('Room not found');
-    }
+    const room = await this.roomService.validateRoomByIdAndOwner(id, user);
 
     return this.roomService.delete(room, user);
   }
@@ -66,11 +61,7 @@ export class RoomController {
     @Body() body: RoomDto,
     @CurrentUser() user: User,
   ) {
-    const room = await this.roomService.getRoomByIdAndOwner(id, user);
-
-    if (!room) {
-      throw new NotFoundException('Room not found');
-    }
+    const room = await this.roomService.validateRoomByIdAndOwner(id, user);
 
     return this.roomService.update(room, body, user);
   }
@@ -82,10 +73,6 @@ export class RoomController {
   ) {
     const room = await this.roomService.join(id, user);
 
-    if (!room) {
-      throw new NotFoundException('Room not found');
-    }
-
     return room.populate('members', '-password -sessionToken').execPopulate();
   }
 
@@ -94,11 +81,7 @@ export class RoomController {
     @Param('id', ParseObjectIdPipe) id: string,
     @CurrentUser() user: User,
   ) {
-    const room = await this.roomService.getRoom(id);
-
-    if (!room) {
-      throw new NotFoundException('Room not found');
-    }
+    const room = await this.roomService.validateRoom(id);
 
     return this.roomService.leave(user, room);
   }

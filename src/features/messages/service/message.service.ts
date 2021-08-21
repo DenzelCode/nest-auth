@@ -1,6 +1,11 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { Room } from '../../room/schema/room.schema';
 import { RoomService } from '../../room/service/room.service';
 import { User } from '../../user/schema/user.schema';
@@ -21,12 +26,38 @@ export class MessageService {
       .populate('from', '-password -sessionToken');
   }
 
+  async validateMessage(id: string) {
+    const message = await this.getMessage(id);
+
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+
+    return message;
+  }
+
   getPopulatedMessage(id: string) {
     return this.messageModel
       .findById(id)
       .populate('from', '-password -sessionToken')
       .populate('to', '-password -sessionToken')
       .populate('room');
+  }
+
+  async validatePopulatedMessage(id: string) {
+    const message = await this.getPopulatedMessage(id);
+
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+
+    return message;
+  }
+
+  getFirstRoomMessage(room: Room) {
+    return this.messageModel
+      .find({ room: room._id })
+      .populate('from', '-password -sessionToken');
   }
 
   getRoomMessages(room: Room) {
@@ -37,19 +68,29 @@ export class MessageService {
 
   getDirectMessages(from: User, to: User) {
     return this.messageModel
-      .find({
-        $or: [
-          {
-            from: from._id,
-            to: to._id,
-          },
-          {
-            to: from._id,
-            from: to._id,
-          },
-        ],
-      })
+      .find(this.getDirectMessageFilter(from, to))
       .populate('from', '-password -sessionToken');
+  }
+
+  getFirstDirectMessage(from: User, to: User) {
+    return this.messageModel
+      .findOne(this.getDirectMessageFilter(from, to))
+      .populate('from', '-password -sessionToken');
+  }
+
+  private getDirectMessageFilter(from: User, to: User): FilterQuery<Message> {
+    return {
+      $or: [
+        {
+          from: from._id,
+          to: to._id,
+        },
+        {
+          to: from._id,
+          from: to._id,
+        },
+      ],
+    };
   }
 
   async createRoomMessage(from: User, room: Room, message: string) {

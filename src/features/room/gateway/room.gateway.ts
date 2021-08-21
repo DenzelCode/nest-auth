@@ -1,7 +1,6 @@
 import {
   forwardRef,
   Inject,
-  NotFoundException,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -13,7 +12,6 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Client } from '../../../shared/utils/get-client';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { RoomService } from '../service/room.service';
 
@@ -35,11 +33,7 @@ export class RoomGateway implements OnGatewayDisconnect<Socket> {
     @ConnectedSocket() client: Socket,
     @MessageBody() roomId: string,
   ) {
-    const room = await this.roomService.getRoom(roomId);
-
-    if (!room) {
-      throw new NotFoundException('Room not found');
-    }
+    const room = await this.roomService.validateRoom(roomId);
 
     return this.roomService.subscribeSocket(client, room);
   }

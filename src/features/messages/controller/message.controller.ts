@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   UnauthorizedException,
   UseGuards,
@@ -26,15 +25,14 @@ export class MessageController {
     private messageService: MessageService,
   ) {}
 
-  @Get('room/:roomId')
-  async getRoomMessages(@Param('roomId') roomId: string) {
-    const room = await this.roomService.getRoom(roomId);
+  @Get('direct-first-message')
+  async getFirstMessage(
+    @CurrentUser() user: User,
+    @Param('userId') to: string,
+  ) {
+    const userTo = await this.userService.validateUserById(to);
 
-    if (!room) {
-      throw new NotFoundException('Room not found');
-    }
-
-    return this.messageService.getRoomMessages(room);
+    return this.messageService.getDirectMessages(user, userTo);
   }
 
   @Get('direct/:userId')
@@ -42,55 +40,9 @@ export class MessageController {
     @CurrentUser() user: User,
     @Param('userId') to: string,
   ) {
-    const userTo = await this.userService.getUserById(to);
-
-    if (!userTo) {
-      throw new NotFoundException('User not found');
-    }
+    const userTo = await this.userService.validateUserById(to);
 
     return this.messageService.getDirectMessages(user, userTo);
-  }
-
-  @Delete('room')
-  async deleteRoomMessage(
-    @Body() body: DeleteRoomMessageDto,
-    @CurrentUser() user: User,
-  ) {
-    const room = await this.roomService.getRoom(body.roomId);
-
-    if (!room) {
-      throw new NotFoundException('Room not found');
-    }
-
-    const message = await this.messageService.getMessage(body.messageId);
-
-    if (!message) {
-      throw new NotFoundException('Message not found');
-    }
-
-    if (room.owner.id !== user.id && message.from.id !== user.id) {
-      throw new UnauthorizedException('You are not the message owner');
-    }
-
-    return this.messageService.deleteRoomMessage(room, body.messageId);
-  }
-
-  @Delete('room/all')
-  async deleteRoomMessages(
-    @Body() body: DeleteRoomMessageDto,
-    @CurrentUser() user: User,
-  ) {
-    const room = await this.roomService.getRoom(body.roomId);
-
-    if (!room) {
-      throw new NotFoundException('Room not found');
-    }
-
-    if (user.id !== room.owner.id) {
-      throw new UnauthorizedException('You are not the room owner');
-    }
-
-    return this.messageService.deleteRoomMessages(room);
   }
 
   @Delete('direct')
@@ -98,19 +50,11 @@ export class MessageController {
     @Body() body: DeleteDirectMessageDto,
     @CurrentUser() from: User,
   ) {
-    const to = await this.userService.getUserById(body.to);
+    await this.userService.validateUserById(body.to);
 
-    if (!to) {
-      throw new NotFoundException('User not found');
-    }
-
-    const message = await this.messageService.getPopulatedMessage(
+    const message = await this.messageService.validatePopulatedMessage(
       body.messageId,
     );
-
-    if (!message) {
-      throw new NotFoundException('Message not found');
-    }
 
     if (message.from.id !== from.id && message.to.id !== from.id) {
       throw new UnauthorizedException('You do not have access to this chat');
@@ -124,12 +68,45 @@ export class MessageController {
     @Body() body: DeleteDirectMessageDto,
     @CurrentUser() from: User,
   ) {
-    const to = await this.userService.getUserById(body.to);
-
-    if (!to) {
-      throw new NotFoundException('User not found');
-    }
+    const to = await this.userService.validateUserById(body.to);
 
     return this.messageService.deleteDirectMessages(from, to);
+  }
+
+  @Get('room/:roomId')
+  async getRoomMessages(@Param('roomId') roomId: string) {
+    const room = await this.roomService.validateRoom(roomId);
+
+    return this.messageService.getRoomMessages(room);
+  }
+
+  @Delete('room')
+  async deleteRoomMessage(
+    @Body() body: DeleteRoomMessageDto,
+    @CurrentUser() user: User,
+  ) {
+    const room = await this.roomService.validateRoom(body.roomId);
+
+    const message = await this.messageService.validateMessage(body.messageId);
+
+    if (room.owner.id !== user.id && message.from.id !== user.id) {
+      throw new UnauthorizedException('You are not the message owner');
+    }
+
+    return this.messageService.deleteRoomMessage(room, body.messageId);
+  }
+
+  @Delete('room/all')
+  async deleteRoomMessages(
+    @Body() body: DeleteRoomMessageDto,
+    @CurrentUser() user: User,
+  ) {
+    const room = await this.roomService.validateRoom(body.roomId);
+
+    if (user.id !== room.owner.id) {
+      throw new UnauthorizedException('You are not the room owner');
+    }
+
+    return this.messageService.deleteRoomMessages(room);
   }
 }

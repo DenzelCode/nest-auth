@@ -1,9 +1,13 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, UpdateQuery } from 'mongoose';
 import { Socket } from 'socket.io';
 import { getSocketClient } from '../../../shared/utils/get-socket-client';
-import { getSocketUser } from '../../../shared/utils/get-socket-user';
 import { remove } from '../../../shared/utils/remove';
 import { MessageService } from '../../messages/service/message.service';
 import { User } from '../../user/schema/user.schema';
@@ -60,11 +64,31 @@ export class RoomService {
       .populate('owner', '-password -sessionToken');
   }
 
+  async validateRoomByIdAndOwner(roomId: string, owner: User) {
+    const room = await this.getRoomByIdAndOwner(roomId, owner);
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    return room;
+  }
+
   getRoom(roomId: string) {
     return this.roomModel
       .findById(roomId)
       .populate('members', '-password -sessionToken')
       .populate('owner', '-password -sessionToken');
+  }
+
+  async validateRoom(roomId: string) {
+    const room = await this.getRoom(roomId);
+
+    if (!room) {
+      throw new NotFoundException('Room not found');
+    }
+
+    return room;
   }
 
   getRoomsByMember(user: User) {
@@ -115,11 +139,7 @@ export class RoomService {
   }
 
   async join(roomId: string, user: User) {
-    const room = await this.getRoom(roomId);
-
-    if (!room) {
-      return undefined;
-    }
+    const room = await this.validateRoom(roomId);
 
     if (!room.members.find(member => user.id === member.id)) {
       room.members.push(user._id);

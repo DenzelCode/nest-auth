@@ -9,7 +9,6 @@ import {
 } from '@nestjs/websockets';
 import { hostname } from 'os';
 import { Server, Socket } from 'socket.io';
-import { Client } from '../../../shared/utils/get-client';
 import { getSocketUser } from '../../../shared/utils/get-socket-user';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
@@ -30,7 +29,7 @@ export class UserGateway implements OnGatewayDisconnect, OnGatewayConnection {
     @Inject(forwardRef(() => UserService)) private userService: UserService,
   ) {}
 
-  handleConnection(socket: Socket) {
+  handleConnection() {
     this.online++;
   }
 

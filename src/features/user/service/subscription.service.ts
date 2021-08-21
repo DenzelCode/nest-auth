@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../schema/user.schema';
@@ -19,6 +19,8 @@ export type NotificationPayload = messaging.NotificationMessagePayload &
 
 @Injectable()
 export class SubscriptionService {
+  private logger = new Logger('SubscriptionService');
+
   constructor(
     private webNotificationService: WebNotificationService,
     private mobileNotificationService: MobileNotificationService,
@@ -68,14 +70,14 @@ export class SubscriptionService {
             .sendNotification(JSON.parse(subscription.subscription), {
               notification: payload,
             })
-            .catch(() => {});
+            .catch(e => this.logger.log(e));
           break;
         case SubscriptionType.Mobile:
           this.mobileNotificationService
             .sendNotification(subscription.subscription, {
               notification: payload,
             })
-            .catch(() => {});
+            .catch(e => this.logger.log(e));
           break;
         default:
           break;

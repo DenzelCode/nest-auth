@@ -2,7 +2,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, UpdateQuery } from 'mongoose';
@@ -47,6 +47,16 @@ export class UserService {
     return this.userModel.findById(id);
   }
 
+  async validateUserById(id: string) {
+    const user = await this.getUserById(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
+
   getOnlineUsers() {
     return this.userModel.find({ online: true });
   }
@@ -84,16 +94,6 @@ export class UserService {
     }
 
     return this.generateUsername(name + randomString(6));
-  }
-
-  async validateUser(id: ObjectId | string) {
-    const user = await this.getUserById(id);
-
-    if (!user) {
-      throw new UnauthorizedException('Token user not found');
-    }
-
-    return user;
   }
 
   async getUser(username: string) {

@@ -1,5 +1,4 @@
 import {
-  NotFoundException,
   UseFilters,
   UseGuards,
   UsePipes,
@@ -43,11 +42,7 @@ export class MessageGateway {
     @MessageBody() body: DirectMessageDto,
     @CurrentUser() user: User,
   ) {
-    const userTo = await this.userService.getUserById(body.to);
-
-    if (!userTo) {
-      throw new NotFoundException('User not found');
-    }
+    const userTo = await this.userService.validateUserById(body.to);
 
     const message = await this.messageService.createDirectMessage(
       user,
@@ -86,11 +81,7 @@ export class MessageGateway {
     @MessageBody() body: RoomMessageDto,
     @CurrentUser() user: User,
   ) {
-    const room = await this.roomService.getRoom(body.roomId);
-
-    if (!room) {
-      throw new NotFoundException('Room not found');
-    }
+    const room = await this.roomService.validateRoom(body.roomId);
 
     const message = await this.messageService.createRoomMessage(
       user,

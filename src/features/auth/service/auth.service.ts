@@ -125,7 +125,7 @@ export class AuthService {
         throw new Error();
       }
 
-      const user = await this.userService.validateUser(decoded.sub);
+      const user = await this.userService.validateUserById(decoded.sub);
 
       await this.jwtService.verifyAsync<Token>(
         refreshToken,
