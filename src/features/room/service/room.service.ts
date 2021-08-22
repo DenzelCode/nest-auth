@@ -36,7 +36,7 @@ export class RoomService {
     this.handleUpdateRoom(room, body as Room);
 
     return this.roomModel
-      .updateOne({ _id: room._id, owner: user._id }, body)
+      .findOneAndUpdate({ _id: room._id, owner: user._id }, body)
       .populate('owner', '-password -sessionToken');
   }
 
