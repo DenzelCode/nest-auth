@@ -136,7 +136,7 @@ export class RoomService {
   async join(roomId: string, user: User) {
     const room = await this.validateRoom(roomId);
 
-    if (!room.members.find(member => user.id === member.id)) {
+    if (!room.members.some(member => user.id === member.id)) {
       room.members.push(user._id);
 
       this.handleJoinRoom(user, room);
