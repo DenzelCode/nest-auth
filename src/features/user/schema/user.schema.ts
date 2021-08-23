@@ -30,6 +30,10 @@ export class User extends Document {
   @Prop()
   appleId?: string;
 
+  get isSocial(): boolean {
+    return !!(this.facebookId || this.googleId || this.appleId);
+  }
+
   generateSessionToken() {
     this.sessionToken = randomString(60);
   }
