@@ -118,22 +118,12 @@ export class UserService {
     );
   }
 
-  async getFilteredUser(username: string) {
-    const user = await this.getUser(username);
-
-    if (!user) {
-      return undefined;
-    }
-
-    return this.filterUser(user);
-  }
-
   updateUser(user: User, data: UpdateQuery<User>) {
     return this.userModel.findByIdAndUpdate(user._id, data);
   }
 
   filterUser(user: User) {
-    const userObject = JSON.parse(JSON.stringify(user));
+    const userObject = user.toObject({ virtuals: true });
 
     for (const field of this.filteredFields) {
       delete userObject[field];

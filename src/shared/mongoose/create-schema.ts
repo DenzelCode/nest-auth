@@ -17,7 +17,10 @@ export function createSchemaForClassWithMethods<T>(target: new () => T) {
 
     if (descriptors[name].get || descriptors[name].set) {
       schema
-        .virtual(name)
+        .virtual(name, {
+          toObject: { virtuals: true },
+          toJSON: { virtuals: true },
+        })
         .get(descriptors[name].get)
         .set(descriptors[name].set);
     }

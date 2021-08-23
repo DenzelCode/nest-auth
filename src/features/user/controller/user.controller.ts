@@ -7,6 +7,8 @@ export class UserController {
 
   @Get(':username')
   async getUser(@Param('username') username: string) {
-    return this.userService.validateUserByName(username);
+    return this.userService.filterUser(
+      await this.userService.validateUserByName(username),
+    );
   }
 }
