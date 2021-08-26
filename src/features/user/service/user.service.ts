@@ -15,7 +15,7 @@ import { SocketConnectionService } from './socket-connection.service';
 
 @Injectable()
 export class UserService {
-  private filteredFields: (keyof User)[] = ['password', 'sessionToken'];
+  private filteredFields: (keyof User)[] = ['password', 'sessionToken', 'facebookId', 'googleId', 'appleId' ];
 
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
