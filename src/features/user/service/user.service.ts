@@ -15,7 +15,7 @@ import { SocketConnectionService } from './socket-connection.service';
 
 @Injectable()
 export class UserService {
-  private filteredFields: (keyof User)[] = ['password', 'sessionToken', 'facebookId', 'googleId', 'appleId' ];
+  private blockedFields: (keyof User)[] = ['password', 'sessionToken', 'email', 'facebookId', 'googleId', 'appleId'];
 
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
@@ -125,7 +125,7 @@ export class UserService {
   filterUser(user: User) {
     const userObject = user.toObject({ virtuals: true });
 
-    for (const field of this.filteredFields) {
+    for (const field of this.blockedFields) {
       delete userObject[field];
     }
 
