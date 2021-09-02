@@ -129,10 +129,14 @@ export class UserService {
     return this.userModel.findByIdAndUpdate(user._id, data);
   }
 
-  filterUser(user: User) {
+  filterUser(user: User, allowedFields: (keyof User)[] = []) {
     const userObject = user.toObject({ virtuals: true });
 
     for (const field of this.blockedFields) {
+      if (allowedFields.includes(field)) {
+        continue;
+      }
+
       delete userObject[field];
     }
 

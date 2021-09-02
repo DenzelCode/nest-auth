@@ -115,6 +115,6 @@ export class AuthController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   me(@CurrentUser() user: User) {
-    return this.userService.filterUser(user);
+    return this.userService.filterUser(user, ['email']);
   }
 }
