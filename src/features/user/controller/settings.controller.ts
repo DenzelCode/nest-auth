@@ -34,7 +34,7 @@ export class SettingsController {
 
   @Put('email')
   async updateEmail(@CurrentUser() user: User, @Body('email') email: string) {
-    const emailUser = await this.userService.getUserByName(email);
+    const emailUser = await this.userService.getUserByEmail(email);
 
     if (emailUser) {
       throw new BadRequestException('Email already exists');
