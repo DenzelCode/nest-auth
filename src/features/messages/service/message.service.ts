@@ -23,7 +23,7 @@ export class MessageService {
   getMessage(id: string) {
     return this.messageModel
       .findById(id)
-      .populate('from', '-password -sessionToken');
+      .populate('from', this.userService.unpopulatedFields);
   }
 
   async validateMessage(id: string) {
@@ -39,8 +39,8 @@ export class MessageService {
   getPopulatedMessage(id: string) {
     return this.messageModel
       .findById(id)
-      .populate('from', '-password -sessionToken')
-      .populate('to', '-password -sessionToken')
+      .populate('from', this.userService.unpopulatedFields)
+      .populate('to', this.userService.unpopulatedFields)
       .populate('room');
   }
 
@@ -57,7 +57,7 @@ export class MessageService {
   getFirstRoomMessage(room: Room) {
     return this.messageModel
       .findOne({ room: room._id })
-      .populate('from', '-password -sessionToken');
+      .populate('from', this.userService.unpopulatedFields);
   }
 
   async getRoomMessages(room: Room, limit?: number, before?: Date) {
@@ -92,7 +92,7 @@ export class MessageService {
         .find(filter)
         .limit(limit)
         .sort({ createdAt: -1 })
-        .populate('from', '-password -sessionToken'),
+        .populate('from', this.userService.unpopulatedFields),
     );
   }
 
@@ -105,7 +105,7 @@ export class MessageService {
   getFirstDirectMessage(from: User, to: User) {
     return this.messageModel
       .findOne(this.getDirectMessageFilter(from, to))
-      .populate('from', '-password -sessionToken');
+      .populate('from', this.userService.unpopulatedFields);
   }
 
   private getDirectMessageFilter(from: User, to: User): FilterQuery<Message> {
@@ -130,7 +130,9 @@ export class MessageService {
       message,
     });
 
-    return object.populate('from', '-password -sessionToken').execPopulate();
+    return object
+      .populate('from', this.userService.unpopulatedFields)
+      .execPopulate();
   }
 
   async deleteRoomMessages(room: Room) {
@@ -146,7 +148,9 @@ export class MessageService {
       message,
     });
 
-    return object.populate('from', '-password -sessionToken').execPopulate();
+    return object
+      .populate('from', this.userService.unpopulatedFields)
+      .execPopulate();
   }
 
   async deleteDirectMessage(message: Message) {

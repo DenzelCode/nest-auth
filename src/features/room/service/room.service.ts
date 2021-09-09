@@ -29,7 +29,9 @@ export class RoomService {
   async create(room: RoomDto, user: User) {
     const object = await this.roomModel.create({ ...room, owner: user._id });
 
-    return object.populate('owner', '-password -sessionToken').execPopulate();
+    return object
+      .populate('owner', this.userService.unpopulatedFields)
+      .execPopulate();
   }
 
   async update(room: Room, body: UpdateQuery<Room>, user: User) {
@@ -37,7 +39,7 @@ export class RoomService {
 
     return this.roomModel
       .findOneAndUpdate({ _id: room._id, owner: user._id }, body)
-      .populate('owner', '-password -sessionToken');
+      .populate('owner', this.userService.unpopulatedFields);
   }
 
   handleUpdateRoom(room: Room, body: Partial<Room>) {
@@ -60,8 +62,8 @@ export class RoomService {
   getRoomByIdAndOwner(roomId: string, owner: User) {
     return this.roomModel
       .findOne({ _id: roomId, owner: owner._id })
-      .populate('members', '-password -sessionToken')
-      .populate('owner', '-password -sessionToken');
+      .populate('members', this.userService.unpopulatedFields)
+      .populate('owner', this.userService.unpopulatedFields);
   }
 
   async validateRoomByIdAndOwner(roomId: string, owner: User) {
@@ -77,8 +79,8 @@ export class RoomService {
   getRoom(roomId: string) {
     return this.roomModel
       .findById(roomId)
-      .populate('members', '-password -sessionToken')
-      .populate('owner', '-password -sessionToken');
+      .populate('members', this.userService.unpopulatedFields)
+      .populate('owner', this.userService.unpopulatedFields);
   }
 
   async validateRoom(roomId: string) {
@@ -94,13 +96,13 @@ export class RoomService {
   getRoomsByMember(user: User) {
     return this.roomModel
       .find({ members: { $in: user._id } })
-      .populate('owner', '-password -sessionToken');
+      .populate('owner', this.userService.unpopulatedFields);
   }
 
   getPublicRooms() {
     return this.roomModel
       .find({ isPublic: true })
-      .populate('owner', '-password -sessionToken');
+      .populate('owner', this.userService.unpopulatedFields);
   }
 
   getRoomsByOwner(user: User) {
@@ -144,7 +146,9 @@ export class RoomService {
       return room.save();
     }
 
-    return room;
+    return room
+      .populate('members', this.userService.unpopulatedFields)
+      .execPopulate();
   }
 
   handleJoinRoom(user: User, room: Room) {
@@ -152,7 +156,7 @@ export class RoomService {
   }
 
   async leave(user: User, room: Room) {
-    remove(room.members, member => member === user._id);
+    remove(room.members, member => member.id === user.id);
 
     this.handleLeaveRoom(user, room);
 

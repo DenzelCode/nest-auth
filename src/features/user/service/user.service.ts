@@ -24,6 +24,8 @@ export class UserService {
     'appleId',
   ];
 
+  unpopulatedFields = '-' + this.blockedFields.join(' -');
+
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     @Inject(forwardRef(() => UserGateway)) private userGateway: UserGateway,

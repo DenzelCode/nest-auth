@@ -74,9 +74,7 @@ export class RoomController {
     @Body('roomId', ParseObjectIdPipe) id: string,
     @CurrentUser() user: User,
   ) {
-    const room = await this.roomService.join(id, user);
-
-    return room.populate('members', '-password -sessionToken').execPopulate();
+    return this.roomService.join(id, user);
   }
 
   @Delete('leave/:id')
