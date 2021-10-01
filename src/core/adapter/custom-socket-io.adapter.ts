@@ -1,8 +1,8 @@
-import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server, ServerOptions } from 'socket.io';
 import { getAddress } from '../../shared/utils/get-address';
+import { ExternalSocketIoAdapter } from './external-socket-io-adapter';
 
-export class CustomSocketIoAdapter extends IoAdapter {
+export class CustomSocketIoAdapter extends ExternalSocketIoAdapter {
   createIOServer(port: number, options?: ServerOptions) {
     const server = super.createIOServer(port, options) as Server;
 

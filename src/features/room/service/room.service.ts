@@ -110,7 +110,7 @@ export class RoomService {
   }
 
   getSockets(room: Room) {
-    return this.roomGateway.server.in(`room_${room._id}`).adapter.sids;
+    return this.roomGateway.server.in(`room_${room._id}`).allSockets();
   }
 
   subscribeSocket(socket: Socket, room: Room) {
