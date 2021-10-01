@@ -1,10 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { ExternalSocketIoAdapter } from './core/adapter/external-socket-io-adapter';
 import { AppModule } from './app.module';
 import { RedisIoAdapter } from './core/adapter/redis-io.adapter';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { environments } from './environments/environments';
+import { CustomSocketIoAdapter } from './core/adapter/custom-socket-io.adapter';
 
 const redis = environments.redis;
 
@@ -18,7 +18,7 @@ async function bootstrap() {
   if (redis.enabled) {
     app.useWebSocketAdapter(new RedisIoAdapter(redis.host, redis.port, app));
   } else {
-    app.useWebSocketAdapter(new ExternalSocketIoAdapter(app));
+    app.useWebSocketAdapter(new CustomSocketIoAdapter(app));
   }
 
   const port = environments.port;
