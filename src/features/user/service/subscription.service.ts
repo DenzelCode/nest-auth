@@ -70,14 +70,14 @@ export class SubscriptionService {
             .sendNotification(JSON.parse(subscription.subscription), {
               notification: payload,
             })
-            .catch(e => this.logger.debug(e));
+            .catch(e => this.logger.debug(`${subscription.type} ${e}`));
           break;
         case SubscriptionType.Mobile:
           this.mobileNotificationService
             .sendNotification(subscription.subscription, {
               notification: payload,
             })
-            .catch(e => this.logger.debug(e));
+            .catch(e => this.logger.debug(`${subscription.type} ${e}`));
           break;
         default:
           break;
