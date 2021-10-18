@@ -14,7 +14,7 @@ export class MobileNotificationService {
       }
     }
 
-    new Logger(`this is the payload: ${JSON.stringify(payload)}`);
+    new Logger().debug(`this is the payload: ${JSON.stringify(payload)}`);
 
     return fcm.sendToDevice(token, payload);
   }
