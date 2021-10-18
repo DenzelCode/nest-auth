@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { messaging } from 'firebase-admin';
 import { fcm } from '../api/firebase';
 
@@ -13,6 +13,8 @@ export class MobileNotificationService {
         delete payload.data[key];
       }
     }
+
+    new Logger(`this is the payload: ${JSON.stringify(payload)}`);
 
     return fcm.sendToDevice(token, payload);
   }
