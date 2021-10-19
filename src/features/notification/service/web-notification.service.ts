@@ -12,7 +12,6 @@ export class WebNotificationService {
       subscription,
       JSON.stringify({
         ...payload,
-        notification: { ...payload.notification, data: payload.data },
       }),
     );
   }
