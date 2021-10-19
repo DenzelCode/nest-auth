@@ -9,7 +9,11 @@ export class MobileNotificationService {
     payload: messaging.MessagingPayload,
   ) {
     return fcm.sendToDevice(token, {
-      ...payload,
+      notification: {
+        ...payload.notification,
+        clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+        click_action: 'FLUTTER_NOTIFICATION_CLICK',
+      },
 
       data: {
         ...payload.data,
