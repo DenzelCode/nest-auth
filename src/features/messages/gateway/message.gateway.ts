@@ -128,6 +128,7 @@ export class MessageGateway {
           type: NotificationType.Room,
           routeName: '/rooms',
           roomId: room.id,
+          roomTitle: room.title,
         },
         webData: {
           onActionClick: {
