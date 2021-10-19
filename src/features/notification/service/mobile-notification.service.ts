@@ -9,9 +9,7 @@ export class MobileNotificationService {
     payload: messaging.MessagingPayload,
   ) {
     return fcm.sendToDevice(token, {
-      notification: {
-        ...payload.notification,
-      },
+      ...payload,
 
       data: {
         ...payload.data,
