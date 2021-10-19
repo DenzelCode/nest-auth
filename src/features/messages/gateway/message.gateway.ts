@@ -19,7 +19,10 @@ import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { RoomService } from '../../room/service/room.service';
 import { User } from '../../user/schema/user.schema';
-import { SubscriptionService } from '../../user/service/subscription.service';
+import {
+  NotificationType,
+  SubscriptionService,
+} from '../../user/service/subscription.service';
 import { UserService } from '../../user/service/user.service';
 import { DirectMessageDto } from '../dto/direct-message.dto';
 import { RoomMessageDto } from '../dto/room-message.dto';
@@ -61,11 +64,17 @@ export class MessageGateway {
 
     const url = environments.frontEndUrl;
 
-    // https://angular.io/guide/service-worker-notifications
     this.subscriptionService.sendNotification(userTo, {
-      title: user.username,
-      body: message.message,
-      data: {
+      notification: {
+        title: user.username,
+        body: message.message,
+      },
+      mobileData: {
+        type: NotificationType.Direct,
+        routeName: '/direct-message',
+        username: user.username,
+      },
+      webData: {
         onActionClick: {
           default: {
             operation: 'navigateLastFocusedOrOpen',
@@ -110,11 +119,17 @@ export class MessageGateway {
         continue;
       }
 
-      // https://angular.io/guide/service-worker-notifications
       this.subscriptionService.sendNotification(member, {
-        title: room.title,
-        body: `${user.username}: ${message.message}`,
-        data: {
+        notification: {
+          title: room.title,
+          body: `${user.username}: ${message.message}`,
+        },
+        mobileData: {
+          type: NotificationType.Room,
+          routeName: '/rooms',
+          roomId: room.id,
+        },
+        webData: {
           onActionClick: {
             default: {
               operation: 'navigateLastFocusedOrOpen',

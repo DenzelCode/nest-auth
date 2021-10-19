@@ -8,8 +8,13 @@ export class MobileNotificationService {
     token: string | string[],
     payload: messaging.MessagingPayload,
   ) {
-    delete payload.notification.data;
+    return fcm.sendToDevice(token, {
+      ...payload,
 
-    return fcm.sendToDevice(token, payload);
+      data: {
+        ...payload.data,
+        click_action: 'FLUTTER_NOTIFICATION_CLICK',
+      },
+    });
   }
 }

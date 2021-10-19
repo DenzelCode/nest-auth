@@ -6,16 +6,18 @@ import { SubscriptionType, Subscription } from '../schema/subscription.schema';
 import { MobileNotificationService } from '../../notification/service/mobile-notification.service';
 import { WebNotificationService } from '../../notification/service/web-notification.service';
 import { messaging } from 'firebase-admin';
+import { Dictionary } from 'code-config/dist';
 
-interface CustomNotification {
-  data: {
-    url: string;
-  };
+export interface NotificationPayload {
+  notification: messaging.NotificationMessagePayload;
+  webData: Dictionary;
+  mobileData: Dictionary;
 }
 
-export type NotificationPayload = messaging.NotificationMessagePayload &
-  messaging.WebpushNotification &
-  CustomNotification;
+export enum NotificationType {
+  Room = 'room',
+  Direct = 'direct',
+}
 
 @Injectable()
 export class SubscriptionService {
@@ -68,14 +70,18 @@ export class SubscriptionService {
         case SubscriptionType.Web:
           this.webNotificationService
             .sendNotification(JSON.parse(subscription.subscription), {
-              notification: payload,
+              notification: payload.notification,
+              data: payload.webData,
             })
             .catch(e => this.logger.debug(`${subscription.type} ${e}`));
           break;
         case SubscriptionType.Mobile:
+          delete payload.webData;
+
           this.mobileNotificationService
             .sendNotification(subscription.subscription, {
-              notification: payload,
+              notification: payload.notification,
+              data: payload.mobileData,
             })
             .catch(e => this.logger.debug(`${subscription.type} ${e}`));
           break;
