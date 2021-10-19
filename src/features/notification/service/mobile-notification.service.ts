@@ -11,8 +11,6 @@ export class MobileNotificationService {
     return fcm.sendToDevice(token, {
       notification: {
         ...payload.notification,
-        clickAction: 'FLUTTER_NOTIFICATION_CLICK',
-        click_action: 'FLUTTER_NOTIFICATION_CLICK',
       },
 
       data: {
