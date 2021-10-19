@@ -8,6 +8,12 @@ export class WebNotificationService {
     subscription: PushSubscription,
     payload: messaging.WebpushConfig,
   ) {
-    return sendNotification(subscription, JSON.stringify(payload));
+    return sendNotification(
+      subscription,
+      JSON.stringify({
+        ...payload,
+        notification: { ...payload.notification, data: payload.data },
+      }),
+    );
   }
 }
