@@ -8,12 +8,18 @@ import { join } from 'path';
 import appleSignin from 'apple-signin-auth';
 import { authConfig } from '../config/auth.config';
 import { SocialUser } from './auth.service';
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { PATHS } from '../../../shared/constants/paths';
 
 const auth = authConfig.apple;
 
-const privateKey = readFileSync(join(PATHS.secrets, 'apple-key.p8'), 'utf-8');
+const privateKeyPath = join(PATHS.secrets, 'apple-key.p8');
+
+let privateKey = '';
+
+if (existsSync(privateKeyPath)) {
+  privateKey = readFileSync(privateKeyPath, 'utf-8');
+}
 
 @Injectable()
 export class AppleAuthService {
