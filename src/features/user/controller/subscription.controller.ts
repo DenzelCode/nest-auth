@@ -21,8 +21,10 @@ export class SubscriptionController {
   @Get()
   sendTestingNotification(@CurrentUser() user: User) {
     return this.subscriptionService.sendNotification(user, {
-      title: 'Testing',
-      body: 'Testing notification',
+      notification: {
+        title: 'Testing',
+        body: 'Testing notification',
+      },
     });
   }
 
