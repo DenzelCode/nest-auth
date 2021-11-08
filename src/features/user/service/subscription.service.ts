@@ -76,8 +76,6 @@ export class SubscriptionService {
             .catch(e => this.logger.debug(`${subscription.type} ${e}`));
           break;
         case SubscriptionType.Mobile:
-          delete payload.webData;
-
           this.mobileNotificationService
             .sendNotification(subscription.subscription, {
               notification: payload.notification,
