@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { google } from 'googleapis';
 import { authConfig } from '../config/auth.config';
 
-const auth = authConfig.google;
-
 @Injectable()
 export class GoogleAuthService {
   async getUser(accessToken: string) {
-    const client = new google.auth.OAuth2(auth.appId as string, auth.appSecret);
+    const client = new google.auth.OAuth2(
+      authConfig.google.appId as string,
+      authConfig.google.appSecret,
+    );
 
     client.setCredentials({ access_token: accessToken });
 

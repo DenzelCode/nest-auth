@@ -11,39 +11,39 @@ import { SocialUser } from './auth.service';
 import { existsSync, readFileSync } from 'fs';
 import { PATHS } from '../../../shared/constants/paths';
 
-const auth = authConfig.apple;
-
-const privateKeyPath = join(PATHS.secrets, 'apple-key.p8');
-
-let privateKey = '';
-
-if (existsSync(privateKeyPath)) {
-  privateKey = readFileSync(privateKeyPath, 'utf-8');
-}
-
 @Injectable()
 export class AppleAuthService {
+  private privateKey: string;
+
+  private privateKeyPath = join(PATHS.secrets, 'apple-key.p8');
+
+  constructor() {
+    if (existsSync(this.privateKeyPath)) {
+      this.privateKey = readFileSync(this.privateKeyPath, 'utf-8');
+    }
+  }
+
   async getUser({
     name,
     authorizationCode,
     type,
   }: AppleLoginDto): Promise<SocialUser> {
     try {
-      const clientID = auth[type || 'ios'].clientId;
+      const clientId = authConfig.apple[type || 'ios'].clientId;
 
       const clientSecret = appleSignin.getClientSecret({
-        privateKey,
-        clientID,
-        teamID: auth.teamId,
-        keyIdentifier: auth.keyIdentifier,
+        clientID: clientId,
+        privateKey: this.privateKey,
+        teamID: authConfig.apple.teamId,
+        keyIdentifier: authConfig.apple.keyIdentifier,
       });
 
       const response = await appleSignin.getAuthorizationToken(
         authorizationCode,
         {
           clientSecret,
-          clientID,
-          redirectUri: auth[type].redirectUri,
+          clientID: clientId,
+          redirectUri: authConfig.apple[type].redirectUri,
         },
       );
 
@@ -56,7 +56,7 @@ export class AppleAuthService {
       }
 
       const json = await appleSignin.verifyIdToken(response.id_token, {
-        audience: clientID,
+        audience: clientId,
         ignoreExpiration: true,
       });
 
