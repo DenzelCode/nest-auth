@@ -7,10 +7,13 @@ const config = ConfigFactory.getConfig(
   join(PATHS.config, 'firebase.config.json'),
 ).init();
 
-const validConfig = Object.keys(config.toObject()).length > 0 ? credential.cert(config.toObject()) : credential.applicationDefault()
+const object = config.toObject();
 
 initializeApp({
-  credential: validConfig,
+  credential:
+    Object.keys(object).length > 0
+      ? credential.cert(object)
+      : credential.applicationDefault(),
 });
 
 export const fcm = messaging();
