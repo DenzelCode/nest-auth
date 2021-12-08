@@ -8,9 +8,8 @@ import {
 
 export class UpdatePasswordDto {
   @IsOptional()
-  @IsNotEmpty()
   @IsString()
-  currentPassword: string;
+  currentPassword?: string;
 
   @IsNotEmpty()
   @IsString()
