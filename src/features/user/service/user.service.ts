@@ -145,12 +145,6 @@ export class UserService {
     return userObject;
   }
 
-  async updateUserObject(user: User) {
-    const newInput = await this.getUserById(user._id);
-
-    return Object.assign(user, newInput);
-  }
-
   async create(body: Partial<User>) {
     const user = await this.userModel.create(body);
 
