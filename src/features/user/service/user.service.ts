@@ -127,10 +127,6 @@ export class UserService {
     );
   }
 
-  updateUser(user: User, data: UpdateQuery<User>) {
-    return this.userModel.findByIdAndUpdate(user._id, data);
-  }
-
   filterUser(user: User, allowedFields: (keyof User)[] = []) {
     const userObject = user.toObject({ virtuals: true });
 
