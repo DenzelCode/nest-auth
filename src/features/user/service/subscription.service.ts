@@ -21,7 +21,7 @@ export enum NotificationType {
 
 @Injectable()
 export class SubscriptionService {
-  private logger = new Logger('SubscriptionService');
+  private logger = new Logger(this.constructor.name);
 
   constructor(
     private webNotificationService: WebNotificationService,
