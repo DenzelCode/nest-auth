@@ -117,7 +117,7 @@ export class UserService {
       return name;
     }
 
-    return this.generateUsername(name + randomString(6));
+    return this.generateUsername(name + randomString(1));
   }
 
   async getUser(username: string) {
