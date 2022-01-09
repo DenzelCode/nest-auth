@@ -15,6 +15,7 @@ import { RecoverService } from '../service/recover.service';
 import { RecoverPasswordDto } from '../dto/recover-password.dto';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 import { environments } from '../../../environments/environments';
+import { User } from '../schema/user.schema';
 
 @Controller('recover')
 export class RecoverController {
@@ -26,9 +27,9 @@ export class RecoverController {
 
   @Get(':code')
   async validateRecoverCode(@Param('code') code: Recover['code']) {
-    const recover = await this.validateRecoverCode(code);
+    const recover = await this.validateCode(code);
 
-    recover.owner = this.userService.filterUser(recover.owner);
+    recover.owner = this.userService.filterUser(recover.owner) as User;
 
     return recover;
   }
