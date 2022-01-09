@@ -14,6 +14,11 @@ export interface NotificationPayload {
   mobileData: Dictionary;
 }
 
+export enum NotificationType {
+  Room = 'room',
+  Direct = 'direct',
+}
+
 @Injectable()
 export class SubscriptionService {
   private logger = new Logger('SubscriptionService');
