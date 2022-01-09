@@ -2,8 +2,6 @@ version: '3.9'
 services:
   app:
     build: .
-    environment:
-      - PORT=3000
     deploy:
       replicas: 5
       restart_policy:
@@ -23,6 +21,7 @@ services:
         source: ./config/firebase.config.json
         target: /app/config/firebase.config.json
     environment:
+      PORT: 3000
       VAPID_SUBJECT: 'mailto:denzelcodedev@gmail.com'
       VAPID_PRIVATE_KEY: ''
       VAPID_PUBLIC_KEY: ''
@@ -38,7 +37,7 @@ services:
       API_PORT: 3000
     deploy:
       placement:
-        constraints: [node.role == manager]
+        constraints: [ node.role == manager ]
     volumes:
       - ./docker/nginx/templates:/etc/nginx/templates/
   mongo:
