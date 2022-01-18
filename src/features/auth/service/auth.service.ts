@@ -78,19 +78,10 @@ export class AuthService {
     try {
       const { name, email, id } = await getSocialUser();
 
-      const internalUser = await this.userService.getUserBy({ [fieldId]: id });
+      const existentUser = await this.userService.getUserBy({ [fieldId]: id });
 
-      if (internalUser) {
-        if (
-          internalUser.email != email &&
-          !(await this.userService.getUserByEmail(email))
-        ) {
-          internalUser.email = email;
-
-          await internalUser.save();
-        }
-
-        return this.login(internalUser);
+      if (existentUser) {
+        return this.login(existentUser);
       }
 
       if (await this.userService.getUserByEmail(email)) {
