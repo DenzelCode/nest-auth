@@ -73,6 +73,7 @@ export class AuthService {
   async loginWithThirdParty(
     fieldId: keyof User,
     getSocialUser: GetSocialUserHandler,
+    currentUser?: User,
     customName?: string,
   ) {
     try {
@@ -80,12 +81,23 @@ export class AuthService {
 
       const existentUser = await this.userService.getUserBy({ [fieldId]: id });
 
-      if (existentUser) {
+      if (existentUser && !currentUser) {
         return this.login(existentUser);
       }
 
-      if (await this.userService.getUserByEmail(email)) {
+      if (existentUser && currentUser) {
+        throw new BadRequestException(`${fieldId} already exists`);
+      }
+
+      if (!currentUser && (await this.userService.getUserByEmail(email))) {
         throw new BadRequestException('Email already exists');
+      }
+
+      if (currentUser) {
+        currentUser[fieldId as string] = id;
+        await currentUser.save();
+
+        return this.login(currentUser);
       }
 
       const username = await this.userService.generateUsername(

@@ -24,6 +24,7 @@ import { Response } from 'express';
 import { authConfig } from '../config/auth.config';
 import { stringify } from 'qs';
 import { SubscriptionService } from '../../user/service/subscription.service';
+import { AuthNotRequired } from '../decorators/auth-not-required.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -44,7 +45,12 @@ export class AuthController {
   }
 
   @Post('facebook-login')
-  async facebookLogin(@Body('accessToken') accessToken: string) {
+  @AuthNotRequired()
+  @UseGuards(JwtAuthGuard)
+  async facebookLogin(
+    @CurrentUser() user: User,
+    @Body('accessToken') accessToken: string,
+  ) {
     return this.authService.loginWithThirdParty('facebookId', () =>
       this.facebookService.getUser(
         accessToken,
@@ -58,16 +64,27 @@ export class AuthController {
   }
 
   @Post('google-login')
-  async googleLogin(@Body('accessToken') accessToken: string) {
-    return this.authService.loginWithThirdParty('googleId', () =>
-      this.googleService.getUser(accessToken),
+  @AuthNotRequired()
+  @UseGuards(JwtAuthGuard)
+  async googleLogin(
+    @CurrentUser() user: User,
+    @Body('accessToken') accessToken: string,
+  ) {
+    return this.authService.loginWithThirdParty(
+      'googleId',
+      () => this.googleService.getUser(accessToken),
+      user,
     );
   }
 
   @Post('apple-login')
-  async appleLogin(@Body() body: AppleLoginDto) {
-    return this.authService.loginWithThirdParty('appleId', () =>
-      this.appleService.getUser(body),
+  @AuthNotRequired()
+  @UseGuards(JwtAuthGuard)
+  async appleLogin(@CurrentUser() user: User, @Body() body: AppleLoginDto) {
+    return this.authService.loginWithThirdParty(
+      'appleId',
+      () => this.appleService.getUser(body),
+      user,
     );
   }
 
