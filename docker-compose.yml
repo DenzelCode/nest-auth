@@ -14,12 +14,7 @@ services:
       - mongo
       - redis
     volumes:
-      - type: bind
-        source: ./config/notification.config.json
-        target: /app/config/notification.config.json
-      - type: bind
-        source: ./config/firebase.config.json
-        target: /app/config/firebase.config.json
+      - ./config:/app/config
     environment:
       PORT: 3000
       VAPID_SUBJECT: 'mailto:denzelcodedev@gmail.com'
