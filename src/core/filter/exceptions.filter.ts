@@ -1,10 +1,4 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { getRequest } from '../../shared/utils/get-request';
@@ -28,9 +22,7 @@ export class ExceptionsFilter implements ExceptionFilter {
       timestamp: Date.now() / 1000,
     };
 
-    const error = this.isHttpException(exception)
-      ? exception.getResponse()
-      : exception.getError();
+    const error = this.isHttpException(exception) ? exception.getResponse() : exception.getError();
 
     if (typeof error === 'string') {
       response.message = error;

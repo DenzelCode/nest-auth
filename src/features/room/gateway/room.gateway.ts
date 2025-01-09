@@ -26,22 +26,14 @@ import { RoomService } from '../service/room.service';
 export class RoomGateway implements OnGatewayDisconnect<Socket> {
   @WebSocketServer() server: Server;
 
-  constructor(
-    @Inject(forwardRef(() => RoomService)) private roomService: RoomService,
-  ) {}
+  constructor(@Inject(forwardRef(() => RoomService)) private roomService: RoomService) {}
 
   handleDisconnect(socket: Socket) {
     this.roomService.unsubscribeSocket(socket);
   }
 
   @SubscribeMessage('room:subscribe')
-  async subscribe(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() roomId: string,
-  ) {
-    return this.roomService.subscribeSocket(
-      client,
-      await this.roomService.validateRoom(roomId),
-    );
+  async subscribe(@ConnectedSocket() client: Socket, @MessageBody() roomId: string) {
+    return this.roomService.subscribeSocket(client, await this.roomService.validateRoom(roomId));
   }
 }

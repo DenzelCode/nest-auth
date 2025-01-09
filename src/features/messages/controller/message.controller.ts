@@ -28,10 +28,7 @@ export class MessageController {
   ) {}
 
   @Get('direct-first-message/:userId')
-  async getFirstDirectMessage(
-    @CurrentUser() user: User,
-    @Param('userId') to: string,
-  ) {
+  async getFirstDirectMessage(@CurrentUser() user: User, @Param('userId') to: string) {
     return this.messageService.getFirstDirectMessage(
       user,
       await this.userService.validateUserById(to),
@@ -53,15 +50,10 @@ export class MessageController {
   }
 
   @Delete('direct')
-  async deleteDirectMessage(
-    @Body() body: DeleteDirectMessageDto,
-    @CurrentUser() from: User,
-  ) {
+  async deleteDirectMessage(@Body() body: DeleteDirectMessageDto, @CurrentUser() from: User) {
     await this.userService.validateUserById(body.to);
 
-    const message = await this.messageService.validatePopulatedMessage(
-      body.messageId,
-    );
+    const message = await this.messageService.validatePopulatedMessage(body.messageId);
 
     if (message.from.id !== from.id && message.to.id !== from.id) {
       throw new UnauthorizedException('You do not have access to this chat');
@@ -71,10 +63,7 @@ export class MessageController {
   }
 
   @Delete('direct/all')
-  async deleteDirectMessages(
-    @Body() body: DeleteDirectMessageDto,
-    @CurrentUser() from: User,
-  ) {
+  async deleteDirectMessages(@Body() body: DeleteDirectMessageDto, @CurrentUser() from: User) {
     const to = await this.userService.validateUserById(body.to);
 
     return this.messageService.deleteDirectMessages(from, to);
@@ -82,16 +71,11 @@ export class MessageController {
 
   @Get('room-first-message/:roomId')
   async getFirstRoomMessage(@Param('roomId') roomId: string) {
-    return this.messageService.getFirstRoomMessage(
-      await this.roomService.validateRoom(roomId),
-    );
+    return this.messageService.getFirstRoomMessage(await this.roomService.validateRoom(roomId));
   }
 
   @Get('room/:roomId')
-  async getRoomMessages(
-    @Param('roomId') roomId: string,
-    @Query() query: FetchMessagesDto,
-  ) {
+  async getRoomMessages(@Param('roomId') roomId: string, @Query() query: FetchMessagesDto) {
     return this.messageService.getRoomMessages(
       await this.roomService.validateRoom(roomId),
       query.limit,
@@ -100,10 +84,7 @@ export class MessageController {
   }
 
   @Delete('room')
-  async deleteRoomMessage(
-    @Body() body: DeleteRoomMessageDto,
-    @CurrentUser() user: User,
-  ) {
+  async deleteRoomMessage(@Body() body: DeleteRoomMessageDto, @CurrentUser() user: User) {
     const room = await this.roomService.validateRoom(body.roomId);
 
     const message = await this.messageService.validateMessage(body.messageId);
@@ -116,10 +97,7 @@ export class MessageController {
   }
 
   @Delete('room/all')
-  async deleteRoomMessages(
-    @Body() body: DeleteRoomMessageDto,
-    @CurrentUser() user: User,
-  ) {
+  async deleteRoomMessages(@Body() body: DeleteRoomMessageDto, @CurrentUser() user: User) {
     const room = await this.roomService.validateRoom(body.roomId);
 
     if (user.id !== room.owner.id) {

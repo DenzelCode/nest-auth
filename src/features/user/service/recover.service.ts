@@ -8,9 +8,7 @@ import { environments } from '../../../environments/environments';
 
 @Injectable()
 export class RecoverService {
-  constructor(
-    @InjectModel(Recover.name) private recoveryModel: Model<Recover>,
-  ) {}
+  constructor(@InjectModel(Recover.name) private recoveryModel: Model<Recover>) {}
 
   async create(user: User) {
     await this.delete(user);
@@ -18,9 +16,7 @@ export class RecoverService {
     return this.recoveryModel.create({
       code: randomString(50),
       owner: user._id,
-      expiration: new Date(
-        Date.now() + environments.recoverCodeExpiration * 1000,
-      ),
+      expiration: new Date(Date.now() + environments.recoverCodeExpiration * 1000),
     });
   }
 

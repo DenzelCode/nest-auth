@@ -46,7 +46,7 @@ export class AuthService {
     return user;
   }
 
-  async login(user: User): Promise<TokenResponse> {
+  async login(user: User, isGenerateRefreshToken = true): Promise<TokenResponse> {
     const payload: Token = {
       sub: user.id,
       username: user.username,
@@ -54,19 +54,19 @@ export class AuthService {
 
     let refresh_token: string;
 
-    if (environments.accessTokenExpiration) {
-      refresh_token = await this.jwtService.signAsync(
-        payload,
-        this.getRefreshTokenOptions(user),
-      );
+    if (environments.accessTokenExpiration && isGenerateRefreshToken) {
+      const refreshTokenOptions = this.getRefreshTokenOptions(user);
+
+      refresh_token = await this.jwtService.signAsync(payload, refreshTokenOptions);
     }
 
+    const accessTokenOptions = this.getAccessTokenOptions(user);
+
+    const accessToken = await this.jwtService.signAsync(payload, accessTokenOptions);
+
     return {
-      access_token: await this.jwtService.signAsync(
-        payload,
-        this.getAccessTokenOptions(user),
-      ),
       refresh_token,
+      access_token: accessToken,
     };
   }
 
@@ -100,9 +100,7 @@ export class AuthService {
         return this.login(currentUser);
       }
 
-      const username = await this.userService.generateUsername(
-        customName || name,
-      );
+      const username = await this.userService.generateUsername(customName || name);
 
       const user = await this.userService.create({
         username,
@@ -130,12 +128,9 @@ export class AuthService {
 
       const user = await this.userService.validateUserById(decoded.sub);
 
-      await this.jwtService.verifyAsync<Token>(
-        refreshToken,
-        this.getRefreshTokenOptions(user),
-      );
+      await this.jwtService.verifyAsync<Token>(refreshToken, this.getRefreshTokenOptions(user));
 
-      return this.login(user);
+      return this.login(user, false);
     } catch {
       throw new UnauthorizedException('Invalid token');
     }

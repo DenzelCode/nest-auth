@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ParseObjectIdPipe } from '../../../shared/pipe/parse-object-id.pipe';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
@@ -41,14 +32,8 @@ export class RoomController {
   }
 
   @Delete('delete/:id')
-  async delete(
-    @Param('id', ParseObjectIdPipe) id: string,
-    @CurrentUser() user: User,
-  ) {
-    return this.roomService.delete(
-      await this.roomService.validateRoomByIdAndOwner(id, user),
-      user,
-    );
+  async delete(@Param('id', ParseObjectIdPipe) id: string, @CurrentUser() user: User) {
+    return this.roomService.delete(await this.roomService.validateRoomByIdAndOwner(id, user), user);
   }
 
   @Post()
@@ -70,21 +55,12 @@ export class RoomController {
   }
 
   @Post('join')
-  async join(
-    @Body('roomId', ParseObjectIdPipe) id: string,
-    @CurrentUser() user: User,
-  ) {
+  async join(@Body('roomId', ParseObjectIdPipe) id: string, @CurrentUser() user: User) {
     return this.roomService.join(id, user);
   }
 
   @Delete('leave/:id')
-  async leave(
-    @Param('id', ParseObjectIdPipe) id: string,
-    @CurrentUser() user: User,
-  ) {
-    return this.roomService.leave(
-      user,
-      await this.roomService.validateRoom(id),
-    );
+  async leave(@Param('id', ParseObjectIdPipe) id: string, @CurrentUser() user: User) {
+    return this.roomService.leave(user, await this.roomService.validateRoom(id));
   }
 }

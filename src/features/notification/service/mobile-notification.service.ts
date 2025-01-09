@@ -4,10 +4,7 @@ import { fcm } from '../api/firebase';
 
 @Injectable()
 export class MobileNotificationService {
-  async sendNotification(
-    token: string | string[],
-    payload: messaging.MessagingPayload,
-  ) {
+  async sendNotification(token: string | string[], payload: messaging.MessagingPayload) {
     return fcm.sendToDevice(token, {
       ...payload,
 

@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, UpdateQuery } from 'mongoose';
 import { ObjectId } from 'mongodb';
@@ -121,10 +116,7 @@ export class UserService {
   }
 
   async getUser(username: string) {
-    return (
-      (await this.getUserByName(username)) ??
-      (await this.getUserByEmail(username))
-    );
+    return (await this.getUserByName(username)) ?? (await this.getUserByEmail(username));
   }
 
   filterUser(user: User, allowedFields: (keyof User)[] = []) {

@@ -33,26 +33,15 @@ export class SubscriptionController {
     @Body('subscription') body: PushSubscriptionJSON,
     @CurrentUser() user: User,
   ) {
-    return this.createSubscription(
-      user,
-      SubscriptionType.Web,
-      JSON.stringify(body),
-    );
+    return this.createSubscription(user, SubscriptionType.Web, JSON.stringify(body));
   }
 
   @Post('mobile')
-  createMobileSubscription(
-    @Body('subscription') body: string,
-    @CurrentUser() user: User,
-  ) {
+  createMobileSubscription(@Body('subscription') body: string, @CurrentUser() user: User) {
     return this.createSubscription(user, SubscriptionType.Mobile, body);
   }
 
-  private async createSubscription(
-    user: User,
-    type: SubscriptionType,
-    body: string,
-  ) {
+  private async createSubscription(user: User, type: SubscriptionType, body: string) {
     if (!body) {
       throw new BadRequestException('Subscription body empty');
     }
@@ -67,26 +56,15 @@ export class SubscriptionController {
     @Body('subscription') body: PushSubscriptionJSON,
     @CurrentUser() user: User,
   ) {
-    return this.deleteSubscription(
-      user,
-      SubscriptionType.Web,
-      JSON.stringify(body),
-    );
+    return this.deleteSubscription(user, SubscriptionType.Web, JSON.stringify(body));
   }
 
   @Delete('mobile')
-  deleteMobileSubscription(
-    @Body('subscription') body: string,
-    @CurrentUser() user: User,
-  ) {
+  deleteMobileSubscription(@Body('subscription') body: string, @CurrentUser() user: User) {
     return this.deleteSubscription(user, SubscriptionType.Mobile, body);
   }
 
-  private async deleteSubscription(
-    user: User,
-    type: SubscriptionType,
-    body: string,
-  ) {
+  private async deleteSubscription(user: User, type: SubscriptionType, body: string) {
     if (!body) {
       throw new BadRequestException('Subscription body empty');
     }

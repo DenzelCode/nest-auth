@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Put, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { UpdateEmailDto } from '../dto/update-email.dto';
@@ -18,10 +12,7 @@ export class SettingsController {
   constructor(private userService: UserService) {}
 
   @Put('username')
-  async updateUsername(
-    @CurrentUser() user: User,
-    @Body('username') username: string,
-  ) {
+  async updateUsername(@CurrentUser() user: User, @Body('username') username: string) {
     const usernameUser = await this.userService.getUserByName(username);
 
     if (usernameUser) {
@@ -47,14 +38,8 @@ export class SettingsController {
   }
 
   @Put('password')
-  async updatePassword(
-    @CurrentUser() user: User,
-    @Body() body: UpdatePasswordDto,
-  ) {
-    if (
-      !user.isSocial &&
-      !(await user.validatePassword(body.currentPassword))
-    ) {
+  async updatePassword(@CurrentUser() user: User, @Body() body: UpdatePasswordDto) {
+    if (!user.isSocial && !(await user.validatePassword(body.currentPassword))) {
       throw new BadRequestException('Current password does not match');
     }
 

@@ -34,10 +34,7 @@ export class JwtAuthGuard implements CanActivate {
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const client = this.getRequest(ctx);
 
-    const allowAny = this.reflector.get<boolean>(
-      AUTH_NOT_REQUIRED,
-      ctx.getHandler(),
-    );
+    const allowAny = this.reflector.get<boolean>(AUTH_NOT_REQUIRED, ctx.getHandler());
 
     try {
       client.user = await this.handleRequest(ctx, client);
@@ -64,10 +61,7 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const user = await this.validate(decoded);
 
-      await this.jwtService.verifyAsync<Token>(
-        token,
-        this.authService.getAccessTokenOptions(user),
-      );
+      await this.jwtService.verifyAsync<Token>(token, this.authService.getAccessTokenOptions(user));
 
       return user;
     } catch (e) {

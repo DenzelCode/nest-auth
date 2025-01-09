@@ -42,9 +42,7 @@ export class SocketConnectionService {
   }
 
   getBySocket(socket: Socket) {
-    return this.socketConnectionModel
-      .findOne({ socketId: socket.id })
-      .populate('user');
+    return this.socketConnectionModel.findOne({ socketId: socket.id }).populate('user');
   }
 
   async deleteAllConnections() {

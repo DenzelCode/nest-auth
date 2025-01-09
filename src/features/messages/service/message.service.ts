@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { Room } from '../../room/schema/room.schema';
@@ -21,9 +16,7 @@ export class MessageService {
   ) {}
 
   getMessage(id: string) {
-    return this.messageModel
-      .findById(id)
-      .populate('from', this.userService.unpopulatedFields);
+    return this.messageModel.findById(id).populate('from', this.userService.unpopulatedFields);
   }
 
   async validateMessage(id: string) {
@@ -97,9 +90,7 @@ export class MessageService {
   }
 
   sortMessages(messages: Message[]) {
-    return messages.sort(
-      (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
-    );
+    return messages.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
   }
 
   getFirstDirectMessage(from: User, to: User) {
@@ -130,9 +121,7 @@ export class MessageService {
       message,
     });
 
-    return object
-      .populate('from', this.userService.unpopulatedFields)
-      .execPopulate();
+    return object.populate('from', this.userService.unpopulatedFields).execPopulate();
   }
 
   async deleteRoomMessages(room: Room) {
@@ -148,23 +137,13 @@ export class MessageService {
       message,
     });
 
-    return object
-      .populate('from', this.userService.unpopulatedFields)
-      .execPopulate();
+    return object.populate('from', this.userService.unpopulatedFields).execPopulate();
   }
 
   async deleteDirectMessage(message: Message) {
-    this.userService.sendMessage(
-      message.from,
-      'direct:delete_message',
-      message._id,
-    );
+    this.userService.sendMessage(message.from, 'direct:delete_message', message._id);
 
-    this.userService.sendMessage(
-      message.to,
-      'direct:delete_message',
-      message._id,
-    );
+    this.userService.sendMessage(message.to, 'direct:delete_message', message._id);
 
     return this.messageModel.findOneAndDelete({
       _id: message._id,

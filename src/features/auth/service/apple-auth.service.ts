@@ -1,8 +1,4 @@
-import {
-  HttpException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AppleLoginDto } from '../dto/apple-login.dto';
 import { join } from 'path';
 import appleSignin from 'apple-signin-auth';
@@ -23,11 +19,7 @@ export class AppleAuthService {
     }
   }
 
-  async getUser({
-    name,
-    authorizationCode,
-    type,
-  }: AppleLoginDto): Promise<SocialUser> {
+  async getUser({ name, authorizationCode, type }: AppleLoginDto): Promise<SocialUser> {
     try {
       const clientId = authConfig.apple[type || 'ios'].clientId;
 
@@ -38,20 +30,15 @@ export class AppleAuthService {
         keyIdentifier: authConfig.apple.keyIdentifier,
       });
 
-      const response = await appleSignin.getAuthorizationToken(
-        authorizationCode,
-        {
-          clientSecret,
-          clientID: clientId,
-          redirectUri: authConfig.apple[type].redirectUri,
-        },
-      );
+      const response = await appleSignin.getAuthorizationToken(authorizationCode, {
+        clientSecret,
+        clientID: clientId,
+        redirectUri: authConfig.apple[type].redirectUri,
+      });
 
       if (!response?.id_token) {
         throw new UnauthorizedException(
-          `Access token cannot be retrieved from Apple: ${JSON.stringify(
-            response,
-          )}`,
+          `Access token cannot be retrieved from Apple: ${JSON.stringify(response)}`,
         );
       }
 

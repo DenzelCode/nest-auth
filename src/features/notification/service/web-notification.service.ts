@@ -4,10 +4,7 @@ import { PushSubscription, sendNotification } from 'web-push';
 
 @Injectable()
 export class WebNotificationService {
-  sendNotification(
-    subscription: PushSubscription,
-    payload: messaging.WebpushConfig,
-  ) {
+  sendNotification(subscription: PushSubscription, payload: messaging.WebpushConfig) {
     return sendNotification(
       subscription,
       JSON.stringify({

@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, UpdateQuery } from 'mongoose';
 import { Socket } from 'socket.io';
@@ -29,9 +24,7 @@ export class RoomService {
   async create(room: RoomDto, user: User) {
     const object = await this.roomModel.create({ ...room, owner: user._id });
 
-    return object
-      .populate('owner', this.userService.unpopulatedFields)
-      .execPopulate();
+    return object.populate('owner', this.userService.unpopulatedFields).execPopulate();
   }
 
   async update(room: Room, body: UpdateQuery<Room>, user: User) {
@@ -146,9 +139,7 @@ export class RoomService {
       return room.save();
     }
 
-    return room
-      .populate('members', this.userService.unpopulatedFields)
-      .execPopulate();
+    return room.populate('members', this.userService.unpopulatedFields).execPopulate();
   }
 
   handleJoinRoom(user: User, room: Room) {

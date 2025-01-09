@@ -1,9 +1,4 @@
-import {
-  UseFilters,
-  UseGuards,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -19,10 +14,7 @@ import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { RoomService } from '../../room/service/room.service';
 import { User } from '../../user/schema/user.schema';
-import {
-  NotificationType,
-  SubscriptionService,
-} from '../../user/service/subscription.service';
+import { NotificationType, SubscriptionService } from '../../user/service/subscription.service';
 import { UserService } from '../../user/service/user.service';
 import { DirectMessageDto } from '../dto/direct-message.dto';
 import { RoomMessageDto } from '../dto/room-message.dto';
@@ -43,17 +35,10 @@ export class MessageGateway {
   ) {}
 
   @SubscribeMessage('message:direct')
-  async sendDirectMessage(
-    @MessageBody() body: DirectMessageDto,
-    @CurrentUser() user: User,
-  ) {
+  async sendDirectMessage(@MessageBody() body: DirectMessageDto, @CurrentUser() user: User) {
     const userTo = await this.userService.validateUserById(body.to);
 
-    const message = await this.messageService.createDirectMessage(
-      user,
-      userTo,
-      body.message,
-    );
+    const message = await this.messageService.createDirectMessage(user, userTo, body.message);
 
     this.userService.sendMessage(user, 'message:direct', message);
     this.userService.sendMessage(userTo, 'message:direct', message);
@@ -100,17 +85,10 @@ export class MessageGateway {
   }
 
   @SubscribeMessage('message:room')
-  async sendRoomMessage(
-    @MessageBody() body: RoomMessageDto,
-    @CurrentUser() user: User,
-  ) {
+  async sendRoomMessage(@MessageBody() body: RoomMessageDto, @CurrentUser() user: User) {
     const room = await this.roomService.validateRoom(body.roomId);
 
-    const message = await this.messageService.createRoomMessage(
-      user,
-      room,
-      body.message,
-    );
+    const message = await this.messageService.createRoomMessage(user, room, body.message);
 
     const url = environments.frontEndUrl;
 
@@ -152,11 +130,9 @@ export class MessageGateway {
   ) {
     const room = await this.roomService.validateRoom(roomId);
 
-    return this.roomService.sendMessageExcept(
-      socket,
+    return this.roomService.sendMessageExcept(socket, room, 'message:room:typing', {
       room,
-      'message:room:typing',
-      { room, user: this.userService.filterUser(user) },
-    );
+      user: this.userService.filterUser(user),
+    });
   }
 }

@@ -24,9 +24,7 @@ async function bootstrap() {
   const port = environments.port;
   const logger = new Logger('NestApplication');
 
-  await app.listen(port, () =>
-    logger.log(`Server initialized on port ${port}`),
-  );
+  await app.listen(port, () => logger.log(`Server initialized on port ${port}`));
 }
 
 bootstrap();
